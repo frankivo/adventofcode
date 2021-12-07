@@ -1,10 +1,22 @@
 object day2 {
   def main(args: Array[String]): Unit = {
+    println(s"Day2: ${part1()}")
+  }
+
+  def part1(): Long = {
     var pos = 0
     var depth = 0
 
+    readFile()
+      .foreach(c => {
+        c.action match {
+          case "forward" => pos += c.positions
+          case "down" => depth += c.positions
+          case "up" => depth -= c.positions
+        }
+      })
 
-    println(readFile())
+    pos * depth
   }
 
   case class command(action: String, positions: Int)
