@@ -1,6 +1,5 @@
 object day1 {
-
-  @main def main(): Unit = {
+  def main(args: Array[String]): Unit = {
     println(s"Part1: ${part1()}")
     println(s"Part2: ${part2()}")
   }
