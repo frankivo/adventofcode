@@ -18,10 +18,9 @@ object day1 {
       .count(x => x(0) < x(1))
   }
 
-  def getData: Seq[Int] = {
+  def getData: Iterator[Int] = {
     scala.io.Source.fromResource("day1.txt")
       .getLines()
       .map(_.toInt)
-      .toSeq
   }
 }
