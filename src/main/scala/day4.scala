@@ -1,8 +1,13 @@
 object day4 {
+  def main(args: Array[String]): Unit = {
+    println(s"Part 1: ${part1()}")
+    println(s"Part 2: ${part2()}")
+  }
+
   case class field(num: Int, hit: Boolean = false)
 
   case class board(data: Seq[Seq[field]]) {
-    def isWin: Boolean = {
+    val isWin: Boolean = {
       val vert = data.count(b => b.forall(_.hit)) > 0
       val horz = (0 until 5).count(i => data.forall(_ (i).hit)) > 0
       vert || horz
@@ -12,15 +17,10 @@ object day4 {
       board(data.map(l => l.map(f => if (f.num == draw) field(f.num, true) else f)))
     }
 
-    def score: Long = data.flatten.filterNot(_.hit).map(_.num).sum
+    val score: Long = data.flatten.filterNot(_.hit).map(_.num).sum
   }
 
-  def main(args: Array[String]): Unit = {
-    part1()
-    part2()
-  }
-
-  def part1(): Unit = {
+  def part1(): Long = {
     var brds = boards.toSeq
     var winDraw = -1
 
@@ -34,34 +34,22 @@ object day4 {
     }
 
     val sum = findWin(brds).getOrElse(throw new Exception("No win found")).score
-    println(s"Board sum: $sum")
-    println(s"Winning draw: $winDraw")
-    println(s"Answer: ${sum * winDraw}")
+    sum * winDraw
   }
 
-  def part2(): Unit = {
+  def part2(): Long = {
     var brds = boards.toSeq
 
-    val finalWin = draws
+    draws
       .flatMap(d => {
-        val games = brds.map(_.update(d))
-        val ret = {
-          if (countWins(games) > 0)
-            Some((d, games.find(_.isWin).get))
-          else
-            None
-        }
-        brds = games.filterNot(_.isWin)
-        ret
+        brds = brds.filterNot(_.isWin).map(_.update(d))
+        val maybewin = findWin(brds)
+
+        if (maybewin.isDefined)
+          Some(maybewin.get.score * d)
+        else None
       })
       .last
-
-    val sum = finalWin._2.score
-    val draw = finalWin._1
-
-    println(s"Board sum: $sum")
-    println(s"Winning draw: ${finalWin._1}")
-    println(s"Answer: ${sum * draw}")
   }
 
   def allData(): Iterator[String] = scala.io.Source.fromResource("day4.txt").getLines()
