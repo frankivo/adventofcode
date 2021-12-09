@@ -22,19 +22,17 @@ object day4 {
 
   def part1(): Long = {
     var brds = boards.toSeq
-    var winDraw = -1
 
-    val drws = draws.iterator
+    draws
+      .flatMap(d => {
+        brds = brds.filterNot(_.isWin).map(_.update(d))
+        val maybewin = findWin(brds)
 
-    while findWin(brds).isEmpty
-    do {
-      val draw = drws.next()
-      brds = brds.map(b => b.update(draw))
-      winDraw = draw
-    }
-
-    val sum = findWin(brds).getOrElse(throw new Exception("No win found")).score
-    sum * winDraw
+        if (maybewin.isDefined)
+          Some(maybewin.get.score * d)
+        else None
+      })
+      .head
   }
 
   def part2(): Long = {
