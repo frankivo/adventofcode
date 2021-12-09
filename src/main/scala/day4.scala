@@ -1,7 +1,7 @@
 object day4 {
   def main(args: Array[String]): Unit = {
-    println(s"Part 1: ${part1()}")
-    println(s"Part 2: ${part2()}")
+    println(s"Part 1: $part1")
+    println(s"Part 2: $part2")
   }
 
   case class field(num: Int, hit: Boolean = false)
@@ -20,42 +20,12 @@ object day4 {
     val score: Long = data.flatten.filterNot(_.hit).map(_.num).sum
   }
 
-  def part1(): Long = {
-    var brds = boards.toSeq
+  def allData: Iterator[String] = scala.io.Source.fromResource("day4.txt").getLines()
 
-    draws
-      .flatMap(d => {
-        brds = brds.filterNot(_.isWin).map(_.update(d))
-        val maybewin = findWin(brds)
+  val draws: Seq[Int] = allData.next().split(",").map(_.toInt)
 
-        if (maybewin.isDefined)
-          Some(maybewin.get.score * d)
-        else None
-      })
-      .head
-  }
-
-  def part2(): Long = {
-    var brds = boards.toSeq
-
-    draws
-      .flatMap(d => {
-        brds = brds.filterNot(_.isWin).map(_.update(d))
-        val maybewin = findWin(brds)
-
-        if (maybewin.isDefined)
-          Some(maybewin.get.score * d)
-        else None
-      })
-      .last
-  }
-
-  def allData(): Iterator[String] = scala.io.Source.fromResource("day4.txt").getLines()
-
-  val draws: Seq[Int] = allData().next().split(",").map(_.toInt)
-
-  def boards: Iterator[board] = {
-    allData()
+  val boards: Iterator[board] = {
+    allData
       .drop(2)
       .filterNot(_.isEmpty)
       .map({
@@ -68,6 +38,24 @@ object day4 {
       .sliding(5, 5)
       .map(board.apply)
   }
+
+  val allGames: Seq[Long] = {
+    var brds = boards.toSeq
+
+    draws
+      .flatMap(d => {
+        brds = brds.filterNot(_.isWin).map(_.update(d))
+        val maybewin = findWin(brds)
+
+        if (maybewin.isDefined)
+          Some(maybewin.get.score * d)
+        else None
+      })
+  }
+
+  val part1: Long = allGames.head
+
+  val part2: Long = allGames.last
 
   def findWin(data: Seq[board]): Option[board] = data.find(_.isWin)
 
