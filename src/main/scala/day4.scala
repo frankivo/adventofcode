@@ -40,7 +40,7 @@ object day4 {
   }
 
   val allGames: Seq[Long] = {
-    var brds = boards.toSeq
+    var brds = boards.toSeq // TODO: I don't like var
 
     draws
       .flatMap(d => {
