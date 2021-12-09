@@ -35,7 +35,7 @@ object day3 {
     var step = 0
     while data.length > 1
     do {
-      data = reduce1(data, step)
+      data = reduce1(data, step, '1', 1)
       step += 1
     }
     Integer.parseInt(data.head, 2)
@@ -46,32 +46,21 @@ object day3 {
     var step = 0
     while data.length > 1
     do {
-      data = reduce2(data, step)
+      data = reduce1(data, step, '0', -1)
       step += 1
     }
 
     Integer.parseInt(data.head, 2)
   }
 
-  def reduce1(data: Seq[String], step: Int): Seq[String] = {
+  def reduce1(data: Seq[String], step: Int, char: Char, minMax: Int): Seq[String] = {
     val grouped = data
       .groupBy(r => r.charAt(step))
 
     if (grouped.head._2.length == grouped.last._2.length)
-      grouped.filter(_._1 == '1').head._2
-    else grouped.max((a, b) => a._2.length.compare(b._2.length))
+      grouped.filter(_._1 == char).head._2
+    else grouped.max((a, b) => a._2.length.compare(b._2.length) * minMax)
       ._2
-  }
-
-  def reduce2(data: Seq[String], step: Int): Seq[String] = {
-    val grouped = data
-      .groupBy(r => r.charAt(step))
-
-    if (grouped.head._2.length == grouped.last._2.length)
-      grouped.filter(_._1 == '0').head._2
-    else
-      grouped.min((a, b) => a._2.length.compare(b._2.length))
-        ._2
   }
 
 }
