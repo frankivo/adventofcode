@@ -2,7 +2,11 @@ object day4 {
   case class field(num: Int, hit: Boolean = false)
 
   case class board(data: Seq[Seq[field]]) {
-    def isWin: Boolean = data.count(b => b.forall(_.hit)) > 0 // TODO: vertical
+    def isWin: Boolean = {
+      val vert = data.count(b => b.forall(_.hit)) > 0
+      val horz = (0 until 5).count(i => data.forall(_ (i).hit)) > 0
+      vert || horz
+    }
 
     def update(draw: Int): board = {
       board(data.map(l => l.map(f => if (f.num == draw) field(f.num, true) else f)))
