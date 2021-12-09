@@ -33,40 +33,45 @@ object day3 {
   def oxygen: Int = {
     var data = getData.toSeq
     var step = 0
-    while data.length > 2
+    while data.length > 1
     do {
       data = reduce1(data, step)
       step += 1
     }
-    data = data.filter(_.last == '1')
     Integer.parseInt(data.head, 2)
   }
 
   def scrubbber: Int = {
     var data = getData.toSeq
     var step = 0
-    while data.length > 2
+    while data.length > 1
     do {
       data = reduce2(data, step)
       step += 1
     }
-    data = data.filter(_.last == '0')
 
     Integer.parseInt(data.head, 2)
   }
 
   def reduce1(data: Seq[String], step: Int): Seq[String] = {
-    data
+    val grouped = data
       .groupBy(r => r.charAt(step))
-      .max((a, b) => a._2.length.compare(b._2.length))
+
+    if (grouped.head._2.length == grouped.last._2.length)
+      grouped.filter(_._1 == '1').head._2
+    else grouped.max((a, b) => a._2.length.compare(b._2.length))
       ._2
   }
 
   def reduce2(data: Seq[String], step: Int): Seq[String] = {
-    data
+    val grouped = data
       .groupBy(r => r.charAt(step))
-      .min((a, b) => a._2.length.compare(b._2.length))
-      ._2
+
+    if (grouped.head._2.length == grouped.last._2.length)
+      grouped.filter(_._1 == '0').head._2
+    else
+      grouped.min((a, b) => a._2.length.compare(b._2.length))
+        ._2
   }
 
 }
