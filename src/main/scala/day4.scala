@@ -2,7 +2,7 @@ object day4 {
   case class field(num: Int, hit: Boolean = false)
 
   case class board(data: Seq[Seq[field]]) {
-    def isWin: Boolean = data.count(b => b.forall(_.hit)) > 0
+    def isWin: Boolean = data.count(b => b.forall(_.hit)) > 0 // TODO: vertical
 
     def update(draw: Int): board = {
       board(data.map(l => l.map(f => if (f.num == draw) field(f.num, true) else f)))
@@ -45,7 +45,7 @@ object day4 {
       .map(board.apply)
   }
 
-  def findWin(data: Seq[board]): Option[board] = data.find(_.isWin) // TODO: vertical
+  def findWin(data: Seq[board]): Option[board] = data.find(_.isWin)
 
   def countWin(brd: board): Long = brd.data.flatten.filterNot(_.hit).map(_.num).sum
 }
