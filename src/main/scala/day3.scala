@@ -50,8 +50,8 @@ object day3 {
     reduce(
       if (grouped.head._2.length == grouped.last._2.length)
         grouped.filter(_._1 == char).head._2
-      else grouped.max((a, b) => a._2.length.compare(b._2.length) * multiplier)
-        ._2,
+      else
+        grouped.max((a, b) => a._2.length.compare(b._2.length) * multiplier)._2,
       char,
       step + 1
     )
