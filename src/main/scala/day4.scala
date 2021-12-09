@@ -1,23 +1,36 @@
 object day4 {
   case class field(num: Int, hit: Boolean = false)
 
-  type board = Seq[Seq[field]]
+  case class board(data: Seq[Seq[field]]) {
+    def isWin: Boolean = data.count(b => b.forall(_.hit)) > 0
 
-  def main(args: Array[String]): Unit = {
-    println(draws)
-    var brds = boards().toSeq
-
-    draws
-      .foreach(d => brds = brds.map(updateBoard(_, d)))
-    brds.foreach(println)
+    def update(draw: Int): board = {
+      board(data.map(l => l.map(f => if (f.num == draw) field(f.num, true) else f)))
+    }
   }
 
+  def main(args: Array[String]): Unit = {
+    var brds = boards.toSeq
+    var winDraw = -1
+
+    while findWin(brds).isEmpty
+    do {
+      val draw = draws.next()
+      brds = brds.map(b => b.update(draw))
+      winDraw = draw
+    }
+
+    val sum = countWin(findWin(brds).getOrElse(throw new Exception("No win found")))
+    println(s"Board sum: $sum")
+    println(s"Winning draw: $winDraw")
+    println(s"Answer: ${sum * winDraw}")
+  }
 
   def allData(): Iterator[String] = scala.io.Source.fromResource("day4.txt").getLines()
 
-  val draws: Seq[Int] = allData().next().split(",").map(_.toInt)
+  val draws: Iterator[Int] = allData().next().split(",").map(_.toInt).iterator
 
-  def boards(): Iterator[board] = {
+  val boards: Iterator[board] = {
     allData()
       .drop(2)
       .filterNot(_.isEmpty)
@@ -29,11 +42,10 @@ object day4 {
           .toSeq
       })
       .sliding(5, 5)
+      .map(board.apply)
   }
 
-  def updateBoard(board: board, draw: Int): board = {
-    board.map(l => {
-      l.map(f => if (f.num == draw) field(f.num, true) else f)
-    })
-  }
+  def findWin(data: Seq[board]): Option[board] = data.find(_.isWin) // TODO: vertical
+
+  def countWin(brd: board): Long = brd.data.flatten.filterNot(_.hit).map(_.num).sum
 }
