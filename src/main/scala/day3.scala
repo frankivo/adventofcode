@@ -1,3 +1,5 @@
+import scala.annotation.tailrec
+
 object day3 {
   def main(args: Array[String]): Unit = {
     println(s"Part 1: ${part1()}")
@@ -28,32 +30,28 @@ object day3 {
     Integer.parseInt(gamma, 2) * Integer.parseInt(epsilon, 2)
   }
 
-  def part2(): Long = {
-    val oxygen = step('1')
-    val scrubbber = step('0')
-    oxygen * scrubbber
-  }
+  def part2(): Long = oxygen * scrubbber
 
-  def step(char: Char): Int = {
-    var data = getData.toSeq
-    var step = 0
-    while data.length > 1
-    do {
-      data = reduce(data, step, char)
-      step += 1
-    }
-    Integer.parseInt(data.head, 2)
-  }
+  def oxygen: Int = toInt(reduce(getData.toSeq, '1').head)
+  def scrubbber: Int = toInt(reduce(getData.toSeq, '0').head)
 
-  def reduce(data: Seq[String], step: Int, char: Char): Seq[String] = {
+  def toInt(bin: String): Int = Integer.parseInt(bin, 2)
+
+  @tailrec
+  def reduce(data: Seq[String], char: Char, step: Int = 0): Seq[String] = {
+    if (data.length == 1) return data
+
     val multiplier = if (char == '1') 1 else -1
 
     val grouped = data
       .groupBy(r => r.charAt(step))
 
-    if (grouped.head._2.length == grouped.last._2.length)
-      grouped.filter(_._1 == char).head._2
-    else grouped.max((a, b) => a._2.length.compare(b._2.length) * multiplier)
-      ._2
+    val smallerData =
+      if (grouped.head._2.length == grouped.last._2.length)
+        grouped.filter(_._1 == char).head._2
+      else grouped.max((a, b) => a._2.length.compare(b._2.length) * multiplier)
+        ._2
+
+    reduce(smallerData, char, step + 1)
   }
 }
