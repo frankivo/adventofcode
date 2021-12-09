@@ -49,7 +49,6 @@ object day3 {
     do {
       data = reduce2(data, step)
       step += 1
-      println(data)
     }
     data = data.filter(_.last == '0')
 
