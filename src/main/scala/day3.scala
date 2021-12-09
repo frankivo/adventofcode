@@ -33,6 +33,7 @@ object day3 {
   def part2(): Long = oxygen * scrubbber
 
   def oxygen: Int = toInt(reduce(getData.toSeq, '1').head)
+
   def scrubbber: Int = toInt(reduce(getData.toSeq, '0').head)
 
   def toInt(bin: String): Int = Integer.parseInt(bin, 2)
@@ -46,12 +47,13 @@ object day3 {
     val grouped = data
       .groupBy(r => r.charAt(step))
 
-    val smallerData =
+    reduce(
       if (grouped.head._2.length == grouped.last._2.length)
         grouped.filter(_._1 == char).head._2
       else grouped.max((a, b) => a._2.length.compare(b._2.length) * multiplier)
-        ._2
-
-    reduce(smallerData, char, step + 1)
+        ._2,
+      char,
+      step + 1
+    )
   }
 }
