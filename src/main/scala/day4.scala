@@ -1,11 +1,17 @@
 object day4 {
+  case class field(num: Int, hit: Boolean = false)
+
+  type board = Seq[Seq[field]]
+
   def main(args: Array[String]): Unit = {
     println(draws)
-    boards()
-      .foreach(println)
+    var brds = boards().toSeq
+
+    draws
+      .foreach(d => brds = brds.map(updateBoard(_, d)))
+    brds.foreach(println)
   }
 
-  type board = Seq[Seq[Int]]
 
   def allData(): Iterator[String] = scala.io.Source.fromResource("day4.txt").getLines()
 
@@ -19,8 +25,15 @@ object day4 {
         _.split(" ")
           .filterNot(_.isEmpty)
           .map(_.toInt)
+          .map(field(_))
           .toSeq
       })
       .sliding(5, 5)
+  }
+
+  def updateBoard(board: board, draw: Int): board = {
+    board.map(l => {
+      l.map(f => if (f.num == draw) field(f.num, true) else f)
+    })
   }
 }
