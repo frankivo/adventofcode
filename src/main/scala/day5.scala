@@ -16,9 +16,13 @@ object day5 {
   case class coordinate(x: Int, y: Int)
 
   case class line(begin: coordinate, end: coordinate) {
+    val sorted: Seq[coordinate] = Seq(begin, end).sorted((a, b) => a.x.compare(b.x) + a.y.compare(a.y))
+    val smallest: coordinate = sorted.head
+    val biggest: coordinate = sorted.last
+
     val all: Seq[coordinate] = {
-      val x = (begin.x to end.x).map(c => coordinate(c, begin.y))
-      val y = (begin.y to end.y).map(c => coordinate(begin.x, c))
+      val x = (smallest.x to biggest.x).map(c => coordinate(c, begin.y))
+      val y = (smallest.y to biggest.y).map(c => coordinate(begin.x, c))
       (x ++ y).distinct
     }
   }
