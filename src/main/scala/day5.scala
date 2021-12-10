@@ -1,16 +1,6 @@
 object day5 {
   def main(args: Array[String]): Unit = {
-    getLines
-      .foreach(println)
-
-    diagram()
-
-    Seq(
-      line(coordinate(1, 3), coordinate(1, 5)),
-      line(coordinate(4, 4), coordinate(8, 4)),
-      line(coordinate(8, 4), coordinate(4, 4)),
-    )
-      .foreach(i => println(i.all))
+    diagram(play())
   }
 
   case class coordinate(x: Int, y: Int)
@@ -27,23 +17,27 @@ object day5 {
     }
   }
 
-  def diagram(): Unit = {
-    println(s"$width * $height")
+  type grid = Array[Array[Int]]
 
-    val grid = Array.ofDim[Int](height, width)
-
-    val filled = getLines
-      .foldLeft(grid) {
+  def play(): grid = {
+    getLines.take(1)
+      .foldLeft(Array.ofDim[Int](height, width)) {
         (g, l) => {
-          g.map(row => {
-            row.map(col => {
-              col
+          g.zipWithIndex.map(row => {
+            row._1.zipWithIndex.map(col => {
+              val cur = coordinate(row._2, col._2)
+              println(l.all)
+              println(cur)
+              println("-" * 10)
+              if (l.all.contains(cur)) col._1 + 1 else col._1
             })
           })
         }
       }
+  }
 
-    filled.map(r => r.mkString(", ")).foreach(println)
+  def diagram(grid: grid): Unit = {
+      grid.map(r => r.mkString(", ")).foreach(println)
   }
 
   val coordinates: Seq[coordinate] = getLines.flatMap(i => Seq(i.begin, i.end)).toSeq
