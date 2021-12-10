@@ -4,13 +4,15 @@ object day5 {
       .foreach(println)
   }
 
-  case class line(start: (Int, Int), end: (Int, Int))
+  case class coordinate(x: Int, y: Int)
+
+  case class line(begin: coordinate, end: coordinate)
 
   def getLines: Iterator[line] = {
     """(\d)+""".r.findAllMatchIn(readInput())
       .map(_.matched.toInt)
       .sliding(4, 4)
-      .map(m => line((m(0), m(1)), (m(2), m(3))))
+      .map(m => line(coordinate(m(0), m(1)), coordinate(m(2), m(3))))
   }
 
   def readInput(): String = scala.io.Source.fromResource("day5.txt").getLines().mkString(" ")
