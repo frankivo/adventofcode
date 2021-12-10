@@ -37,7 +37,8 @@ object day5 {
   }
 
   def diagram(grid: grid): Unit = {
-      grid.map(r => r.mkString(", ")).foreach(println)
+    grid.map(r => r.map(_.toString.replace("0", ".")).mkString)
+      .foreach(println)
   }
 
   val coordinates: Seq[coordinate] = getLines.flatMap(i => Seq(i.begin, i.end)).toSeq
