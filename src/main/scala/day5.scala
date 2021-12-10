@@ -1,6 +1,8 @@
 object day5 {
   def main(args: Array[String]): Unit = {
-    diagram(play())
+    val game = play()
+    diagram(game)
+    println(s"Score: ${score(game)}")
   }
 
   case class coordinate(x: Int, y: Int)
@@ -15,20 +17,20 @@ object day5 {
       val y = (smallest.y to biggest.y).map(c => coordinate(begin.x, c))
       (x ++ y).distinct
     }
+
+    val isStraight: Boolean = begin.x == end.x || begin.y == end.y
   }
 
   type grid = Array[Array[Int]]
 
   def play(): grid = {
-    getLines.take(1)
+    getLines
+      .filter(_.isStraight)
       .foldLeft(Array.ofDim[Int](height, width)) {
         (g, l) => {
           g.zipWithIndex.map(row => {
             row._1.zipWithIndex.map(col => {
-              val cur = coordinate(row._2, col._2)
-              println(l.all)
-              println(cur)
-              println("-" * 10)
+              val cur = coordinate(col._2, row._2)
               if (l.all.contains(cur)) col._1 + 1 else col._1
             })
           })
@@ -36,16 +38,19 @@ object day5 {
       }
   }
 
-  def diagram(grid: grid): Unit = {
-    grid.map(r => r.map(_.toString.replace("0", ".")).mkString)
+  def score(game: grid): Int = game.flatten.count(_ >= 2)
+
+  def diagram(game: grid): Unit = {
+    game.map(r => r.map(_.toString.replace("0", ".")).mkString)
       .foreach(println)
   }
 
-  val coordinates: Seq[coordinate] = getLines.flatMap(i => Seq(i.begin, i.end)).toSeq
+  val coordinates: Seq[coordinate] = getLines.filter(_.isStraight)
+    .flatMap(i => Seq(i.begin, i.end)).toSeq
 
-  val height: Int = coordinates.max((a, b) => a.y.compare(b.y)).y
+  val height: Int = coordinates.max((a, b) => a.y.compare(b.y)).y + 1
 
-  val width: Int = coordinates.max((a, b) => a.x.compare(b.x)).x
+  val width: Int = coordinates.max((a, b) => a.x.compare(b.x)).x + 1
 
   def getLines: Iterator[line] = {
     """(\d)+""".r.findAllMatchIn(readInput())
