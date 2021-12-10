@@ -11,11 +11,9 @@ object day5 {
     getLines
       .flatMap(l => {
         if (l.begin.x == l.end.x) {
-          val y = Seq(l.begin.y, l.end.y).sorted
-          (y.head to y.last).map(y => coordinate(l.begin.x, y))
+          ((l.begin.y to l.end.y) ++ (l.end.y to l.begin.y)).map(y => coordinate(l.begin.x, y))
         } else if (l.begin.y == l.end.y) {
-          val x = Seq(l.begin.x, l.end.x).sorted
-          (x.head to x.last).map(x => coordinate(x, l.begin.y))
+          ((l.begin.x to l.end.x) ++ (l.end.x to l.begin.x)).map(x => coordinate(x, l.begin.y))
         } else None
       })
       .toSeq
