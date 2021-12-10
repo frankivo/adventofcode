@@ -1,51 +1,29 @@
 object day5 {
   def main(args: Array[String]): Unit = {
-    diagram(play())
+    println(s"Score: ${play()}")
   }
 
   case class coordinate(x: Int, y: Int)
 
-  case class line(begin: coordinate, end: coordinate) {
-    val sorted: Seq[coordinate] = Seq(begin, end).sorted((a, b) => a.x.compare(b.x) + a.y.compare(a.y))
-    val smallest: coordinate = sorted.head
-    val biggest: coordinate = sorted.last
+  case class line(begin: coordinate, end: coordinate)
 
-    val all: Seq[coordinate] = {
-      val x = (smallest.x to biggest.x).map(c => coordinate(c, begin.y))
-      val y = (smallest.y to biggest.y).map(c => coordinate(begin.x, c))
-      (x ++ y).distinct
-    }
+  def play(): Long = {
+    getLines
+      .flatMap(l => {
+        if (l.begin.x == l.end.x) {
+          val y = Seq(l.begin.y, l.end.y).sorted
+          (y.head to y.last).map(y => coordinate(l.begin.x, y))
+        } else if (l.begin.y == l.end.y) {
+          val x = Seq(l.begin.x, l.end.x).sorted
+          (x.head to x.last).map(x => coordinate(x, l.begin.y))
+        } else None
+      })
+      .toSeq
+      .groupBy(identity)
+      .view
+      .mapValues(_.length)
+      .count(y => y._2 >= 2)
   }
-
-  type grid = Array[Array[Int]]
-
-  def play(): grid = {
-    getLines.take(1)
-      .foldLeft(Array.ofDim[Int](height, width)) {
-        (g, l) => {
-          g.zipWithIndex.map(row => {
-            row._1.zipWithIndex.map(col => {
-              val cur = coordinate(row._2, col._2)
-              println(l.all)
-              println(cur)
-              println("-" * 10)
-              if (l.all.contains(cur)) col._1 + 1 else col._1
-            })
-          })
-        }
-      }
-  }
-
-  def diagram(grid: grid): Unit = {
-    grid.map(r => r.map(_.toString.replace("0", ".")).mkString)
-      .foreach(println)
-  }
-
-  val coordinates: Seq[coordinate] = getLines.flatMap(i => Seq(i.begin, i.end)).toSeq
-
-  val height: Int = coordinates.max((a, b) => a.y.compare(b.y)).y
-
-  val width: Int = coordinates.max((a, b) => a.x.compare(b.x)).x
 
   def getLines: Iterator[line] = {
     """(\d)+""".r.findAllMatchIn(readInput())
