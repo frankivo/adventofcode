@@ -26,25 +26,21 @@ object day5 {
   }
 
   def part2(): Long = {
-    getLines
+    val data = getLines
       .flatMap(l => {
-        if (l.begin.x == l.end.x) {
-          ((l.begin.y to l.end.y) ++ (l.end.y to l.begin.y)).map(y => coordinate(l.begin.x, y))
-        } else if (l.begin.y == l.end.y) {
-          ((l.begin.x to l.end.x) ++ (l.end.x to l.begin.x)).map(x => coordinate(x, l.begin.y))
-        } else {
-          val deltaX = l.begin.x - l.end.x
-          val deltaY = l.begin.y - l.end.y
+        val deltaX = l.begin.x - l.end.x
+        val deltaY = l.begin.y - l.end.y
 
-          val stepX = 0.compare(deltaX)
-          val stepY = 0.compare(deltaY)
+        val stepX = 0.compare(deltaX)
+        val stepY = 0.compare(deltaY)
 
-          for (i <- 0 to deltaX.abs)
-            yield coordinate(l.begin.x + (stepX * i), l.begin.y + (stepY * i))
-        }
+        val steps = Seq(deltaX.abs, deltaY.abs).max
+
+        for (i <- 0 to steps)
+          yield coordinate(l.begin.x + (stepX * i), l.begin.y + (stepY * i))
       })
       .toSeq
-      .groupBy(identity)
+    data.groupBy(x => s"${x.x},${x.y}")
       .view
       .mapValues(_.length)
       .count(y => y._2 >= 2)
