@@ -26,7 +26,7 @@ object day5 {
   }
 
   def part2(): Long = {
-    val data = getLines
+    getLines
       .flatMap(l => {
         val deltaX = l.begin.x - l.end.x
         val deltaY = l.begin.y - l.end.y
@@ -36,11 +36,11 @@ object day5 {
 
         val steps = Seq(deltaX.abs, deltaY.abs).max
 
-        for (i <- 0 to steps)
-          yield coordinate(l.begin.x + (stepX * i), l.begin.y + (stepY * i))
+        (0 to steps)
+          .map(s => coordinate(l.begin.x + (stepX * s), l.begin.y + (stepY * s)))
       })
       .toSeq
-    data.groupBy(x => s"${x.x},${x.y}")
+      .groupBy(x => s"${x.x},${x.y}")
       .view
       .mapValues(_.length)
       .count(y => y._2 >= 2)
