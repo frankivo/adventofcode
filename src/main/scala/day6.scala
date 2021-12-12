@@ -17,8 +17,7 @@ object day6 {
           x
         }
       }
-
-    0
+      .length
   }
 
   def lanternfish: Seq[Int] = {
