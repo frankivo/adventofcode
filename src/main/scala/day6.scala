@@ -1,6 +1,24 @@
 object day6 {
   def main(args: Array[String]): Unit = {
-    lanternfish.foreach(println)
+    println(s"Part1: ${part1()}")
+  }
+
+  def part1(): Long = {
+    val fish = lanternfish
+    println(s"Initial state: ${fish.mkString(",")}")
+
+    (0 until 18)
+      .foldLeft(fish) {
+        (cur, step) => {
+          val newBorn = cur ++ Seq.fill(cur.count(_ == 0))(0)
+          val countDown = newBorn.map(_ - 1)
+          val x = countDown.map(f => if (f == -1) 8 else f)
+          println(s"After ${step + 1} days: ${x.mkString(",")}")
+          x
+        }
+      }
+
+    0
   }
 
   def lanternfish: Seq[Int] = {
