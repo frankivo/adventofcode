@@ -8,6 +8,17 @@ object day5 {
 
   case class line(begin: coordinate, end: coordinate) {
     def isDiagonal: Boolean = !(begin.x == end.x || begin.y == end.y)
+
+    private val deltaX = begin.x - end.x
+
+    private val deltaY = begin.y - end.y
+
+    private val stepX: Int = 0.compare(deltaX)
+    private val stepY: Int = 0.compare(deltaY)
+
+    private val steps: Int = Seq(deltaX.abs, deltaY.abs).max
+
+    def all: Seq[coordinate] = (0 to steps).map(s => coordinate(begin.x + (stepX * s), begin.y + (stepY * s)))
   }
 
   def part1(): Long = getOverlap(getLines.filterNot(_.isDiagonal))
@@ -16,18 +27,7 @@ object day5 {
 
   def getOverlap(data: Iterator[line]): Long = {
     data
-      .flatMap(l => {
-        val deltaX = l.begin.x - l.end.x
-        val deltaY = l.begin.y - l.end.y
-
-        val stepX = 0.compare(deltaX)
-        val stepY = 0.compare(deltaY)
-
-        val steps = Seq(deltaX.abs, deltaY.abs).max
-
-        (0 to steps)
-          .map(s => coordinate(l.begin.x + (stepX * s), l.begin.y + (stepY * s)))
-      })
+      .flatMap(_.all)
       .toSeq
       .groupBy(x => s"${x.x},${x.y}")
       .view
