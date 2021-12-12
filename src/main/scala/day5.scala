@@ -6,27 +6,16 @@ object day5 {
 
   case class coordinate(x: Int, y: Int)
 
-  case class line(begin: coordinate, end: coordinate)
-
-  def part1(): Long = {
-    getLines
-      .flatMap(l => {
-        if (l.begin.x == l.end.x) {
-          ((l.begin.y to l.end.y) ++ (l.end.y to l.begin.y)).map(y => coordinate(l.begin.x, y))
-        } else if (l.begin.y == l.end.y) {
-          ((l.begin.x to l.end.x) ++ (l.end.x to l.begin.x)).map(x => coordinate(x, l.begin.y))
-        } else
-          None
-      })
-      .toSeq
-      .groupBy(identity)
-      .view
-      .mapValues(_.length)
-      .count(y => y._2 >= 2)
+  case class line(begin: coordinate, end: coordinate) {
+    def isDiagonal: Boolean = !(begin.x == end.x || begin.y == end.y)
   }
 
-  def part2(): Long = {
-    getLines
+  def part1(): Long = getOverlap(getLines.filterNot(_.isDiagonal))
+
+  def part2(): Long = getOverlap(getLines)
+
+  def getOverlap(data: Iterator[line]): Long = {
+    data
       .flatMap(l => {
         val deltaX = l.begin.x - l.end.x
         val deltaY = l.begin.y - l.end.y
