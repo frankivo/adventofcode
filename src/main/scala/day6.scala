@@ -10,9 +10,9 @@ object day6 {
     (0 until 18)
       .foldLeft(fish) {
         (cur, step) => {
-          val newBorn = cur ++ Seq.fill(cur.count(_ == 0))(0)
-          val countDown = newBorn.map(_ - 1)
-          val x = countDown.map(f => if (f == -1) 8 else f)
+          val countDown = cur.map(_ - 1)
+          val newBorn = countDown ++ Seq.fill(countDown.count(_ == 0))(8)
+          val x = newBorn.map(f => if (f == -1) 6 else f)
           println(s"After ${step + 1} days: ${x.mkString(",")}")
           x
         }
