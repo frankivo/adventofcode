@@ -1,23 +1,35 @@
 object day5 {
   def main(args: Array[String]): Unit = {
-    println(s"Score: ${play()}")
+    println(s"Part1: ${part1()}")
+    println(s"Part2: ${part2()}")
   }
 
   case class coordinate(x: Int, y: Int)
 
-  case class line(begin: coordinate, end: coordinate)
+  case class line(begin: coordinate, end: coordinate) {
+    def isDiagonal: Boolean = !(begin.x == end.x || begin.y == end.y)
 
-  def play(): Long = {
-    getLines
-      .flatMap(l => {
-        if (l.begin.x == l.end.x) {
-          ((l.begin.y to l.end.y) ++ (l.end.y to l.begin.y)).map(y => coordinate(l.begin.x, y))
-        } else if (l.begin.y == l.end.y) {
-          ((l.begin.x to l.end.x) ++ (l.end.x to l.begin.x)).map(x => coordinate(x, l.begin.y))
-        } else None
-      })
+    private val deltaX = begin.x - end.x
+
+    private val deltaY = begin.y - end.y
+
+    private val stepX: Int = 0.compare(deltaX)
+    private val stepY: Int = 0.compare(deltaY)
+
+    private val steps: Int = Seq(deltaX.abs, deltaY.abs).max
+
+    def all: Seq[coordinate] = (0 to steps).map(s => coordinate(begin.x + (stepX * s), begin.y + (stepY * s)))
+  }
+
+  def part1(): Long = getOverlap(getLines.filterNot(_.isDiagonal))
+
+  def part2(): Long = getOverlap(getLines)
+
+  def getOverlap(data: Iterator[line]): Long = {
+    data
+      .flatMap(_.all)
       .toSeq
-      .groupBy(identity)
+      .groupBy(x => s"${x.x},${x.y}")
       .view
       .mapValues(_.length)
       .count(y => y._2 >= 2)
