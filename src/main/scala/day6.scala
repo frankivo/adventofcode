@@ -22,24 +22,15 @@ object day6 {
     (0 until days)
       .foldLeft(init) {
         (cur, _) => {
+          cur.slice(1, 7) ++
           Seq(
-            cur(1),
-            cur(2),
-            cur(3),
-            cur(4),
-            cur(5),
-            cur(6),
             cur(7) + cur.head,
             cur(8),
             cur.head
-          ).toIndexedSeq
+          )
         }
       }
       .sum
-  }
-
-  def magic(data: Seq[Int]): Unit = {
-
   }
 
   def lanternfish: Seq[Int] = {
