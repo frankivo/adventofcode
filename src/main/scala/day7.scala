@@ -12,6 +12,7 @@ object day7 {
   }
 
   def part2(): Int = {
+    // Average seems to need floor/ceil/round depending in input and I'm not sure why
     val dest = average(crabs)
     crabs
       .map(c => (dest - c).abs)
