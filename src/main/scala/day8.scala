@@ -1,3 +1,5 @@
+import day8.findSegment
+
 object day8 {
   def main(args: Array[String]): Unit = {
     println(s"Part1: ${part1()}")
@@ -18,15 +20,36 @@ object day8 {
     val in = panels.map(_._1).toSeq
 
     println(signalCount)
-    in.map(l => {
-      val one = findSegment(l, 1)
-      val seven = findSegment(l, 7)
-      println(one)
-      println(seven)
-      one
+    val data = in.map(l => {
+      val step0 = Seq(1, 4, 7, 8)
+        .map(i => (i, findSegment(l, i).toCharArray))
+        .toMap
+
+      val step1 = step0 +
+        (9 -> findInOthers(l, 6, step0(4)))
+
+      debug(step1)
+      0
     })
 
     0
+  }
+
+  def findInOthers(data: Seq[String], size: Int, other: Array[Char]): Array[Char] = {
+    data
+      .filter(_.length == size)
+      .map(x => (x, x.toCharArray.intersect(other)))
+      .filter(_._2.length == other.length)
+      .head
+      ._1.toCharArray
+  }
+
+  def debug(data: Map[Int, Array[Char]]): Unit = {
+    data
+      .toSeq
+      .sortBy(_._1)
+      .map(x=> s"${x._1} -> ${x._2.mkString(",")}").foreach(println)
+
   }
 
   def findSegment(data: Seq[String], num: Int): String =
@@ -38,7 +61,6 @@ object day8 {
 
   val signalCount: Seq[(Int, Int)] = // Signal, panel count
     signals.map(s => (s._2, s._1.length))
-
 
   def panels: Iterator[(Seq[String], Seq[String])] = {
     input
