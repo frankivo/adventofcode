@@ -22,11 +22,11 @@ object day6 {
     (0 until days)
       .foldLeft(init) {
         (cur, _) => {
-          cur.slice(1, 7) ++
+          cur.slice(1, 7) ++ // Numbers slide forward (standard aging)
           Seq(
-            cur(7) + cur.head,
+            cur(7) + cur.head, // Parents restart at age 6
             cur(8),
-            cur.head
+            cur.head, // Newborns start here
           )
         }
       }
