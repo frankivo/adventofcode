@@ -1,10 +1,10 @@
 object day6 {
   def main(args: Array[String]): Unit = {
-    println(s"Part1: ${part1()}")
+    println(s"Part1: ${bruteForce(80)}")
   }
 
-  def part1(): Long = {
-    (0 until 80)
+  def bruteForce(days: Int): Long = {
+    (0 until days)
       .foldLeft(lanternfish) {
         (cur, step) => {
           val countDown = cur.map(_ - 1)
