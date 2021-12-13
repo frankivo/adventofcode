@@ -4,17 +4,12 @@ object day6 {
   }
 
   def part1(): Long = {
-    val fish = lanternfish
-    println(s"Initial state: ${fish.mkString(",")}")
-
-    (0 until 18)
-      .foldLeft(fish) {
+    (0 until 80)
+      .foldLeft(lanternfish) {
         (cur, step) => {
           val countDown = cur.map(_ - 1)
-          val newBorn = countDown ++ Seq.fill(countDown.count(_ == 0))(8)
-          val x = newBorn.map(f => if (f == -1) 6 else f)
-          println(s"After ${step + 1} days: ${x.mkString(",")}")
-          x
+          (countDown ++ Seq.fill(countDown.count(_ == -1))(8))
+            .map(f => if (f == -1) 6 else f)
         }
       }
       .length
