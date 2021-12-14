@@ -15,17 +15,17 @@ object day8 {
   }
 
   def part2(): Int = {
-    val in = panels.map(_._1).toSeq
-
-    val data = in.map(l => {
-      val mixed = mixedSignals(l)
-      val decoder = decodeSignals(mixed)
-
-      println(decoder.toSeq.sortBy(_._1))
-      0
-    })
-
-    0
+    panels
+      .map(l => {
+        val mixed = mixedSignals(l._1)
+        l._2
+          .map(_.sorted)
+          .flatMap(s => mixed.find(_._2 == s))
+          .map(_._1)
+          .mkString
+          .toInt
+      })
+      .sum
   }
 
   def mixedSignals(data: Seq[String]): Map[Int, String] = {
@@ -50,24 +50,7 @@ object day8 {
       (2 -> remaining(data, step4).head)
 
     step5
-  }
-
-  def decodeSignals(data: Map[Int, String]): Map[Char, Char] = {
-    val step0 = Map(
-      'a' -> data(7).diff(data(1)).head,
-      'd' -> data(8).diff(data(0)).head,
-      'e' -> data(6).diff(data(5)).head,
-      'f' -> data(3).diff(data(2)).head,
-    )
-
-    val step1 = step0 +
-      ('b' -> data(6).diff(data(2)).filterNot(_ == step0('f')).head) +
-      ('c' -> data(7).diff(Array(step0('a'), step0('f'))).head)
-
-    val step2 = step1 +
-      ('g' -> data(8).diff(step1.values.mkString).head)
-
-    step2
+      .map(s => s._1 -> s._2.sorted)
   }
 
   def findInOthers(data: Seq[String], size: Int, other: String): Option[String] = {
