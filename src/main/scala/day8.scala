@@ -19,37 +19,55 @@ object day8 {
   def part2(): Int = {
     val in = panels.map(_._1).toSeq
 
-    println(signalCount)
     val data = in.map(l => {
       val step0 = Seq(1, 4, 7, 8)
-        .map(i => (i, findSegment(l, i).toCharArray))
+        .map(i => (i, findSegment(l, i)))
         .toMap
 
       val step1 = step0 +
-        (9 -> findInOthers(l, 6, step0(4)))
+        (9 -> findInOthers(l, 6, step0(4)).get)
 
-      debug(step1)
+      val step2 = step1 +
+        (3 -> findInOthers(remaining(l, step1), 5, step0(1)).get) +
+        (0 -> findInOthers(remaining(l, step1), 6, step0(1)).get)
+
+      val step3 = step2 +
+        (6 -> remaining(l, step2).find(_.length == 6).get)
+
+      val step4 = step3 +
+        (5 -> remaining(l, step3).find(r => step3(6).diff(r).length == 1).get)
+
+      val step5 = step4 +
+        (2 -> remaining(l, step4).head)
+
+      debug(step5)
+      println(remaining(l, step5))
+
       0
     })
 
     0
   }
 
-  def findInOthers(data: Seq[String], size: Int, other: Array[Char]): Array[Char] = {
+  def findInOthers(data: Seq[String], size: Int, other: String): Option[String] = {
     data
       .filter(_.length == size)
-      .map(x => (x, x.toCharArray.intersect(other)))
+      .map(x => (x, x.intersect(other)))
       .filter(_._2.length == other.length)
-      .head
-      ._1.toCharArray
+      .map(_._1)
+      .headOption
   }
 
-  def debug(data: Map[Int, Array[Char]]): Unit = {
+  def remaining(data: Seq[String], found: Map[Int, String]): Seq[String] = {
+    data.filterNot(d => found.values.toSeq.contains(d))
+  }
+
+  def debug(data: Map[Int, String]): Unit = {
     data
       .toSeq
       .sortBy(_._1)
-      .map(x=> s"${x._1} -> ${x._2.mkString(",")}").foreach(println)
-
+      .map(x => s"${x._1} -> ${x._2}")
+      .foreach(println)
   }
 
   def findSegment(data: Seq[String], num: Int): String =
