@@ -6,25 +6,32 @@ object day9 {
     //    println(s"Part2: ${part2()}")
   }
 
+  // 1820 too high
+  // 27650 too high
   def part1(): Int = {
-    data.zipWithIndex
+   val x = data.zipWithIndex
       .flatMap(row => {
-        row._1.zipWithIndex.flatMap(column => {
-          val cur = cell(row._2, column._2).get
-          if (adjacent(row._2, column._2).count(_ < cur) == 0)
-            Some(cur)
-          else None
-        })
+        row._1.zipWithIndex
+          .flatMap(column => {
+            val cur = cell(row._2, column._2).get
+            val adj = adjacent(row._2, column._2)
+            if (adj.count(_ < cur) == 0)
+              Some(cur)
+            else
+              None
+          })
       })
       .map(_ + 1)
-      .sum
+
+    println(x)
+    0
   }
 
   def part2(): Int = {
     ???
   }
 
-  def cell(row: Int, column: Int): Option[Int] = Try(data(row)(column).toString.toInt).toOption
+  def cell(row: Int, column: Int): Option[Int] = Try(data(row)(column)).toOption
 
   def adjacent(row: Int, column: Int): Seq[Int] = {
     Seq(
@@ -35,7 +42,11 @@ object day9 {
     ).flatMap(c => cell(c._1, c._2))
   }
 
-  val data: Seq[String] = scala.io.Source.fromResource("day9.txt").getLines().toSeq
+  val data: Seq[Seq[Int]] = {
+    scala.io.Source.fromResource("day9.txt").getLines()
+      .map(_.toCharArray.map(_.getNumericValue).toSeq)
+      .toSeq
+  }
 
   val width: Int = data.head.length
 
