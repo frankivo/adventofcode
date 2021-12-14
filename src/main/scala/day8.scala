@@ -68,9 +68,9 @@ object day8 {
       .foreach(println)
   }
 
-  val signals: Seq[(Seq[Char], Int)] = Seq(
+  val signals: Seq[(String, Int)] = Seq(
     "abcefg", "cf", "acdeg", "acdfg", "bcdf", "abdfg", "abdefg", "acf", "abcdefg", "abcdfg"
-  ).map(_.toCharArray.toSeq).zipWithIndex
+  ).zipWithIndex
 
   val signalCount: Seq[(Int, Int)] = // Signal, panel count
     signals.map(s => (s._2, s._1.length))
