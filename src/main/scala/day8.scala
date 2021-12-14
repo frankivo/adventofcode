@@ -1,5 +1,3 @@
-import day8.findSegment
-
 object day8 {
   def main(args: Array[String]): Unit = {
     println(s"Part1: ${part1()}")
@@ -21,7 +19,7 @@ object day8 {
 
     val data = in.map(l => {
       val step0 = Seq(1, 4, 7, 8)
-        .map(i => (i, findSegment(l, i)))
+        .flatMap(x => l.find(_.length == signalCount(x)._2).map(y => x -> y))
         .toMap
 
       val step1 = step0 +
@@ -69,9 +67,6 @@ object day8 {
       .map(x => s"${x._1} -> ${x._2}")
       .foreach(println)
   }
-
-  def findSegment(data: Seq[String], num: Int): String =
-    data.find(_.length == signalCount.find(_._1 == num).get._2).get
 
   val signals: Seq[(Seq[Char], Int)] = Seq(
     "abcefg", "cf", "acdeg", "acdfg", "bcdf", "abdfg", "abdefg", "acf", "abcdefg", "abcdfg"
