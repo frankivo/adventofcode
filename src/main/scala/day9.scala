@@ -6,40 +6,34 @@ object day9 {
     //    println(s"Part2: ${part2()}")
   }
 
-  case class cell(x: Int, y: Int) {
+  case class cell(row: Int, col: Int) {
     def getOption: Option[cell] = {
-      if (x < 0) None
-      else if (y < 0) None
-      else if (x >= data.length) None
-      else if (y >= data.length) None
+      if (col < 0) None
+      else if (row < 0) None
+      else if (col >= width) None
+      else if (row >= height) None
       else Some(cell.this)
     }
 
-    def value: Int = data(x)(y)
+    def value: Int = data(row)(col)
 
     def isLowest: Boolean = adjacent.forall(value < _.value)
 
     private def adjacent: Seq[cell] = {
       Seq(
-        (x - 1, y), // Top
-        (x, y - 1), // Left
-        (x + 1, y), // Down
-        (x, y + 1) // Right
-      ).flatMap(c => cell(c._1, c._2).getOption)
+        (row, col - 1), // Left
+        (row - 1, col), // Top
+        (row, col + 1), // Right
+        (row + 1, col), // Bottom
+      )
+        .map(c => cell(c._1, c._2))
+        .flatMap(_.getOption)
     }
   }
 
   def part1(): Int = {
-    data.zipWithIndex
-      .flatMap(row => {
-        row._1.zipWithIndex
-          .flatMap(column => {
-            val cur = cell(row._2, column._2)
-            if (cur.isLowest)
-              Some(cur.value)
-            else None
-          })
-      })
+    getLowPoints
+      .map(_.value)
       .map(_ + 1)
       .sum
   }
@@ -48,9 +42,26 @@ object day9 {
     ???
   }
 
+  def getLowPoints: Seq[cell] = {
+    (0 until height)
+      .flatMap(row => {
+        (0 until width)
+          .flatMap(column => {
+            val cur = cell(row, column)
+            if (cur.isLowest)
+              Some(cur)
+            else None
+          })
+      })
+  }
+
   val data: Seq[Seq[Int]] = {
     scala.io.Source.fromResource("day9.txt").getLines()
       .map(_.toCharArray.map(_.getNumericValue).toSeq)
       .toSeq
   }
+
+  val height: Int = data.length
+
+  val width: Int = data.head.length
 }
