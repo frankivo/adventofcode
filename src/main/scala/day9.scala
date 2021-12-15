@@ -3,7 +3,7 @@ import scala.util.Try
 object day9 {
   def main(args: Array[String]): Unit = {
     println(s"Part1: ${part1()}")
-    //    println(s"Part2: ${part2()}")
+    println(s"Part2: ${part2()}")
   }
 
   case class cell(row: Int, col: Int) {
@@ -19,7 +19,7 @@ object day9 {
 
     def isLowest: Boolean = adjacent.forall(value < _.value)
 
-    private def adjacent: Seq[cell] = {
+    def adjacent: Seq[cell] = {
       Seq(
         (row, col - 1), // Left
         (row - 1, col), // Top
@@ -39,7 +39,34 @@ object day9 {
   }
 
   def part2(): Int = {
-    ???
+    getLowPoints
+      .foldLeft(Seq.fill(3)(0))(
+        { (top3, cur) => {
+          (top3 :+
+            adjacentLimit(cur)
+              .distinct
+              .length
+            )
+            .sorted
+            .reverse
+            .take(3)
+
+        }
+        })
+      .product
+  }
+
+  def adjacentLimit(cur: cell, visited: Seq[cell] = Seq()): Seq[cell] = {
+    cur
+      .adjacent
+      .filterNot(visited.contains(_))
+      .filterNot(_.value == 9)
+      .flatMap(a => adjacentLimit(a, visited :+ cur)) ++ {
+      if (cur.value < 9)
+        Seq(cur)
+      else
+        Seq()
+    }
   }
 
   def getLowPoints: Seq[cell] = {
