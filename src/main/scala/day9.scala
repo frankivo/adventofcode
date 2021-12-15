@@ -1,3 +1,4 @@
+import scala.collection.mutable
 import scala.util.Try
 
 object day9 {
@@ -29,6 +30,8 @@ object day9 {
         .map(c => cell(c._1, c._2))
         .flatMap(_.getOption)
     }
+
+    def isMaxHeight: Boolean = value == 9
   }
 
   def part1(): Int = {
@@ -40,33 +43,29 @@ object day9 {
 
   def part2(): Int = {
     getLowPoints
-      .foldLeft(Seq.fill(3)(0))(
-        { (top3, cur) => {
-          (top3 :+
-            adjacentLimit(cur)
-              .distinct
-              .length
-            )
+      .foldLeft(Seq.fill(3)(0))({
+        (top3, cur) => {
+          (top3 :+ adjacentLimit(cur).size)
             .sorted
             .reverse
             .take(3)
-
         }
-        })
+      })
       .product
   }
 
-  def adjacentLimit(cur: cell, visited: Seq[cell] = Seq()): Seq[cell] = {
+  def adjacentLimit(cur: cell): Set[cell] =
+    adjacentLimit(cur, visited = new mutable.HashSet[cell]())
+
+  def adjacentLimit(cur: cell, visited: mutable.HashSet[cell]): Set[cell] = {
+    visited += cur
+
     cur
       .adjacent
-      .filterNot(visited.contains(_))
-      .filterNot(_.value == 9)
-      .flatMap(a => adjacentLimit(a, visited :+ cur)) ++ {
-      if (cur.value < 9)
-        Seq(cur)
-      else
-        Seq()
-    }
+      .filterNot(visited.contains)
+      .filterNot(_.isMaxHeight)
+      .toSet
+      .flatMap(a => adjacentLimit(a, visited)) + cur
   }
 
   def getLowPoints: Seq[cell] = {
