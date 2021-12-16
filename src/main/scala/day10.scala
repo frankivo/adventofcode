@@ -11,7 +11,7 @@ object day10 {
       line
         .foldLeft("")({
           (store, cur) =>
-            if (store.nonEmpty && !cur.isLeft && cur.findPair.left == store.last)
+            if (!cur.isLeft && cur.findPair.left == store.last)
               store.dropRight(1)
             else
               store + cur
