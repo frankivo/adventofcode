@@ -10,16 +10,11 @@ object day10 {
     data.flatMap(line => {
       line
         .foldLeft("")({
-          (a, b) =>
-            if (b.isLeft)
-              a + b
-            else {
-              // Check if previous is left for this right
-              if (b.findPair.left == a.last)
-                a.dropRight(1)
-              else
-                a + b
-            }
+          (store, cur) =>
+            if (store.nonEmpty && !cur.isLeft && cur.findPair.left == store.last)
+              store.dropRight(1)
+            else
+              store + cur
         })
         .filterNot(_.isLeft)
         .headOption
