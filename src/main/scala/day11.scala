@@ -27,11 +27,11 @@ object day11 {
             if (b(row)(col) > 9 && !flashed.contains((row, col))) {
               flashed += ((row, col))
 
-              adjecent(row, col)
+              adjacent(row, col)
                 .foreach(c => {
                   val cur = findCell(c._1, c._2).get
                   b(c._1)(c._2) = cur + 1
-                  if (!flashed.contains(c._1, c._2))
+                  if (!flashed.contains(c._1, c._2) && b(c._1)(c._2) > 9)
                     keepGoing = true
                 })
             }
@@ -41,17 +41,17 @@ object day11 {
       flashed.size
     }
 
-    def findCell(row: Int, col: Int): Option[Int] = Try(b(row)(col)).toOption
-
-    def adjecent(row: Int, col: Int): Seq[(Int, Int)] = {
+    def adjacent(row: Int, col: Int): Seq[(Int, Int)] = {
       val xs = (-1 to 1).map(_ + row)
       val ys = (-1 to 1).map(_ + col)
 
       xs
         .flatMap(x => ys.map(y => (x, y)))
-        .filterNot(c => c._1 == row && c._2 == 1)
+        .filterNot(_ == (row, col))
         .filter(c => findCell(c._1, c._2).isDefined)
     }
+
+    def findCell(row: Int, col: Int): Option[Int] = Try(b(row)(col)).toOption
 
     def debug(): Unit = {
       b.map(row => {
@@ -63,20 +63,16 @@ object day11 {
     }
   }
 
-  def part1(): Int = {
-    (0 until 5)
+  def part1(): Long = {
+    (1 to 100)
       .foldLeft((input, 0L)) {
-      (a, b) => {
-        println(s"After step $b")
-        a._1.debug()
-        println
-
-        val grow = a._1.grow
-        val flashed = grow.flash
-        (grow.reset, flashed)
+        (a, b) => {
+          val grow = a._1.grow
+          val flashed = grow.flash
+          (grow.reset, a._2 + flashed)
+        }
       }
-    }
-    0
+      ._2
   }
 
   def part2(): Int = ???
