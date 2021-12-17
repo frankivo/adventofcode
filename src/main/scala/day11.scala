@@ -63,25 +63,19 @@ object day11 {
     }
   }
 
-
   def part1(): Int = {
-    val data = input
-    //    data.debug()
-    //    val x = data.grow
-    //    x.flash
-    //    println("-" * 20)
-    //    x.debug()
-    //    println("-" * 20)
-    //    val y = x.reset.grow
-    //    y.flash
-    //    y.debug()
+    (0 until 5)
+      .foldLeft((input, 0L)) {
+      (a, b) => {
+        println(s"After step $b")
+        a._1.debug()
+        println
 
-    (0 until 2).foldLeft(0) {
-      (score, step) => {
-
+        val grow = a._1.grow
+        val flashed = grow.flash
+        (grow.reset, flashed)
       }
     }
-
     0
   }
 
