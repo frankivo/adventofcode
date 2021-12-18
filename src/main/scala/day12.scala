@@ -1,13 +1,14 @@
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 object day12 {
   def main(args: Array[String]): Unit = {
     println(s"Part 1: ${part1()}")
-    println(s"Part 2: ${part2()}")
+    //    println(s"Part 2: ${part2()}")
   }
 
-  case class Node(name: String, connections: Set[String]) {
-    val isSmall: Boolean = name.head.isLower
+  extension (node: String) {
+    def isSmall: Boolean = node.head.isLower
   }
 
   type CaveMap = Map[String, Set[String]]
@@ -17,19 +18,29 @@ object day12 {
   }
 
   def part1(): Long = {
-    readData
-      .start
-      .map(node => {
-        node
+    data("start").map(findEnd(_)).sum
+  }
 
-      })
+  def findEnd(node: String, trail: Seq[String] = Seq("start")): Int = {
+    if (node.isSmall && trail.contains(node))
+      return 0
 
-    0
+    val connections = data(node)
+//    println(s"$node --> ${connections.mkString(",")}")
+
+    connections.toSeq.map(c => {
+      if (c == "end") {
+        println((trail :+ "end").mkString(","))
+        1
+      } else
+        findEnd(c, trail :+ node)
+    })
+      .sum
   }
 
   def part2(): Long = 0
 
-  def readData: CaveMap = {
+  val data: CaveMap = {
     io.Source.fromResource("day12.txt").getLines()
       .map(_.split("-").toSeq)
       .map(l => (l.head, l.last))
