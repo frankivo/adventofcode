@@ -6,14 +6,23 @@ object day12 {
     println(s"Part 2: ${part2()}")
   }
 
-  case class Node(name: String, connections: Seq[String]) {
+  case class Node(name: String, connections: Set[String]) {
     val isSmall: Boolean = name.head.isLower
   }
 
   type CaveMap = Map[String, Set[String]]
 
+  extension (cv: CaveMap) {
+    def start: Set[String] = cv("start")
+  }
+
   def part1(): Long = {
-    readData.foreach(println)
+    readData
+      .start
+      .map(node => {
+        node
+
+      })
 
     0
   }
