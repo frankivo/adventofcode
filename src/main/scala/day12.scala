@@ -12,11 +12,7 @@ object day12 {
   }
 
   type CaveMap = Map[String, Set[String]]
-
-  extension (cv: CaveMap) {
-    def start: Set[String] = cv("start")
-  }
-
+  
   def part1(): Long = {
     data("start").map(findEnd(_)).sum
   }
@@ -25,15 +21,10 @@ object day12 {
     if (node.isSmall && trail.contains(node))
       return 0
 
-    val connections = data(node)
-//    println(s"$node --> ${connections.mkString(",")}")
-
-    connections.toSeq.map(c => {
-      if (c == "end") {
-        println((trail :+ "end").mkString(","))
-        1
-      } else
-        findEnd(c, trail :+ node)
+    data(node)
+      .toSeq.map(c => {
+      if (c == "end") 1
+      else findEnd(c, trail :+ node)
     })
       .sum
   }
