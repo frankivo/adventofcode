@@ -84,7 +84,7 @@ object day11 {
 
     while foundAt < 0
     do {
-      step = step + 1
+      step += 1
 
       data = data.grow
       data.flash
