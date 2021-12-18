@@ -5,7 +5,7 @@ import scala.util.Try
 object day11 {
   def main(args: Array[String]): Unit = {
     println(s"Part 1: ${part1()}")
-    //    println(s"Part 2: ${part2()}")
+    println(s"Part 2: ${part2()}")
   }
 
   type Board = Seq[MSeq[Int]]
@@ -15,7 +15,7 @@ object day11 {
 
     def reset: Board = b.map(_.map(c => if (c > 9) 0 else c))
 
-    def flash: Long = {
+    def flash: Int = {
       var keepGoing = true
       val flashed = mutable.HashSet[(Int, Int)]()
 
@@ -61,12 +61,14 @@ object day11 {
         }).mkString
       }).foreach(println)
     }
+
+    def allFlash = b.forall(_.forall(_ == 0))
   }
 
-  def part1(): Long = {
+  def part1(): Int = {
     (1 to 100)
-      .foldLeft((input, 0L)) {
-        (a, b) => {
+      .foldLeft((input, 0)) {
+        (a, step) => {
           val grow = a._1.grow
           val flashed = grow.flash
           (grow.reset, a._2 + flashed)
@@ -75,7 +77,24 @@ object day11 {
       ._2
   }
 
-  def part2(): Int = ???
+  def part2(): Int = {
+    var step = 0
+    var data = input
+    var foundAt = -1
+
+    while foundAt < 0
+    do {
+      step = step + 1
+
+      data = data.grow
+      data.flash
+      data = data.reset
+
+      if (data.allFlash)
+        foundAt = step
+    }
+    foundAt
+  }
 
   val input: Board = {
     io.Source.fromResource("day11.txt")
