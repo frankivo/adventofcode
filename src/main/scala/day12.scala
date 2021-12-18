@@ -12,10 +12,8 @@ object day12 {
   }
 
   type CaveMap = Map[String, Set[String]]
-  
-  def part1(): Long = {
-    data("start").map(findEnd(_)).sum
-  }
+
+  def part1(): Long = data("start").map(findEnd(_)).sum
 
   def findEnd(node: String, trail: Seq[String] = Seq("start")): Int = {
     if (node.isSmall && trail.contains(node))
@@ -25,8 +23,7 @@ object day12 {
       .toSeq.map(c => {
       if (c == "end") 1
       else findEnd(c, trail :+ node)
-    })
-      .sum
+    }).sum
   }
 
   def part2(): Long = 0
