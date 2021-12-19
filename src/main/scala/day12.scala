@@ -30,11 +30,22 @@ object day12 {
 
   def part2(node: String, trail: Seq[String] = Seq("start")): Int = {
     if (node.isSmall) {
-      if (Seq("start", "end").contains(node) && trail.contains(node))
+      if (Seq("start", "end").contains(node))
         return 0
-      if (trail.filter(_.isSmall).groupBy(_.length).exists(_._2.length == 2))
-        return 0
-      // TODO fix
+
+      val pair = trail
+        .filter(_.isSmall)
+        .filterNot(Seq("start", "end").contains(_))
+        .groupBy(identity)
+        .find(_._2.length == 2)
+        .map(_._1)
+
+      if (pair.isDefined) {
+        if (pair.get == node)
+          return 0
+        else if (trail.contains(node))
+          return 0
+      }
     }
 
     data(node)
