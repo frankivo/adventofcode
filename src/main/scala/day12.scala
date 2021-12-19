@@ -40,23 +40,16 @@ object day12 {
         .find(_._2.length == 2)
         .map(_._1)
 
-      if (pair.isDefined) {
-        if (pair.get == node)
-          return 0
-        else if (trail.contains(node))
-          return 0
-      }
+      if (pair.isDefined && (pair.get == node || trail.contains(node)))
+        return 0
     }
 
     data(node)
       .toSeq
-      .map(c => {
-        if (c == "end") {
-          println((trail :+ c).mkString(","))
-          1
-        }
+      .map(c =>
+        if (c == "end") 1
         else part2(c, trail :+ node)
-      }).sum
+      ).sum
   }
 
   val data: CaveMap = {
