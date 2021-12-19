@@ -4,7 +4,7 @@ import scala.collection.mutable
 object day12 {
   def main(args: Array[String]): Unit = {
     println(s"Part 1: ${part1()}")
-    //    println(s"Part 2: ${part2()}")
+    println(s"Part 2: ${part2()}")
   }
 
   extension (node: String) {
@@ -13,20 +13,40 @@ object day12 {
 
   type CaveMap = Map[String, Set[String]]
 
-  def part1(): Long = data("start").map(findEnd(_)).sum
+  def part1(): Long = data("start").map(part1(_)).sum
 
-  def findEnd(node: String, trail: Seq[String] = Seq("start")): Int = {
+  def part1(node: String, trail: Seq[String] = Seq("start")): Int = {
     if (node.isSmall && trail.contains(node))
       return 0
 
     data(node)
       .toSeq.map(c => {
       if (c == "end") 1
-      else findEnd(c, trail :+ node)
+      else part1(c, trail :+ node)
     }).sum
   }
 
-  def part2(): Long = 0
+  def part2(): Long = data("start").map(part2(_)).sum
+
+  def part2(node: String, trail: Seq[String] = Seq("start")): Int = {
+    if (node.isSmall) {
+      if (Seq("start", "end").contains(node) && trail.contains(node))
+        return 0
+      if (trail.filter(_.isSmall).groupBy(_.length).exists(_._2.length == 2))
+        return 0
+      // TODO fix
+    }
+
+    data(node)
+      .toSeq
+      .map(c => {
+        if (c == "end") {
+          println((trail :+ c).mkString(","))
+          1
+        }
+        else part2(c, trail :+ node)
+      }).sum
+  }
 
   val data: CaveMap = {
     io.Source.fromResource("day12.txt").getLines()
