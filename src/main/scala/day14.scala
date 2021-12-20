@@ -1,7 +1,7 @@
 object day14 {
   def main(args: Array[String]): Unit = {
     println(s"Part 1: ${part1()}")
-    //    println(s"Part 2: ${part2()}")
+    println(s"Part 2: ${part2()}")
   }
 
   def part1(): Int = {
@@ -14,8 +14,10 @@ object day14 {
       .groupBy(identity)
       .view.mapValues(_.length)
 
-    occurrences.max((a, b) => a._2.compare(b._2))._2 -
-      occurrences.min((a, b) => a._2.compare(b._2))._2
+    val max = occurrences.max((a, b) => a._2.compare(b._2))._2
+    val min = occurrences.min((a, b) => a._2.compare(b._2))._2
+
+    max - min
   }
 
   def doInsertions(start: String): String = {
