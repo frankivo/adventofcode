@@ -5,14 +5,12 @@ object day14 {
   }
 
   def part1(): Int = {
-    val replaced = (0 until 10)
+    val occurrences = (0 until 10)
       .foldLeft(template) {
         (start, ins) => {
           doInsertions(start)
         }
       }
-
-    val occurrences = replaced
       .groupBy(identity)
       .view.mapValues(_.length)
 
