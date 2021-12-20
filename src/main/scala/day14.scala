@@ -24,7 +24,7 @@ object day14 {
       .map(p => {
         val ins = insertions.find(i => i._1 == p)
         if (ins.isDefined)
-          p.replaceAll(ins.get._1, ins.get._2)
+          p.replaceAll(ins.get._1, ins.get._1.head + ins.get._2 + ins.get._1.last)
         else
           p
       })
@@ -42,9 +42,8 @@ object day14 {
   lazy val insertions: Map[String, String] = {
     data
       .drop(2)
-      .map(_.split("->"))
-      .map(l => (l.head.trim, l.last.trim))
-      .map(l => (l._1, l._1.head + l._2 + l._1.last))
+      .map(_.split(" -> "))
+      .map(l => (l.head, l.last))
       .toMap
   }
 }
