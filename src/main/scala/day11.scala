@@ -17,7 +17,7 @@ object day11 {
 
     def flash: Int = {
       var keepGoing = true
-      val flashed = mutable.HashSet[(Int, Int)]()
+      val flashed = mutable.HashSet.empty[(Int, Int)]
 
       while keepGoing
       do {
