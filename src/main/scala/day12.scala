@@ -57,7 +57,7 @@ object day12 {
       .map(_.split("-").toSeq)
       .map(l => (l.head, l.last))
       .flatMap(l => Seq(l, (l._2, l._1)))
-      .foldLeft(Map[String, Set[String]]()) {
+      .foldLeft(Map.empty[String, Set[String]]) {
         (store, line) => {
           if (!store.contains(line.head))
             store + (line._1 -> Set(line._2))
