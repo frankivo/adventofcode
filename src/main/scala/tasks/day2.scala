@@ -31,19 +31,7 @@ object day2 {
 
   private def getTotalScore: Long = {
     input.foldLeft(0L) {
-      (total, line) => {
-
-        val opponent = hands(line._1)
-        val player = hands(line._2)
-        val score = scores(player)
-
-        if (opponent equals player)
-          total + 3 + score
-        else if (wins(player) equals opponent)
-          total + 6 + score
-        else
-          total + 0 + score
-      }
+      (total, line) => total + calcScore(hands(line._1), hands(line._2))
     }
   }
 
@@ -59,18 +47,21 @@ object day2 {
           else wins.find(w => opponent equals w._2).get._1 // Win
         }
 
-        val score = scores(player)
-
-        if (opponent equals player)
-          total + 3 + score
-        else if (wins(player) equals opponent)
-          total + 6 + score
-        else
-          total + 0 + score
+        total + calcScore(opponent, player)
       }
     }
   }
 
+  private def calcScore(opponent: String, player: String): Int = {
+    val score = scores(player)
+
+    if (opponent equals player)
+      3 + score
+    else if (wins(player) equals opponent)
+      6 + score
+    else
+      score
+  }
 
   private val input: Seq[(Char, Char)] = util.get("day2.txt")
     .map(_.filter(('A' to 'Z').toSet))
