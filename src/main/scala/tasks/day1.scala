@@ -25,5 +25,5 @@ object day1 {
     }
   }
 
-  private val input: Seq[String] = input.get("day1.txt")
+  private val input: Seq[String] = util.get("day1.txt")
 }
