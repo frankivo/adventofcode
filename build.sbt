@@ -6,5 +6,4 @@ lazy val root = (project in file("."))
   .settings(
     name := "adventofcode2022",
     idePackagePrefix := Some("com.github.frankivo"),
-//    libraryDependencies += "com.softwaremill.sttp.client3" %% "core" % "3.8.3"
   )
