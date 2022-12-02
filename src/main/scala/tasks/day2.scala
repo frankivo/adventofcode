@@ -5,6 +5,7 @@ object day2 {
 
   def main(args: Array[String]): Unit = {
     println(s"Total score: $getTotalScore")
+    println(s"Total score with secret strategy: $getScoreWithWinningStrategy")
   }
 
   private val hands = Map(
@@ -45,7 +46,32 @@ object day2 {
       }
     }
   }
-  
+
+  private def getScoreWithWinningStrategy: Long = {
+    input.foldLeft(0L) {
+      (total, line) => {
+
+        val opponent = hands(line._1)
+
+        val player = {
+          if (line._2 equals 'X') wins(opponent) // Lose
+          else if (line._2 equals 'Y') opponent // Draw
+          else wins.find(w => opponent equals w._2).get._1 // Win
+        }
+
+        val score = scores(player)
+
+        if (opponent equals player)
+          total + 3 + score
+        else if (wins(player) equals opponent)
+          total + 6 + score
+        else
+          total + 0 + score
+      }
+    }
+  }
+
+
   private val input: Seq[(Char, Char)] = util.get("day2.txt")
     .map(_.filter(('A' to 'Z').toSet))
     .map(l => (l(0), l(1)))
