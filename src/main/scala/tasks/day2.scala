@@ -22,6 +22,12 @@ object day2 {
     "scissors" -> 3,
   )
 
+  private val wins = Map( // Left wins
+    "rock" -> "scissors",
+    "scissors" -> "paper",
+    "paper" -> "rock",
+  )
+
   private def getTotalScore: Long = {
     input.foldLeft(0L) {
       (total, line) => {
@@ -32,18 +38,14 @@ object day2 {
 
         if (opponent equals player)
           total + 3 + score
-        else if (
-          (opponent == "rock" && player == "paper")
-          || (opponent == "paper" && player == "scissors")
-          || (opponent == "scissors" && player == "rock")
-        )
+        else if (wins(player) equals opponent)
           total + 6 + score
         else
           total + 0 + score
       }
     }
   }
-
+  
   private val input: Seq[(Char, Char)] = util.get("day2.txt")
     .map(_.filter(('A' to 'Z').toSet))
     .map(l => (l(0), l(1)))
