@@ -1,6 +1,5 @@
-package com.github.frankivo.tasks
-
-import com.github.frankivo.util
+package com.github.frankivo
+package tasks
 
 object day1 {
   def main(args: Array[String]): Unit = {
