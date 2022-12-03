@@ -19,7 +19,7 @@ object day3 {
   }
 
   def getBadgePriorities: Long = {
-    inputPart2
+    util.get("day3.txt")
       .grouped(3)
       .foldLeft(0L) {
         (sum, cur) => {
@@ -35,6 +35,4 @@ object day3 {
       l._1.substring(0, l._2),
       l._1.substring(l._2)
     ))
-
-  def inputPart2: Seq[String] = util.get("day3.txt")
 }
