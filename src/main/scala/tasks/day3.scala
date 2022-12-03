@@ -12,7 +12,11 @@ object day3 {
   def getRucksackPrioritiesSum: Long = {
     inputPart1.foldLeft(0L) {
       (sum, cur) => {
-        val doubleChar = cur._1.distinct.filter(c => cur._2.contains(c)).head
+        val doubleChar = cur
+          ._1
+          .distinct
+          .filter(c => cur._2.contains(c))
+          .head
         sum + priorities(doubleChar)
       }
     }
@@ -23,7 +27,11 @@ object day3 {
       .grouped(3)
       .foldLeft(0L) {
         (sum, cur) => {
-          val badge = cur.head.distinct.filter(c => cur(1).contains(c) && cur(2).contains(c)).head
+          val badge = cur
+            .head
+            .distinct
+            .filter(c => cur(1).contains(c) && cur(2).contains(c))
+            .head
           sum + priorities(badge)
         }
       }
