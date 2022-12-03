@@ -3,7 +3,18 @@ package tasks
 
 object day3 {
   def main(args: Array[String]): Unit = {
-input.map(x => (x._1.length, x._2.length)).foreach(println)
+    println(s"Sum of priorities: ${getRucksackPrioritiesSum}")
+  }
+
+  private val priorities = (('a' to 'z') ++ ('A' to 'Z')).zip(LazyList.from(1)).toMap
+
+  def getRucksackPrioritiesSum: Long = {
+    input.foldLeft(0L) {
+      (sum, cur) => {
+        val doubleChar = cur._1.distinct.filter(c => cur._2.contains(c)).head
+        sum + priorities(doubleChar)
+      }
+    }
   }
 
   def input: Seq[(String, String)] = Seq(
