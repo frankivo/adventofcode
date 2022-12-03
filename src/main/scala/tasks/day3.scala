@@ -17,14 +17,7 @@ object day3 {
     }
   }
 
-  def input: Seq[(String, String)] = Seq(
-    "vJrwpWtwJgWrhcsFMMfFFhFp",
-    "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-    "PmmdzqPrVvPwwTWBwg",
-    "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
-    "ttgJtRGJQctTZtZT",
-    "CrZsJsPPZsGzwwsLwLmpwMDw"
-  )
+  def input: Seq[(String, String)] = util.get("day3.txt")
     .map(l => (l, l.length / 2))
     .map(l => (
       l._1.substring(0, l._2),
