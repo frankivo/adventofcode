@@ -3,8 +3,7 @@ package tasks
 
 object day5 {
   def main(args: Array[String]): Unit = {
-    println(stacks)
-    println(moves)
+    println(rearrange)
   }
 
   private val input: Array[String] = "   [D]    \n[N] [C]    \n[Z] [M] [P]\n 1   2   3 \n\nmove 1 from 2 to 1\nmove 3 from 1 to 3\nmove 2 from 2 to 1\nmove 1 from 1 to 2"
@@ -40,5 +39,26 @@ object day5 {
           .toSeq
         Move(numbers.head, numbers(1), numbers(2))
       })
+  }
+
+  def rearrange: Map[Int, String] = {
+    moves
+      .foldLeft(stacks) {
+        (result, move) => {
+          println(result)
+
+          val tomove = result(move.from).take(move.amount)
+
+          result.map {
+            case (nr, stack) =>
+              if (nr == move.from)
+                (nr, stack.takeRight(stack.length - move.amount))
+              else if (nr == move.to)
+                (nr, tomove.reverse ++ stack)
+              else
+                (nr, stack)
+          }
+        }
+      }
   }
 }
