@@ -3,7 +3,8 @@ package tasks
 
 object day5 {
   def main(args: Array[String]): Unit = {
-    println(s"Top values: ${getTops(rearrange)}")
+    println(s"Top values with CrateMover9000: ${getTops(rearrange(true))}")
+    println(s"Top values with CrateMover9001: ${getTops(rearrange(false))}")
   }
 
   private val input: Seq[String] = util.get("day5.txt")
@@ -45,7 +46,7 @@ object day5 {
       })
   }
 
-  private def rearrange: Map[Int, String] = {
+  private def rearrange(oneByOne: Boolean): Map[Int, String] = {
     moves
       .foldLeft(stacks) {
         (result, move) => {
@@ -55,8 +56,10 @@ object day5 {
             case (nr, stack) =>
               if (nr == move.from)
                 (nr, stack.takeRight(stack.length - move.amount))
-              else if (nr == move.to)
+              else if (nr == move.to && oneByOne)
                 (nr, tomove.reverse ++ stack)
+              else if (nr == move.to && !oneByOne)
+                (nr, tomove ++ stack)
               else
                 (nr, stack)
           }
