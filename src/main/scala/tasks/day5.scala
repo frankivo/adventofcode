@@ -3,11 +3,7 @@ package tasks
 
 object day5 {
   def main(args: Array[String]): Unit = {
-    println(stacks)
-    val r = rearrange
-    println(r)
-
-    println(getTops(r.values.toSeq))
+    println(s"Top values: ${getTops(rearrange)}")
   }
 
   private val input: Seq[String] = util.get("day5.txt")
@@ -68,5 +64,9 @@ object day5 {
       }
   }
 
-  private def getTops(stacks: Seq[String]): String = stacks.map(_.head).mkString
+  private def getTops(stacks: Map[Int, String]): String = stacks
+    .toSeq
+    .sortBy(_._1)
+    .map(_._2.head)
+    .mkString
 }
