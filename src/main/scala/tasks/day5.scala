@@ -17,7 +17,6 @@ object day5 {
           val crates = "[A-Z]".r
             .findAllIn(current)
             .matchData.map(m => {
-            println(m.start)
             val stack = (m.start / 3.0).ceil.toInt
             val crate = m.matched.head
             (stack, crate)
