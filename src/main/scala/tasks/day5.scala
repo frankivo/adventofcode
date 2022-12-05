@@ -9,7 +9,7 @@ object day5 {
   private val input: Array[String] = "   [D]    \n[N] [C]    \n[Z] [M] [P]\n 1   2   3 \n\nmove 1 from 2 to 1\nmove 3 from 1 to 3\nmove 2 from 2 to 1\nmove 1 from 1 to 2"
     .split("\n")
 
-   private val stacks: Map[Int, Seq[(Int, Char)]] = {
+  private val stacks: Map[Int, Seq[(Int, Char)]] = {
     input
       .foldLeft(Seq[(Int, Char)]()) {
         (total, current) => {
@@ -23,6 +23,6 @@ object day5 {
           total ++ crates
         }
       }
-    .groupBy(_._1)
+      .groupBy(_._1)
   }
 }
