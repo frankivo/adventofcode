@@ -3,11 +3,22 @@ package tasks
 
 object day5 {
   def main(args: Array[String]): Unit = {
-    println(rearrange)
+    println(stacks)
+    val r = rearrange
+    println(r)
+
+    println(getTops(r.values.toSeq))
   }
 
-  private val input: Array[String] = "   [D]    \n[N] [C]    \n[Z] [M] [P]\n 1   2   3 \n\nmove 1 from 2 to 1\nmove 3 from 1 to 3\nmove 2 from 2 to 1\nmove 1 from 1 to 2"
-    .split("\n")
+  private val input: Seq[String] = util.get("day5.txt")
+
+  private val stackPos: Map[Int, Int] = { // Pos, stacknr
+    "[0-9]".r
+      .findAllIn(input.find(_.trim.startsWith("1")).get)
+      .matchData
+      .map(m => (m.start, m.matched.toInt))
+      .toMap
+  }
 
   private val stacks: Map[Int, String] = {
     input
@@ -15,11 +26,8 @@ object day5 {
         (total, current) => {
           val crates = "[A-Z]".r
             .findAllIn(current)
-            .matchData.map(m => {
-            val stack = (m.start / 3.0).ceil.toInt
-            val crate = m.matched.head
-            (stack, crate)
-          })
+            .matchData.map(m => (stackPos(m.start), m.matched.head))
+
           total ++ crates
         }
       }
@@ -41,12 +49,10 @@ object day5 {
       })
   }
 
-  def rearrange: Map[Int, String] = {
+  private def rearrange: Map[Int, String] = {
     moves
       .foldLeft(stacks) {
         (result, move) => {
-          println(result)
-
           val tomove = result(move.from).take(move.amount)
 
           result.map {
@@ -61,4 +67,6 @@ object day5 {
         }
       }
   }
+
+  private def getTops(stacks: Seq[String]): String = stacks.map(_.head).mkString
 }
