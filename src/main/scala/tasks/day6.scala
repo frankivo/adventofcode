@@ -3,15 +3,18 @@ package tasks
 
 object day6 {
   def main(args: Array[String]): Unit = {
-    println(s"Marker is at pos $getMarker")
+    println(s"first start-of-packet is at pos: $startOfPacketMarker")
+    println(s"first start-of-message is at pos: $startOfMessageMarker")
   }
 
-  def getMarker: Int = marker(util.get("day6.txt").head)
+  def startOfPacketMarker: Int = marker(util.get("day6.txt").head, 4)
 
-  def marker(msg: String): Int = msg
-    .sliding(4, 1)
+  def startOfMessageMarker: Int = marker(util.get("day6.txt").head, 14)
+
+  def marker(msg: String, size: Int): Int = msg
+    .sliding(size, 1)
     .zipWithIndex
-    .find(_._1.distinct.length == 4)
+    .find(_._1.distinct.length == size)
     .map(_._2)
-    .get + 4
+    .get + size
 }
