@@ -17,8 +17,8 @@ object day7 {
           }
           val files = {
             if (current.exists(_.isDigit)) {
-              val size :: name :: _ = current.split(" ").toList
-              val file = (path + name, size.toLong)
+              val data  = current.split(" ").toList
+              val file = (path + data.last, data.head.toLong)
               browser._2 + file
             }
             else browser._2
