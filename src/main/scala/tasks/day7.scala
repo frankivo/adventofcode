@@ -3,7 +3,6 @@ package tasks
 
 object day7 {
   def main(args: Array[String]): Unit = {
-    println(dirSizes)
     println(findSmallDirsTotal)
   }
 
@@ -32,17 +31,15 @@ object day7 {
 
   def findSmallDirsTotal: Long = {
     dirSizes
-      .filter(_._2 <= 10000)
+      .filter(_._2 <= 100000)
       .values
       .sum
   }
 
   def dirSizes: Map[String, Long] = {
-    tree
-      .toSeq
-      .map(f => (getDir(f._1), f._2))
-      .groupBy(_._1)
-      .map(d => (d._1, d._2.map(_._2).sum))
+    tree.keys.map(getDir) // Directories
+      .map(dir => (dir, tree.filter(_._1.startsWith(dir)).values.sum))
+      .toMap
   }
 
   def getDir(path: String): String = path.split("/").dropRight(1).mkString("/") + "/"
