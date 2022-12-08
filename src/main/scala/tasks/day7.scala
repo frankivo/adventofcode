@@ -38,10 +38,11 @@ object day7 {
       .keys
       .map(getDir)
       .flatMap(d => {
-      d.split("/").zip(LazyList.from(1)).map(p => {
-        d.split("/").take(p._2).mkString("/") + "/"
+        (1 to d.count(_.equals('/')))
+          .map(idx => {
+            d.split("/").take(idx).mkString("/") + "/"
+          })
       })
-    })
     dirs.map(dir => (dir, tree.filter(_._1.startsWith(dir)).values.sum)).toMap
   }
 
