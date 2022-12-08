@@ -4,6 +4,7 @@ package tasks
 object day8 {
   def main(args: Array[String]): Unit = {
     println(s"Number of visible trees: ${visibleTrees.size}")
+    println(s"Best scenic score: $bestScenicScore")
   }
 
   private case class Coordinate(x: Int, y: Int)
@@ -40,5 +41,23 @@ object day8 {
         }
       }
       ._1.toSet
+  }
+
+  private def bestScenicScore: Int = {
+    grid.take(5).foldLeft(0) {
+      (best, tree) => {
+        println(lookRight(tree))
+        best
+      }
+    }
+  }
+
+  private def lookRight(tree: (Coordinate, Int)): Int = {
+    grid
+      .filter(_._1.y == tree._1.y) // All trees on col
+      .filter(_._1.x > tree._1.x) // All trees on the right
+      .find(_._2 >= tree._2)
+      .map(_._1.x)
+      .getOrElse(gridSize) - tree._1.x
   }
 }
