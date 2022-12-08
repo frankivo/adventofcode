@@ -4,6 +4,7 @@ package tasks
 object day7 {
   def main(args: Array[String]): Unit = {
     println(s"Sum of directories under 100000: ${findSmallDirsTotal()}")
+    println(s"Size of directory to remove: $dirToRemove")
   }
 
   val tree: Map[String, Long] = {
@@ -56,5 +57,16 @@ object day7 {
       case "/" => action
       case ".." => old.split("/").dropRight(1).mkString("/") + "/"
       case _ => old + action + "/"
+  }
+
+  def dirToRemove: Long = {
+    val disk_size = 70_000_000
+    val updt_size = 30_000_000
+    val used_size = dirSizes("/")
+    val free_size = disk_size - used_size
+    val reqd_size = updt_size - free_size
+
+    val dirToDelete = dirSizes.filter(_._2 >= reqd_size).minBy(_._2)
+    dirToDelete._2
   }
 }
