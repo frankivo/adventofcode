@@ -3,7 +3,7 @@ package tasks
 
 object day7 {
   def main(args: Array[String]): Unit = {
-    println(findSmallDirsTotal())
+    println(s"Sum of directories under 100000: ${findSmallDirsTotal()}")
   }
 
   val tree: Map[String, Long] = {
