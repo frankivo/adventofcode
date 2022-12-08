@@ -17,20 +17,13 @@ object day8 {
 
   private val gridSize: Int = grid.maxBy(_._1.x)._1.x
 
-  private def visibleTrees: Set[Coordinate] = {
-    (0 to gridSize).flatMap(i => {
-      val x = visibleTreesRow(i)
-      println(x.size)
-      x
-    }).toSet
-  }
+  private def visibleTrees: Set[Coordinate] =
+    (0 to gridSize).flatMap(i => visibleTreesRow(i) ++ visibleTreesColumn(i)).toSet
 
   private def visibleTreesRow(y: Int): Set[Coordinate] = {
     val row = grid.filter(_._1.y == y)
-
     val leftToRight = visibleTreesRow(row, 0)
     val rightToLeft = visibleTreesRow(row.reverse, gridSize)
-
     leftToRight ++ rightToLeft
   }
 
@@ -46,5 +39,22 @@ object day8 {
       ._1.toSet
   }
 
+  private def visibleTreesColumn(x: Int): Set[Coordinate] = {
+    val column = grid.filter(_._1.x == x)
+    val leftToRight = visibleTreesColumn(column, 0)
+    val rightToLeft = visibleTreesColumn(column.reverse, gridSize)
+    leftToRight ++ rightToLeft
+  }
 
+  private def visibleTreesColumn(column: Seq[(Coordinate, Int)], edge: Int): Set[Coordinate] = {
+    column
+      .foldLeft((Seq[Coordinate](), 0)) {
+        (result, current) => {
+          if ((current._1.y == edge) || (current._2 > result._2))
+            (result._1 :+ current._1, current._2)
+          else result
+        }
+      }
+      ._1.toSet
+  }
 }
