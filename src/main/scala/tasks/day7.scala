@@ -12,15 +12,13 @@ object day7 {
         (browser, current) => {
           val path = newPath(browser._1, current)
           val files = {
-            val file = {
-              if (current.exists(_.isDigit)) {
-                val data = current.split(" ").last
-                (path + data.last, data.head.toLong)
-              }
-              else
-                (path + "dummy.frankivo", 0L) // Dirty hack, to let empty dirs appear in the tree.
+            if (current.exists(_.isDigit)) {
+              val data = current.split(" ")
+              val file = (path + data.last, data.head.toLong)
+              browser._2 + file
             }
-            browser._2 + file
+            else
+              browser._2
           }
           (path, files)
         }
@@ -36,9 +34,15 @@ object day7 {
   }
 
   def dirSizes: Map[String, Long] = {
-    tree.keys.map(getDir) // Directories
-      .map(dir => (dir, tree.filter(_._1.startsWith(dir)).values.sum))
-      .toMap
+    val dirs = tree
+      .keys
+      .map(getDir)
+      .flatMap(d => {
+      d.split("/").zip(LazyList.from(1)).map(p => {
+        d.split("/").take(p._2).mkString("/") + "/"
+      })
+    })
+    dirs.map(dir => (dir, tree.filter(_._1.startsWith(dir)).values.sum)).toMap
   }
 
   def getDir(path: String): String = path.split("/").dropRight(1).mkString("/") + "/"
