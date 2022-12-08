@@ -46,8 +46,8 @@ object day8 {
   private def bestScenicScore: Int = {
     grid.take(5).foldLeft(0) {
       (best, tree) => {
-        //        println(lookLeft(tree))
-        lookLeft(tree)
+        println(lookLeft(tree))
+        //        lookLeft(tree)
         best
       }
     }
@@ -63,14 +63,11 @@ object day8 {
   }
 
   private def lookLeft(tree: (Coordinate, Int)): Int = {
-    val trees = grid
-      .filter(_._1.y == tree._1.y) // All trees on col
-      .filter(_._1.x < tree._1.x) // All trees on the left
-      .reverse
-
-    val x = trees.find(_._2 >= tree._2).map(_._2)
-    println(x)
-    0
-
+     tree._1.x - grid
+       .filter(_._1.y == tree._1.y) // All trees on col
+       .filter(_._1.x < tree._1.x) // All trees on the left
+       .findLast(_._2 >= tree._2)
+       .map(_._1.x)
+       .getOrElse(0)
   }
 }
