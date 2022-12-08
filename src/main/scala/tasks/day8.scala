@@ -28,24 +28,23 @@ object day8 {
   private def visibleTreesRow(y: Int): Set[Coordinate] = {
     val row = grid.filter(_._1.y == y)
 
-    val leftToRight = row
+    val leftToRight = visibleTreesRow(row, 0)
+    val rightToLeft = visibleTreesRow(row.reverse, gridSize)
+
+    leftToRight ++ rightToLeft
+  }
+
+  private def visibleTreesRow(row: Seq[(Coordinate, Int)], edge: Int): Set[Coordinate] = {
+    row
       .foldLeft((Seq[Coordinate](), 0)) {
         (result, current) => {
-          if ((current._1.x == 0) || (current._2 > result._2))
+          if ((current._1.x == edge) || (current._2 > result._2))
             (result._1 :+ current._1, current._2)
           else result
         }
       }
-
-    val rightToLeft = row
-      .foldRight((Seq[Coordinate](), 0)) {
-        (current, result) => {
-          if ((current._1.x == gridSize) || (current._2 > result._2))
-            (result._1 :+ current._1, current._2)
-          else result
-        }
-      }
-
-    (leftToRight._1 ++ rightToLeft._1).toSet
+      ._1.toSet
   }
+
+
 }
