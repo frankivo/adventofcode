@@ -10,11 +10,7 @@ object day7 {
     util.get("day7.txt")
       .foldLeft(("", Map[String, Long]())) {
         (browser, current) => {
-          val path = {
-            if (current.startsWith("$ cd"))
-              newPath(browser._1, current)
-            else browser._1
-          }
+          val path = newPath(browser._1, current)
           val files = {
             if (current.exists(_.isDigit)) {
               val data = current.split(" ").toList
@@ -29,9 +25,9 @@ object day7 {
       ._2
   }
 
-  def findSmallDirsTotal: Long = {
+  def findSmallDirsTotal(maxSize: Long = 100_000): Long = {
     dirSizes
-      .filter(_._2 <= 100000)
+      .filter(_._2 <= maxSize)
       .values
       .sum
   }
@@ -45,6 +41,8 @@ object day7 {
   def getDir(path: String): String = path.split("/").dropRight(1).mkString("/") + "/"
 
   def newPath(old: String, command: String): String = {
+    if (!command.startsWith("$ cd")) return old
+
     val action = command.split(" ").last
     action match
       case "/" => action
