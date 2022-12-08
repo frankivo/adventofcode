@@ -27,13 +27,25 @@ object day8 {
 
   private def visibleTreesRow(y: Int): Set[Coordinate] = {
     val row = grid.filter(_._1.y == y)
-    val topFromLeft = row.maxBy(_._2)
-    val topFromRight = row.reverse.maxBy(_._2)
-    val leftToRight = row.filter(c => c._1.x == 0 || (c._1.x <= topFromLeft._1.x) && c._2 < topFromLeft._2)
-    val rightToLeft = row.filter(c => c._1.x == gridSize || (c._1.x >= topFromRight._1.x) && c._2 < topFromRight._2)
 
-    (leftToRight ++ rightToLeft)
-      .map(_._1)
-      .toSet
+    val leftToRight = row
+      .foldLeft((Seq[Coordinate](), 0)) {
+        (result, current) => {
+          if ((current._1.x == 0) || (current._2 > result._2))
+            (result._1 :+ current._1, current._2)
+          else result
+        }
+      }
+
+    val rightToLeft = row
+      .foldRight((Seq[Coordinate](), 0)) {
+        (current, result) => {
+          if ((current._1.x == gridSize) || (current._2 > result._2))
+            (result._1 :+ current._1, current._2)
+          else result
+        }
+      }
+
+    (leftToRight._1 ++ rightToLeft._1).toSet
   }
 }
