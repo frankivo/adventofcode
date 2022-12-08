@@ -21,7 +21,7 @@ object day8 {
     (0 to gridSize).flatMap(i => visibleTrees(i, true) ++ visibleTrees(i, false)).toSet
 
   private def visibleTrees(index: Int, horizontal: Boolean): Set[Coordinate] = {
-    val trees =  if (horizontal) grid.filter(_._1.x == index)  else grid.filter(_._1.y == index)
+    val trees = if (horizontal) grid.filter(_._1.x == index) else grid.filter(_._1.y == index)
     val oneWay = visibleTrees(trees, 0, horizontal)
     val reverse = visibleTrees(trees.reverse, gridSize, horizontal)
     oneWay ++ reverse
