@@ -16,6 +16,8 @@ object day8 {
       .flatMap(i => i._2.map(j => (Coordinate(j._2, i._1), j._1.getNumericValue)))
   }
 
+  private val gridSize: Int = grid.length / 4 - 1
+
   private def visibleTrees: Seq[Coordinate] = {
     println(visibleTreesRow(1).toSeq.sortBy(_.x))
     Seq()
