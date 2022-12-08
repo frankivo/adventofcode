@@ -22,35 +22,26 @@ object day8 {
 
   private def visibleTreesRow(y: Int): Set[Coordinate] = {
     val row = grid.filter(_._1.y == y)
-    val leftToRight = visibleTreesRow(row, 0)
-    val rightToLeft = visibleTreesRow(row.reverse, gridSize)
+    val leftToRight = visibleTrees(row, 0, true)
+    val rightToLeft = visibleTrees(row.reverse, gridSize, true)
     leftToRight ++ rightToLeft
-  }
-
-  private def visibleTreesRow(row: Seq[(Coordinate, Int)], edge: Int): Set[Coordinate] = {
-    row
-      .foldLeft((Seq[Coordinate](), 0)) {
-        (result, current) => {
-          if ((current._1.x == edge) || (current._2 > result._2))
-            (result._1 :+ current._1, current._2)
-          else result
-        }
-      }
-      ._1.toSet
   }
 
   private def visibleTreesColumn(x: Int): Set[Coordinate] = {
     val column = grid.filter(_._1.x == x)
-    val leftToRight = visibleTreesColumn(column, 0)
-    val rightToLeft = visibleTreesColumn(column.reverse, gridSize)
+    val leftToRight = visibleTrees(column, 0, false)
+    val rightToLeft = visibleTrees(column.reverse, gridSize, false)
     leftToRight ++ rightToLeft
   }
 
-  private def visibleTreesColumn(column: Seq[(Coordinate, Int)], edge: Int): Set[Coordinate] = {
+  private def visibleTrees(column: Seq[(Coordinate, Int)], edge: Int, horizontal: Boolean): Set[Coordinate] = {
     column
       .foldLeft((Seq[Coordinate](), 0)) {
         (result, current) => {
-          if ((current._1.y == edge) || (current._2 > result._2))
+          if (
+            ((horizontal && current._1.x == edge) || (!horizontal && current._1.y == edge))
+              || (current._2 > result._2)
+          )
             (result._1 :+ current._1, current._2)
           else result
         }
