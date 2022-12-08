@@ -4,7 +4,8 @@ import scala.io.Source
 
 object util {
   def get(filename: String): Seq[String] = {
-    val path = s"input/$filename"
+    val dir = if (sys.env.contains("DEMO")) "demo" else "input"
+    val path = s"$dir/$filename"
     Source.fromResource(path).getLines().toSeq
   }
 
