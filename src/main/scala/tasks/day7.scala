@@ -3,7 +3,7 @@ package tasks
 
 object day7 {
   def main(args: Array[String]): Unit = {
-    println(findSmallDirsTotal)
+    println(findSmallDirsTotal())
   }
 
   val tree: Map[String, Long] = {
@@ -12,12 +12,15 @@ object day7 {
         (browser, current) => {
           val path = newPath(browser._1, current)
           val files = {
-            if (current.exists(_.isDigit)) {
-              val data = current.split(" ").toList
-              val file = (path + data.last, data.head.toLong)
-              browser._2 + file
+            val file = {
+              if (current.exists(_.isDigit)) {
+                val data = current.split(" ").last
+                (path + data.last, data.head.toLong)
+              }
+              else
+                (path + "dummy.frankivo", 0L) // Dirty hack, to let empty dirs appear in the tree.
             }
-            else browser._2
+            browser._2 + file
           }
           (path, files)
         }
