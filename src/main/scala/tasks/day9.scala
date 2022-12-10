@@ -3,20 +3,31 @@ package tasks
 
 object day9 {
   def main(args: Array[String]): Unit = {
-    println(s"Amount of unique tail positions: $amountTailPositions")
+    //    println(s"Amount of unique tail positions: ${amountTailPositions(1)}")
+    println(s"Amount of unique tail positions: ${amountTailPositions(9)}")
   }
 
-  case class ropestate(head: coordinate, tail: coordinate, tailPositions: Set[coordinate])
+  case class ropestate(head: coordinate, tail: Seq[coordinate], tailPositions: Set[coordinate])
 
-  private def amountTailPositions: Int = {
+  private def amountTailPositions(tailSize: Int): Int = {
     val startPos = coordinate(0, 0)
-    val start = ropestate(startPos, startPos, Set(startPos))
+    val tail = (0 to tailSize).map(_ => startPos)
+
+    val start = ropestate(startPos, tail, Set(startPos))
 
     val history = moves.foldLeft(start) {
       (his, move) => {
         val head = moveHead(his.head, move)
-        val tail = moveTail(his.tail, head, move)
-        ropestate(head, tail, his.tailPositions + tail)
+        val x =his.tail.sliding(2, 1) // Needs head
+        val tails = x
+          .map(t => {
+            if (t.length == 1) t.head
+            else
+              moveTail(t.head, t(1), move)
+          }).toSeq
+
+
+        ropestate(head, tails, his.tailPositions + tails.last)
       }
     }
     history.tailPositions.size
