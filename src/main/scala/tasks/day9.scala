@@ -15,16 +15,19 @@ object day9 {
 
     val pos = moves.foldLeft(start) {
       (his, move) => {
-        val head = move match {
-          case 'R' => coordinate(his.head.x + 1, his.head.y)
-          case 'L' => coordinate(his.head.x - 1, his.head.y)
-          case 'U' => coordinate(his.head.x, his.head.y + 1)
-          case 'D' => coordinate(his.head.x, his.head.y - 1)
-        }
+        val head = moveHead(his.head, move)
         ropestate(head, his.tail, his.tailPositions)
       }
     }
     println(s"H pos: $pos")
+  }
+
+  private def moveHead(old: coordinate, move: Char): coordinate = {
+    move match
+      case 'R' => coordinate(old.x + 1, old.y)
+      case 'L' => coordinate(old.x - 1, old.y)
+      case 'U' => coordinate(old.x, old.y + 1)
+      case 'D' => coordinate(old.x, old.y - 1)
   }
 
   private val moves: String = util.get("day9.txt")
