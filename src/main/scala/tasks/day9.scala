@@ -7,15 +7,21 @@ object day9 {
     doMoves()
   }
 
+  case class ropestate(head: coordinate, tail: coordinate, tailPositions: Set[coordinate])
+
   def doMoves(): Unit = {
-    val pos = moves.foldLeft(coordinate(0, 0)) {
-      (pos, move) => {
-        move match {
-          case 'R' => coordinate(pos.x + 1, pos.y)
-          case 'L' => coordinate(pos.x - 1, pos.y)
-          case 'U' => coordinate(pos.x, pos.y + 1)
-          case 'D' => coordinate(pos.x, pos.y - 1)
+    val startPos = coordinate(0, 0)
+    val start = ropestate(startPos, startPos, Set(startPos))
+
+    val pos = moves.foldLeft(start) {
+      (his, move) => {
+        val head = move match {
+          case 'R' => coordinate(his.head.x + 1, his.head.y)
+          case 'L' => coordinate(his.head.x - 1, his.head.y)
+          case 'U' => coordinate(his.head.x, his.head.y + 1)
+          case 'D' => coordinate(his.head.x, his.head.y - 1)
         }
+        ropestate(head, his.tail, his.tailPositions)
       }
     }
     println(s"H pos: $pos")
