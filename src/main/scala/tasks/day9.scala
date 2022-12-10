@@ -16,9 +16,6 @@ object day9 {
       (his, move) => {
         val head = moveHead(his.head, move)
         val tail = moveTail(his.tail, head, move)
-
-        println(s"head: $head tail: $tail")
-
         ropestate(head, tail, his.tailPositions + tail)
       }
     }
