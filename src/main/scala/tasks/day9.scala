@@ -16,7 +16,8 @@ object day9 {
     val pos = moves.foldLeft(start) {
       (his, move) => {
         val head = moveHead(his.head, move)
-        ropestate(head, his.tail, his.tailPositions)
+        val tail = moveTail(his.tail, head)
+        ropestate(head, tail, his.tailPositions)
       }
     }
     println(s"H pos: $pos")
@@ -28,6 +29,12 @@ object day9 {
       case 'L' => coordinate(old.x - 1, old.y)
       case 'U' => coordinate(old.x, old.y + 1)
       case 'D' => coordinate(old.x, old.y - 1)
+  }
+
+  private def moveTail(old: coordinate, head: coordinate): coordinate = {
+    if (old.distance(head) <= 1)
+      old
+    else ??? // Needs to move
   }
 
   private val moves: String = util.get("day9.txt")
