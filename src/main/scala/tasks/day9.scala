@@ -3,17 +3,16 @@ package tasks
 
 object day9 {
   def main(args: Array[String]): Unit = {
-    println(moves)
-    doMoves()
+    println(s"Amount of unique tail positions: $amountTailPositions")
   }
 
   case class ropestate(head: coordinate, tail: coordinate, tailPositions: Set[coordinate])
 
-  def doMoves(): Unit = {
+  private def amountTailPositions: Int = {
     val startPos = coordinate(0, 0)
     val start = ropestate(startPos, startPos, Set(startPos))
 
-    val pos = moves.foldLeft(start) {
+    val history = moves.foldLeft(start) {
       (his, move) => {
         val head = moveHead(his.head, move)
         val tail = moveTail(his.tail, head, move)
@@ -23,7 +22,7 @@ object day9 {
         ropestate(head, tail, his.tailPositions + tail)
       }
     }
-    println(s"H pos: $pos")
+    history.tailPositions.size
   }
 
   private def moveHead(old: coordinate, move: Char): coordinate = {
@@ -37,8 +36,13 @@ object day9 {
   private def moveTail(old: coordinate, head: coordinate, move: Char): coordinate = {
     if (old.distance(head) <= 1)
       old
-    else
-      moveHead(old, move)
+    else {
+      val tail = moveHead(old, move)
+      coordinate(
+        if ("UD".contains(move)) head.x else tail.x,
+        if ("LR".contains(move)) head.y else tail.y
+      )
+    }
   }
 
   private val moves: String = util.get("day9.txt")
