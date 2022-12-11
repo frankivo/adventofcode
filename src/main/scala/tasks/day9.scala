@@ -3,7 +3,7 @@ package tasks
 
 object day9 {
   def main(args: Array[String]): Unit = {
-    //    println(s"Amount of unique tail positions: ${amountTailPositions(1)}")
+    println(s"Amount of unique tail positions: ${amountTailPositions(1)}")
     println(s"Amount of unique tail positions: ${amountTailPositions(9)}")
   }
 
@@ -24,22 +24,19 @@ object day9 {
   private def amountTailPositions(tailSize: Int): Int = {
     val startPos = coordinate(0, 0, "H")
     val tail = (1 to tailSize).map(i => coordinate(0, 0, i.toString))
-
     val start = ropestate(startPos, tail, Set(startPos))
 
     val history = moves.foldLeft(start) {
       (his, move) => {
         val head = moveHead(his.head, move)
-        val x = (head +: his.tail).sliding(2, 1).toSeq
-        val tails = x
-          .map(t => {
-            if (t.length == 1)
-              t.last
-            else
-              moveTail(t.last, t.head, move)
-          })
+        val tail = his.tail.foldLeft(Seq[coordinate]()) {
+          (x, cur) => {
+            val prev = x.lastOption.getOrElse(head)
+            x :+ moveTail(cur, prev)
+          }
+        }
 
-        ropestate(head, tails, his.tailPositions + tails.last)
+        ropestate(head, tail, his.tailPositions + tail.last)
       }
     }
     history.tailPositions.size
@@ -53,16 +50,21 @@ object day9 {
       case 'D' => coordinate(old.x, old.y - 1, old.name)
   }
 
-  private def moveTail(old: coordinate, head: coordinate, move: Char): coordinate = {
-    if (old.distance(head) <= 1)
-      old
+  private def moveTail(cur: coordinate, prev: coordinate): coordinate = {
+    if (cur.distance(prev) <= 1)
+      cur
     else {
-      val tail = moveHead(old, move)
-      coordinate(
-        if ("UD".contains(move)) head.x else tail.x,
-        if ("LR".contains(move)) head.y else tail.y,
-        old.name
+      Seq(
+        coordinate(cur.x + 1, cur.y + 1, cur.name),
+        coordinate(cur.x - 1, cur.y - 1, cur.name),
+        coordinate(cur.x + 1, cur.y - 1, cur.name),
+        coordinate(cur.x - 1, cur.y + 1, cur.name),
+        coordinate(cur.x + 1, cur.y, cur.name),
+        coordinate(cur.x - 1, cur.y, cur.name),
+        coordinate(cur.x, cur.y + 1, cur.name),
+        coordinate(cur.x, cur.y - 1, cur.name),
       )
+        .find(_.distance(prev) <= 1).get
     }
   }
 
