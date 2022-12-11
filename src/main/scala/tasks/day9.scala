@@ -3,42 +3,47 @@ package tasks
 
 object day9 {
   def main(args: Array[String]): Unit = {
-    println(s"Amount of unique tail positions: ${amountTailPositions(1)}")
+//    println(s"Amount of unique tail positions: ${amountTailPositions(1)}")
     println(s"Amount of unique tail positions: ${amountTailPositions(9)}")
   }
 
   case class ropestate(head: coordinate, tail: Seq[coordinate], tailPositions: Set[coordinate]) {
     def show(): Unit = {
       val rope = head +: tail
+      val min = rope.map(k => Seq(k.x, k.y).min).min
       val max = rope.map(k => Seq(k.x, k.y).max).max
 
-      for (y <- (0 to max).reverse) {
-        for (x <- 0 to max) {
+      for (y <- (min to max).reverse) {
+        for (x <- min to max) {
           print(rope.find(k => k.x == x && k.y == y).map(_.name).getOrElse("."))
         }
         println()
       }
+      println()
     }
   }
 
   private def amountTailPositions(tailSize: Int): Int = {
     val startPos = coordinate(0, 0, "H")
     val tail = (1 to tailSize).map(i => coordinate(0, 0, i.toString))
-    val start = ropestate(startPos, tail, Set(startPos))
+    val start = ropestate(startPos, tail, tail.takeRight(1).toSet)
 
     val history = moves.foldLeft(start) {
       (his, move) => {
         val head = moveHead(his.head, move)
         val tail = his.tail.foldLeft(Seq[coordinate]()) {
-          (x, cur) => {
-            val prev = x.lastOption.getOrElse(head)
-            x :+ moveTail(cur, prev)
+          (visited, cur) => {
+            val prev = visited.lastOption.getOrElse(head)
+            visited :+ moveTail(cur, prev, move)
           }
         }
-
-        ropestate(head, tail, his.tailPositions + tail.last)
+        val state = ropestate(head, tail, his.tailPositions + tail.last)
+        state.show()
+        state
       }
     }
+
+//    history.show()
     history.tailPositions.size
   }
 
@@ -50,22 +55,15 @@ object day9 {
       case 'D' => coordinate(old.x, old.y - 1, old.name)
   }
 
-  private def moveTail(cur: coordinate, prev: coordinate): coordinate = {
+  private def moveTail(cur: coordinate, prev: coordinate, move: Char): coordinate = {
     if (cur.distance(prev) <= 1)
       cur
-    else {
-      Seq(
-        coordinate(cur.x + 1, cur.y + 1, cur.name),
-        coordinate(cur.x - 1, cur.y - 1, cur.name),
-        coordinate(cur.x + 1, cur.y - 1, cur.name),
-        coordinate(cur.x - 1, cur.y + 1, cur.name),
-        coordinate(cur.x + 1, cur.y, cur.name),
-        coordinate(cur.x - 1, cur.y, cur.name),
-        coordinate(cur.x, cur.y + 1, cur.name),
-        coordinate(cur.x, cur.y - 1, cur.name),
-      )
-        .find(_.distance(prev) <= 1).get
-    }
+    else if (cur.x == prev.x || cur.y == prev.y)
+      coordinate((cur.x + prev.x) / 2, (cur.y + prev.y) / 2, cur.name)
+    else if ("UD".contains(move))
+      coordinate(prev.x, (cur.y + prev.y) / 2, cur.name)
+    else
+      coordinate((cur.x + prev.x) / 2, prev.y, cur.name)
   }
 
   private val moves: String = util.get("day9.txt")
