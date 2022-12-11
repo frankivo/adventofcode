@@ -10,22 +10,22 @@ object day9 {
   case class ropestate(head: coordinate, tail: Seq[coordinate], tailPositions: Set[coordinate])
 
   private def amountTailPositions(tailSize: Int): Int = {
-    val startPos = coordinate(0, 0)
-    val tail = (0 to tailSize).map(_ => startPos)
+    val startPos = coordinate(0, 0, "H")
+    val tail = (1 to tailSize).map(i => coordinate(0, 0, i.toString))
 
     val start = ropestate(startPos, tail, Set(startPos))
 
     val history = moves.foldLeft(start) {
       (his, move) => {
         val head = moveHead(his.head, move)
-        val x =his.tail.sliding(2, 1) // Needs head
+        val x = (head +: his.tail).sliding(2, 1).toSeq
         val tails = x
           .map(t => {
-            if (t.length == 1) t.head
+            if (t.length == 1)
+              t.last
             else
-              moveTail(t.head, t(1), move)
-          }).toSeq
-
+              moveTail(t.last, t.head, move)
+          })
 
         ropestate(head, tails, his.tailPositions + tails.last)
       }
@@ -35,10 +35,10 @@ object day9 {
 
   private def moveHead(old: coordinate, move: Char): coordinate = {
     move match
-      case 'R' => coordinate(old.x + 1, old.y)
-      case 'L' => coordinate(old.x - 1, old.y)
-      case 'U' => coordinate(old.x, old.y + 1)
-      case 'D' => coordinate(old.x, old.y - 1)
+      case 'R' => coordinate(old.x + 1, old.y, old.name)
+      case 'L' => coordinate(old.x - 1, old.y, old.name)
+      case 'U' => coordinate(old.x, old.y + 1, old.name)
+      case 'D' => coordinate(old.x, old.y - 1, old.name)
   }
 
   private def moveTail(old: coordinate, head: coordinate, move: Char): coordinate = {
@@ -48,7 +48,8 @@ object day9 {
       val tail = moveHead(old, move)
       coordinate(
         if ("UD".contains(move)) head.x else tail.x,
-        if ("LR".contains(move)) head.y else tail.y
+        if ("LR".contains(move)) head.y else tail.y,
+        old.name
       )
     }
   }
