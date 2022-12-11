@@ -7,7 +7,19 @@ object day9 {
     println(s"Amount of unique tail positions: ${amountTailPositions(9)}")
   }
 
-  case class ropestate(head: coordinate, tail: Seq[coordinate], tailPositions: Set[coordinate])
+  case class ropestate(head: coordinate, tail: Seq[coordinate], tailPositions: Set[coordinate]) {
+    def show(): Unit = {
+      val rope = head +: tail
+      val max = rope.map(k => Seq(k.x, k.y).max).max
+
+      for (y <- (0 to max).reverse) {
+        for (x <- 0 to max) {
+          print(rope.find(k => k.x == x && k.y == y).map(_.name).getOrElse("."))
+        }
+        println()
+      }
+    }
+  }
 
   private def amountTailPositions(tailSize: Int): Int = {
     val startPos = coordinate(0, 0, "H")
