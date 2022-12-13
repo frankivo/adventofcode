@@ -8,11 +8,10 @@ object day10 {
     println(s"Sum of six signal strenghts: $getSignalStrenghts")
   }
 
-  def getSignalStrenghts: Long = {
-    val data = cycle
+  private def getSignalStrenghts: Long = {
     val cycles = Seq(20, 60, 100, 140, 180, 220)
 
-    data
+    cycle
       .filter(cycles contains _._1)
       .map(c => c._1 * c._2)
       .sum
