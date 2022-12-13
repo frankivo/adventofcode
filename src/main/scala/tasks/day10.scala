@@ -5,8 +5,24 @@ import scala.util.Try
 
 object day10 {
   def main(args: Array[String]): Unit = {
-    println("Hello, World!")
-    println(input)
+    println(s"Sum of six signal strenghts: $getSignalStrenghts")
+  }
+
+  def getSignalStrenghts: Long = {
+    val data = cycle
+    val cycles = Seq(20, 60, 100, 140, 180, 220)
+
+    data
+      .filter(cycles contains _._1)
+      .map(c => c._1 * c._2)
+      .sum
+  }
+
+  private def cycle: Seq[(Int, Int)] = {
+    val start = Seq((1, 1))
+    input.zip(LazyList.from(2)).foldLeft(start) {
+      (state, current) => state :+ (current._2, state.last._2 + current._1.param.getOrElse(0))
+    }
   }
 
   private case class command(cmd: String, param: Option[Int] = None)
@@ -17,6 +33,6 @@ object day10 {
     .flatMap(c => {
       c.cmd match
         case "noop" => Seq(c)
-        case "addx" => Seq(command("noop"), command("noop"), c)
+        case "addx" => Seq(command("noop"), c)
     })
 }
