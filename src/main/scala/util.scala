@@ -9,4 +9,5 @@ object util {
     Source.fromResource(path).getLines().toSeq
   }
 
+  def clamp(i: Int, lower: Int, upper: Int) : Int = lower max i min upper
 }
