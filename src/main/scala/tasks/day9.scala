@@ -3,9 +3,10 @@ package tasks
 
 object day9 {
   def main(args: Array[String]): Unit = {
-//    println(s"Amount of unique tail positions: ${amountTailPositions(1)}")
+    println(s"Amount of unique tail positions: ${amountTailPositions(1)}")
     println(s"Amount of unique tail positions: ${amountTailPositions(9)}")
   }
+
 
   case class ropestate(head: coordinate, tail: Seq[coordinate], tailPositions: Set[coordinate]) {
     def show(): Unit = {
@@ -34,16 +35,13 @@ object day9 {
         val tail = his.tail.foldLeft(Seq[coordinate]()) {
           (visited, cur) => {
             val prev = visited.lastOption.getOrElse(head)
-            visited :+ moveTail(cur, prev, move)
+            visited :+ moveTail(cur, prev)
           }
         }
-        val state = ropestate(head, tail, his.tailPositions + tail.last)
-        state.show()
-        state
+        ropestate(head, tail, his.tailPositions + tail.last)
       }
     }
 
-//    history.show()
     history.tailPositions.size
   }
 
@@ -55,15 +53,15 @@ object day9 {
       case 'D' => coordinate(old.x, old.y - 1, old.name)
   }
 
-  private def moveTail(cur: coordinate, prev: coordinate, move: Char): coordinate = {
+  private def moveTail(cur: coordinate, prev: coordinate): coordinate = {
     if (cur.distance(prev) <= 1)
       cur
-    else if (cur.x == prev.x || cur.y == prev.y)
-      coordinate((cur.x + prev.x) / 2, (cur.y + prev.y) / 2, cur.name)
-    else if ("UD".contains(move))
-      coordinate(prev.x, (cur.y + prev.y) / 2, cur.name)
-    else
-      coordinate((cur.x + prev.x) / 2, prev.y, cur.name)
+    else {
+      val x = util.clamp(prev.x - cur.x, -1, 1)
+      val y = util.clamp(prev.y - cur.y, -1, 1)
+
+      coordinate(cur.x + x, cur.y + y, cur.name)
+    }
   }
 
   private val moves: String = util.get("day9.txt")
