@@ -9,9 +9,13 @@ object day11 {
   }
 
   private def play(r: Seq[monkey]): Seq[monkey] = {
-    val op = r.map(operate)
-    println(op)
-    op
+    r.foldLeft(r) {
+      (a, b) => {
+        val c = operate(b)
+        val d = divide(x)
+        a
+      }
+    }
   }
 
   private def operate(m: monkey): monkey = {
@@ -24,6 +28,10 @@ object day11 {
           case 3 => i + 3
       }).map(_ / 3)
     )
+  }
+
+  private def divide(): Unit = {
+
   }
 
   private case class monkey(nr: Int, items: Seq[Int])
