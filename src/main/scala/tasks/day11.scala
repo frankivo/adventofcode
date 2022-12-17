@@ -15,15 +15,15 @@ object day11 {
   }
 
   private def operate(m: monkey): monkey = {
-      monkey(m.nr,
-        m.items.map(i => {
-          m.nr match
-            case 0 => i * 19
-            case 1 => i + 6
-            case 2 => 1 * 1
-            case 3 => i + 3
-        })
-      )
+    monkey(m.nr,
+      m.items.map(i => {
+        m.nr match
+          case 0 => i * 19
+          case 1 => i + 6
+          case 2 => 1 * 1
+          case 3 => i + 3
+      }).map(_ / 3)
+    )
   }
 
   private case class monkey(nr: Int, items: Seq[Int])
