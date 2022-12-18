@@ -12,7 +12,9 @@ object day11 {
     r.foldLeft(r) {
       (a, b) => {
         val c = operate(b)
-        val d = divide(x)
+        val d = divide(c)
+
+        println(d)
         a
       }
     }
@@ -30,7 +32,21 @@ object day11 {
     )
   }
 
-  private def divide(): Unit = {
+  private def divide(m: monkey): Map[Int, Seq[Int]] = {
+    val x = m.items.map(i => {
+      (m.nr match
+        case 0 => if (i % 23 == 0) 2 else 3
+        case 1 => if (i % 19 == 0) 2 else 0
+        case 2 => if (i % 13 == 0) 1 else 3
+        case 3 => if (i % 17 == 0) 0 else 1
+        , i)
+    })
+          .groupBy(_._1)
+    //      .map(g => (g._1, g._2.))
+
+    println(x)
+
+    Map()
 
   }
 
