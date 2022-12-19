@@ -10,18 +10,22 @@ object day11 {
     println(end)
   }
 
-  private def play(r: Seq[monkey]): Seq[monkey] = {
-    r.foldLeft(r) {
+  type monkey = (Int, Seq[Int])
+  type monkeys = Map[Int, Seq[Int]]
+
+  private def play(r: monkeys): monkeys = {
+    r.keys.foldLeft(r) {
       (state, m) => {
-        val monk = state.find(_.nr == m.nr).get
+        val monk = state.find(_._1 == m).get
 
         val op = operate(monk)
         val div = divide(op)
         r.map(x => {
-          monkey(x.nr,
-            x.nr match
-              case m.nr => Seq()
-              case _ => state.find(_.nr == x.nr).map(_.items).getOrElse(Seq()) ++ div.getOrElse(x.nr, Seq())
+          (x._1,
+            if (x._1 == m)
+              Seq()
+            else
+              state.getOrElse(x._1, Seq()) ++ div.getOrElse(x._1, Seq())
           )
         })
       }
@@ -29,9 +33,9 @@ object day11 {
   }
 
   private def operate(m: monkey): monkey = {
-    monkey(m.nr,
-      m.items.map(i => {
-        m.nr match
+    (m._1,
+      m._2.map(i => {
+        m._1 match
           case 0 => i * 19
           case 1 => i + 6
           case 2 => i * i
@@ -40,9 +44,9 @@ object day11 {
     )
   }
 
-  private def divide(m: monkey): Map[Int, Seq[Int]] = {
-    m.items.map(i => {
-      (m.nr match
+  private def divide(m: monkey): monkeys = {
+    m._2.map(i => {
+      (m._1 match
         case 0 => if (i % 23 == 0) 2 else 3
         case 1 => if (i % 19 == 0) 2 else 0
         case 2 => if (i % 13 == 0) 1 else 3
@@ -53,13 +57,12 @@ object day11 {
       .map(g => (g._1, g._2.map(_._2)))
   }
 
-  private case class monkey(nr: Int, items: Seq[Int])
-
-  private val startingItems: Seq[monkey] = Seq(
+  private val startingItems: monkeys = Seq(
     Seq(79, 98),
     Seq(54, 65, 75, 74),
     Seq(79, 60, 97),
     Seq(74),
   ).zipWithIndex
-    .map(si => monkey(si._2, si._1))
+    .map(si => (si._2, si._1))
+    .toMap
 }
