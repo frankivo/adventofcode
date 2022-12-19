@@ -10,12 +10,17 @@ object day11 {
 
   private def play(r: Seq[monkey]): Seq[monkey] = {
     r.foldLeft(r) {
-      (a, b) => {
-        val c = operate(b)
+      (_, m) => {
+        val c = operate(m)
         val d = divide(c)
 
-        println(d)
-        a
+        r.map(x => {
+          monkey(x.nr,
+            x.nr match
+              case m.nr => Seq()
+              case _ => x.items ++ d.getOrElse(x.nr, Seq())
+          )
+        })
       }
     }
   }
@@ -33,7 +38,7 @@ object day11 {
   }
 
   private def divide(m: monkey): Map[Int, Seq[Int]] = {
-    val x = m.items.map(i => {
+    m.items.map(i => {
       (m.nr match
         case 0 => if (i % 23 == 0) 2 else 3
         case 1 => if (i % 19 == 0) 2 else 0
@@ -41,13 +46,8 @@ object day11 {
         case 3 => if (i % 17 == 0) 0 else 1
         , i)
     })
-          .groupBy(_._1)
-    //      .map(g => (g._1, g._2.))
-
-    println(x)
-
-    Map()
-
+      .groupBy(_._1)
+      .map(g => (g._1, g._2.map(_._2)))
   }
 
   private case class monkey(nr: Int, items: Seq[Int])
