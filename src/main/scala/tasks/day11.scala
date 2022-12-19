@@ -3,22 +3,25 @@ package tasks
 
 object day11 {
   def main(args: Array[String]): Unit = {
-    val start = Map(0 -> startingItems)
-    println(start)
-    play(start(0))
+    val end = (0 until 20).foldLeft(startingItems) {
+      (res, _) => play(res)
+    }
+
+    println(end)
   }
 
   private def play(r: Seq[monkey]): Seq[monkey] = {
     r.foldLeft(r) {
-      (_, m) => {
-        val c = operate(m)
-        val d = divide(c)
+      (state, m) => {
+        val monk = state.find(_.nr == m.nr).get
 
+        val op = operate(monk)
+        val div = divide(op)
         r.map(x => {
           monkey(x.nr,
             x.nr match
               case m.nr => Seq()
-              case _ => x.items ++ d.getOrElse(x.nr, Seq())
+              case _ => state.find(_.nr == x.nr).map(_.items).getOrElse(Seq()) ++ div.getOrElse(x.nr, Seq())
           )
         })
       }
