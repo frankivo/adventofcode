@@ -31,7 +31,7 @@ object day11 {
         m.nr match
           case 0 => i * 19
           case 1 => i + 6
-          case 2 => 1 * 1
+          case 2 => i * i
           case 3 => i + 3
       }).map(_ / 3)
     )
