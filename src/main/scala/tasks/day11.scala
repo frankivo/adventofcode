@@ -3,33 +3,47 @@ package tasks
 
 object day11 {
   def main(args: Array[String]): Unit = {
-    val end = (0 until 20).foldLeft(startingItems) {
-      (res, _) => play(res)
-    }
-
-    println(end)
+    play()
   }
 
   type monkey = (Int, Seq[Int])
   type monkeys = Map[Int, Seq[Int]]
 
-  private def play(r: monkeys): monkeys = {
-    r.keys.foldLeft(r) {
+  private def play(): Unit = {
+    val start = startingItems.map(m => (m._1, (m._2, 0)))
+
+    val end = (0 until 20).foldLeft(start) {
+      (res, _) => playRound(res)
+    }
+
+    println(end)
+  }
+
+  private def playRound(r: Map[Int, (Seq[Int], Int)]): Map[Int, (Seq[Int], Int)] = {
+    val ret = r.keys.foldLeft(r) {
       (state, m) => {
-        val monk = state.find(_._1 == m).get
+        val mstate = state.find(_._1 == m).get
+        val monk = (mstate._1, mstate._2._1)
 
         val op = operate(monk)
         val div = divide(op)
         r.map(x => {
-          (x._1,
+          val mNr = x._1
+          val items = {
             if (x._1 == m)
               Seq()
-            else
-              state.getOrElse(x._1, Seq()) ++ div.getOrElse(x._1, Seq())
-          )
+            else {
+              val olditems = state.get(x._1).map(_._1).getOrElse(Seq())
+              val newitems = div.getOrElse(x._1, Seq())
+              olditems ++ newitems
+            }
+          }
+          val itemCount = x._2._1.length
+          (mNr, (items, mstate._2._2 + itemCount))
         })
       }
     }
+    ret
   }
 
   private def operate(m: monkey): monkey = {
