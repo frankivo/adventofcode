@@ -3,47 +3,45 @@ package tasks
 
 object day11 {
   def main(args: Array[String]): Unit = {
-    play()
+    println(play())
   }
 
   type monkey = (Int, Seq[Int])
   type monkeys = Map[Int, Seq[Int]]
 
-  private def play(): Unit = {
+  private def play(): Long = {
     val start = startingItems.map(m => (m._1, (m._2, 0)))
 
     val end = (0 until 20).foldLeft(start) {
       (res, _) => playRound(res)
     }
-
-    println(end)
+    end.map(_._2._2).toSeq.sorted.takeRight(2).product
   }
 
   private def playRound(r: Map[Int, (Seq[Int], Int)]): Map[Int, (Seq[Int], Int)] = {
-    val ret = r.keys.foldLeft(r) {
-      (state, m) => {
-        val mstate = state.find(_._1 == m).get
-        val monk = (mstate._1, mstate._2._1)
+    r.keys.foldLeft(r) {
+      (state, roundMonkey) => {
+        val monk = state.find(_._1 == roundMonkey).get
 
-        val op = operate(monk)
+        val op = operate((monk._1, monk._2._1))
         val div = divide(op)
-        r.map(x => {
-          val mNr = x._1
-          val items = {
-            if (x._1 == m)
+        state.keys.map(x => {
+          (x,
+            if (x == roundMonkey)
               Seq()
             else {
-              val olditems = state.get(x._1).map(_._1).getOrElse(Seq())
-              val newitems = div.getOrElse(x._1, Seq())
+              val olditems = state.get(x).map(_._1).getOrElse(Seq())
+              val newitems = div.getOrElse(x, Seq())
               olditems ++ newitems
             }
-          }
-          val itemCount = x._2._1.length
-          (mNr, (items, mstate._2._2 + itemCount))
+          )
         })
+          .map(b => {
+            val update = if (b._1 == roundMonkey) monk._2._1.length + state(b._1)._2 else state(b._1)._2
+            (b._1, (b._2, update))
+          }).toMap
       }
     }
-    ret
   }
 
   private def operate(m: monkey): monkey = {
