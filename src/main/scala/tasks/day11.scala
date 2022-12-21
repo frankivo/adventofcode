@@ -3,6 +3,8 @@ package tasks
 
 object day11 {
   def main(args: Array[String]): Unit = {
+    println(tests)
+
     println(play(20, true))
     println(play(10_000, false))
   }
@@ -59,23 +61,16 @@ object day11 {
           case 6 => old + 2
           case 7 => old * old
       }).map(w =>
-        if (bored) w / 3 else w % 9699690L
+        if (bored) w / 3 else w % tests.map(_._2._1).product
       )
     )
   }
 
   private def divide(m: monkey): monkeys = {
     m._2.map(i => {
-      (m._1 match
-        case 0 => if (i % 5 == 0) 6 else 1
-        case 1 => if (i % 2 == 0) 2 else 6
-        case 2 => if (i % 19 == 0) 7 else 5
-        case 3 => if (i % 7 == 0) 0 else 4
-        case 4 => if (i % 17 == 0) 0 else 1
-        case 5 => if (i % 13 == 0) 4 else 3
-        case 6 => if (i % 3 == 0) 2 else 7
-        case 7 => if (i % 11 == 0) 3 else 5
-        , i)
+      val mt = tests(m._1)
+      val to = if (i % mt._1 == 0) mt._2 else mt._3
+      (to, i)
     })
       .groupBy(_._1)
       .map(g => (g._1, g._2.map(_._2)))
@@ -92,5 +87,18 @@ object day11 {
     Seq(90, 56),
   ).zipWithIndex
     .map(si => (si._2, si._1.map(_.toLong)))
+    .toMap
+
+  private val tests: Map[Int, (Int, Int, Int)] = Seq(
+    (5, 6, 1),
+    (2, 2, 6),
+    (19, 7, 5),
+    (7, 0, 4),
+    (17, 0, 1),
+    (13, 4, 3),
+    (3, 2, 7),
+    (11, 3, 5)
+  ).zipWithIndex
+    .map(t => (t._2, t._1))
     .toMap
 }
