@@ -3,27 +3,29 @@ package tasks
 
 object day11 {
   def main(args: Array[String]): Unit = {
-    println(play())
+    println(play(20, true))
+    println(play(10_000, false))
   }
 
   type monkey = (Int, Seq[Long])
   type monkeys = Map[Int, Seq[Long]]
 
-  private def play(): Long = {
-    val start = startingItems.map(m => (m._1, (m._2, 0)))
+  private def play(rounds: Int, bored: Boolean): Long = {
+    val start = startingItems.map(m => (m._1, (m._2, 0L)))
 
-    val end = (0 until 20).foldLeft(start) {
-      (res, _) => playRound(res)
+    val end = (0 until rounds).foldLeft(start) {
+      (res, _) => playRound(res, bored)
     }
+
     end.map(_._2._2).toSeq.sorted.takeRight(2).product
   }
 
-  private def playRound(r: Map[Int, (Seq[Long], Int)]): Map[Int, (Seq[Long], Int)] = {
+  private def playRound(r: Map[Int, (Seq[Long], Long)], bored: Boolean): Map[Int, (Seq[Long], Long)] = {
     r.keys.toSeq.sorted.foldLeft(r) {
       (state, roundMonkey) => {
         val monk = state.find(_._1 == roundMonkey).get
 
-        val op = operate((monk._1, monk._2._1))
+        val op = operate((monk._1, monk._2._1), bored)
         val div = divide(op)
         state.keys.map(x => {
           (x,
@@ -44,7 +46,7 @@ object day11 {
     }
   }
 
-  private def operate(m: monkey): monkey = {
+  private def operate(m: monkey, bored: Boolean): monkey = {
     (m._1,
       m._2.map(old => {
         m._1 match
@@ -56,7 +58,9 @@ object day11 {
           case 5 => old + 4
           case 6 => old + 2
           case 7 => old * old
-      }).map(_ / 3)
+      }).map(w =>
+        if (bored) w / 3 else w % 9699690L
+      )
     )
   }
 
