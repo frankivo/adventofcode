@@ -3,26 +3,23 @@ package tasks
 
 object day12 {
   def main(args: Array[String]): Unit = {
-    println(findBest())
-    println(findBest().size)
+    findEnd()
   }
 
-  private def findBest(): Set[coordinate] = {
-    val all = findEnd(start, Set(start))
-    println(all.size)
-
-    Set()
+  private def findEnd(): Unit = {
+    findEnd(start, Seq(start))
   }
 
-  private def findEnd(node: coordinate, visited: Set[coordinate]): Seq[Set[coordinate]] = {
-    val options = node.validAdjacent.filterNot(visited.contains)
-    if (options.isEmpty)
-      Seq(visited)
-    else if (options.contains(end))
-      Seq(visited + end)
-    else
-      val x = options.map(findEnd(_, visited + node))
-      x.flatten
+  private def findEnd(node: coordinate, visited: Seq[coordinate]): Unit = {
+    if (node == end) {
+      println(visited.size)
+      return
+    }
+
+    node
+      .validAdjacent
+      .filterNot(visited.contains)
+      .foreach(o => findEnd(o, visited :+ o))
   }
 
   private val input: Seq[coordinate] = {
@@ -55,7 +52,7 @@ object day12 {
       ).flatMap(c => input.find(i => i.x == c._1 && i.y == c._2))
 
     private def validAdjacent: Seq[coordinate] =
-      adjacent.filter(a => numVal <= a.numVal || numVal - a.numVal == 1)
+      adjacent.filter(a => a.numVal <= numVal || a.numVal - numVal == 1)
 
     private def numVal: Int = scores(coord.char)
   }
