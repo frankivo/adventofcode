@@ -5,6 +5,11 @@ object day12 {
   def main(args: Array[String]): Unit = {
     println(start)
     println(end)
+
+    println(scores)
+
+    println(scores('S'))
+    println(scores('e'))
   }
 
   private val input: Seq[coordinate] = {
@@ -18,4 +23,10 @@ object day12 {
   private val start: coordinate = input.find(_.name.equals("S")).get
 
   private val end: coordinate = input.find(_.name.equals("E")).get
+
+  val scores: Map[Char, Int] = ('a' to 'z')
+    .zip(LazyList.from(1))
+    .toMap
+    + ('S' -> 0)
+    + ('E' -> 27)
 }
