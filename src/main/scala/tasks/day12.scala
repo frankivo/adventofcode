@@ -3,10 +3,26 @@ package tasks
 
 object day12 {
   def main(args: Array[String]): Unit = {
-    println(start.adjacent)
-    println(start.validAdjacent)
-    println(end.adjacent)
-    println(end.validAdjacent)
+    println(findBest())
+    println(findBest().size)
+  }
+
+  private def findBest(): Set[coordinate] = {
+    val all = findEnd(start, Set(start))
+    println(all.size)
+
+    Set()
+  }
+
+  private def findEnd(node: coordinate, visited: Set[coordinate]): Seq[Set[coordinate]] = {
+    val options = node.validAdjacent.filterNot(visited.contains)
+    if (options.isEmpty)
+      Seq(visited)
+    else if (options.contains(end))
+      Seq(visited + end)
+    else
+      val x = options.map(findEnd(_, visited + node))
+      x.flatten
   }
 
   private val input: Seq[coordinate] = {
