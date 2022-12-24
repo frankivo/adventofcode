@@ -1,6 +1,9 @@
 package com.github.frankivo
 package tasks
 
+
+import akka.stream.scaladsl.Source
+
 /**
  * Not immutable, yet?
  * This video helped me a lot: https://www.youtube.com/watch?v=xcIUM003HS0
@@ -8,8 +11,10 @@ package tasks
 
 object day12 {
   def main(args: Array[String]): Unit = {
-    println(s"Distance from S: $part1")
-    println(s"Best distance: $part2")
+    //    println(s"Distance from S: $part1")
+    //    println(s"Best distance: $part2")
+
+    explore()
   }
 
   private def part1: Int = BFS().explore(start)
@@ -20,6 +25,35 @@ object day12 {
       .foldLeft(Int.MaxValue) {
         (best, cur) => Seq(BFS().explore(cur), best).min
       }
+  }
+
+  def explore(): Unit = {
+    val distances = Map[coordinate, Int](start -> 0)
+    val explorable = Seq[coordinate](start)
+
+    val out = Seq.unfold(distances, explorable) {
+      (d, e) => {
+        if (e.isEmpty) None
+        else {
+          val cur = explorable.head
+          val dist = distances(cur) + 1
+
+          val newD = d ++ cur
+            .validAdjacent
+            .filterNot(distances.contains)
+            .map(adj => adj -> dist)
+
+          val newE = e.filterNot(_.eq(cur)) ++ cur.validAdjacent
+            .filterNot(distances.contains)
+
+          println(1)
+
+          Some(newD.minBy(_._2)._2, (newD, newE))
+        }
+      }
+    }
+
+    println("Out: " + out)
   }
 
   class BFS() {
