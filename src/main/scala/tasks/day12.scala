@@ -34,11 +34,12 @@ object day12 {
 
   private val end: coordinate = input.find(_.char.equals('E')).get
 
-  val scores: Map[Char, Int] = ('a' to 'z')
-    .zip(LazyList.from(1))
-    .toMap
-    + ('S' -> 0)
-    + ('E' -> 27)
+  private val heights: Map[Char, Int] =
+    ('a' to 'z')
+      .zip(LazyList.from(1))
+      .toMap
+      + ('S' -> 1)
+      + ('E' -> 26)
 
   extension (coord: coordinate) {
     private def char: Char = coord.name.head
@@ -52,8 +53,8 @@ object day12 {
       ).flatMap(c => input.find(i => i.x == c._1 && i.y == c._2))
 
     private def validAdjacent: Seq[coordinate] =
-      adjacent.filter(a => a.numVal <= numVal || a.numVal - numVal == 1)
+      adjacent.filter(a => a.height <= height || a.height - height == 1)
 
-    private def numVal: Int = scores(coord.char)
+    private def height: Int = heights(coord.char)
   }
 }
