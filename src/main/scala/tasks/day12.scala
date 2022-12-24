@@ -1,25 +1,49 @@
 package com.github.frankivo
 package tasks
 
+/**
+ * Not immutable, yet?
+ * This video helped me a lot: https://www.youtube.com/watch?v=xcIUM003HS0
+ */
+
 object day12 {
   def main(args: Array[String]): Unit = {
-    findEnd()
+    val explorer = BFS()
+    println("Distance: " + explorer.explore(start))
   }
 
-  private def findEnd(): Unit = {
-    findEnd(start, Seq(start))
-  }
+  class BFS() {
+    private var distances = Map[coordinate, Int]()
+    private var explorable = Seq[coordinate]()
 
-  private def findEnd(node: coordinate, visited: Seq[coordinate]): Unit = {
-    if (node == end) {
-      println(visited.size)
-      return
+    def explore(startNode: coordinate): Int = {
+      distances = distances + (startNode -> 0)
+      explorable = explorable.add(startNode)
+      explore()
+
+      distances(end)
     }
 
-    node
-      .validAdjacent
-      .filterNot(visited.contains)
-      .foreach(o => findEnd(o, visited :+ o))
+    private def explore(): Unit = {
+      while (explorable.nonEmpty) {
+        val cur = explorable.head
+        val dist = distances(cur) + 1
+        cur
+          .validAdjacent
+          .filterNot(distances.contains)
+          .foreach(adj => {
+            distances = distances + (adj -> dist)
+            explorable = explorable.add(adj)
+          })
+        explorable = explorable.rem(cur)
+      }
+    }
+  }
+
+  extension (lst: Seq[coordinate]) { // Hack Seq into a Queue
+    def add(item: coordinate): Seq[coordinate] = lst :+ item
+
+    def rem(item: coordinate): Seq[coordinate] = lst.filterNot(_.eq(item))
   }
 
   private val input: Seq[coordinate] = {
