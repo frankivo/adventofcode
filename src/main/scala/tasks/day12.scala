@@ -8,8 +8,18 @@ package tasks
 
 object day12 {
   def main(args: Array[String]): Unit = {
-    val explorer = BFS()
-    println("Distance: " + explorer.explore(start))
+    println(s"Distance from S: $part1")
+    println(s"Best distance: $part2")
+  }
+
+  private def part1: Int = BFS().explore(start)
+
+  private def part2: Int = {
+    input
+      .filter(i => Seq('S', 'a').contains(i.char))
+      .foldLeft(Int.MaxValue) {
+        (best, cur) => Seq(BFS().explore(cur), best).min
+      }
   }
 
   class BFS() {
@@ -21,7 +31,7 @@ object day12 {
       explorable = explorable.add(startNode)
       explore()
 
-      distances(end)
+      distances.getOrElse(end, Int.MaxValue)
     }
 
     private def explore(): Unit = {
