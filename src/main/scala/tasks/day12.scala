@@ -2,7 +2,6 @@ package com.github.frankivo
 package tasks
 
 /**
- * Not immutable, yet?
  * This video helped me a lot: https://www.youtube.com/watch?v=xcIUM003HS0
  */
 
@@ -40,41 +39,8 @@ object day12 {
           Some(endDistance, (newD, newE))
         }
       }
-    }.flatten.min
-  }
-
-  class BFS() {
-    private var distances = Map[coordinate, Int]()
-    private var explorable = Seq[coordinate]()
-
-    def explore(startNode: coordinate): Int = {
-      distances = distances + (startNode -> 0)
-      explorable = explorable.add(startNode)
-      explore()
-
-      distances.getOrElse(end, Int.MaxValue)
-    }
-
-    private def explore(): Unit = {
-      while (explorable.nonEmpty) {
-        val cur = explorable.head
-        val dist = distances(cur) + 1
-        cur
-          .validAdjacent
-          .filterNot(distances.contains)
-          .foreach(adj => {
-            distances = distances + (adj -> dist)
-            explorable = explorable.add(adj)
-          })
-        explorable = explorable.rem(cur)
-      }
-    }
-  }
-
-  extension (lst: Seq[coordinate]) { // Hack Seq into a Queue
-    def add(item: coordinate): Seq[coordinate] = lst :+ item
-
-    def rem(item: coordinate): Seq[coordinate] = lst.filterNot(_.eq(item))
+    }.flatten
+      .minOption.getOrElse(Int.MaxValue)
   }
 
   private val input: Seq[coordinate] = {
