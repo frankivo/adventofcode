@@ -40,7 +40,8 @@ object day12 {
         }
       }
     }.flatten
-      .minOption.getOrElse(Int.MaxValue)
+      .minOption
+      .getOrElse(Int.MaxValue)
   }
 
   private val input: Seq[coordinate] = {
