@@ -3,16 +3,13 @@ package tasks
 
 object day13 {
   def main(args: Array[String]): Unit = {
-    println(s"Sum of sorted pair indices: ${part1}")
+    println(s"Sum of sorted pair indices: $part1")
   }
 
-  def part1 : Long = {
-    rawInput
-      .foldLeft(0L) {
-        (sum, pair) => {
-          sum + pair.index // If pair is sorted, else 0
-        }
-      }
+  def part1: Long = rawInput.flatMap(p => Option.when(compareLists(p.left, p.right))(p.index)).sum
+
+  private def compareLists(left: String, right: String): Boolean = {
+    left.length == right.length
   }
 
   private case class Pair(index: Int, left: String, right: String)
