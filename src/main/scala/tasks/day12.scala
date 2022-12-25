@@ -8,49 +8,39 @@ package tasks
 
 object day12 {
   def main(args: Array[String]): Unit = {
-    //    println(s"Distance from S: $part1")
-    //    println(s"Best distance: $part2")
-
-    explore()
+    println(s"Distance from S: $part1")
+    println(s"Best distance: $part2")
   }
 
-  private def part1: Int = BFS().explore(start)
+  private def part1: Int = explore(start)
 
   private def part2: Int = {
     input
       .filter(i => Seq('S', 'a').contains(i.char))
       .foldLeft(Int.MaxValue) {
-        (best, cur) => Seq(BFS().explore(cur), best).min
+        (best, cur) => Seq(explore(cur), best).min
       }
   }
 
-  def explore(): Unit = {
-    val distances = Map[coordinate, Int](start -> 0)
-    val explorable = Seq[coordinate](start)
+  def explore(startPos: coordinate): Int = {
+    val distances = Map[coordinate, Int](startPos -> 0)
+    val explorable = Seq[coordinate](startPos)
 
-    val out = Seq.unfold(distances, explorable) {
+    Seq.unfold(distances, explorable) {
       (d, e) => {
         if (e.isEmpty) None
         else {
-          val cur = explorable.head
-          val dist = distances(cur) + 1
+          val cur = e.head
+          val dist = d(cur) + 1
 
-          val newD = d ++ cur
-            .validAdjacent
-            .filterNot(distances.contains)
-            .map(adj => adj -> dist)
+          val newD = d ++ cur.validAdjacent.filterNot(d.contains).map(adj => adj -> dist)
+          val newE = e.filterNot(_.eq(cur)) ++ cur.validAdjacent.filterNot(d.contains)
+          val endDistance = newD.get(end)
 
-          val newE = e.filterNot(_.eq(cur)) ++ cur.validAdjacent
-            .filterNot(newD.contains)
-
-          println(1)
-
-          Some(newD.minBy(_._2)._2, (newD, newE))
+          Some(endDistance, (newD, newE))
         }
       }
-    }
-
-    println("Out: " + out)
+    }.flatten.min
   }
 
   class BFS() {
