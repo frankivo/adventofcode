@@ -1,9 +1,6 @@
 package com.github.frankivo
 package tasks
 
-
-import akka.stream.scaladsl.Source
-
 /**
  * Not immutable, yet?
  * This video helped me a lot: https://www.youtube.com/watch?v=xcIUM003HS0
@@ -44,7 +41,7 @@ object day12 {
             .map(adj => adj -> dist)
 
           val newE = e.filterNot(_.eq(cur)) ++ cur.validAdjacent
-            .filterNot(distances.contains)
+            .filterNot(newD.contains)
 
           println(1)
 
