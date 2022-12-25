@@ -5,11 +5,26 @@ object day13 {
   def main(args: Array[String]): Unit = {
     println("Hello, World!")
 
-    println(input.toSeq.head)
+    println(rawInput)
+    println(compare(rawInput.head))
   }
 
-  val input = util.get("day13.txt")
+  private def compare(pair: Pair): Boolean = {
+    println(pair.left)
+    println(pair.right)
+
+    val left = pair.left.split(",").toSeq
+    val right = pair.right.split(",").toSeq
+
+    left.indices.forall(i => left(i) <= right(i))
+  }
+
+  private case class Pair(index: Int, left: String, right: String)
+
+  private val rawInput: Seq[Pair] = util.get("day13.txt")
     .filterNot(_.isEmpty)
     .sliding(2)
     .zip(LazyList.from(1))
+    .map(p => Pair(p._2, p._1.head, p._1.last))
+    .toSeq
 }
