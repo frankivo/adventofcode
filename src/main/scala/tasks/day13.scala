@@ -52,7 +52,7 @@ object day13 {
     .map(JsonParser.parseString)
     .map(_.getAsJsonArray)
     .map(_.asPacket)
-    .sliding(2)
+    .grouped(2)
     .zip(LazyList.from(1))
     .map(p => Pair(p._2, p._1.head, p._1.last))
     .toSeq
