@@ -7,12 +7,7 @@ import scala.jdk.CollectionConverters.*
 
 object day13 {
   def main(args: Array[String]): Unit = {
-    //    println(s"Sum of sorted pair indices: $part1")
-
-    println(1 compare 0)
-    println(0 compare 0)
-    println(1 compare 1)
-
+    println(s"Sum of sorted pair indices: $part1")
   }
 
   type Packet = Map[Int, JsonElement]
@@ -20,26 +15,22 @@ object day13 {
   private case class Pair(index: Int, left: Packet, right: Packet)
 
   def part1: Long = {
-    val i = input
-    //      .filter(_.index == 1)
-
-    val indices = i
-      .flatMap(p => Option.when(compareLists(p.left, p.right) > 0)(p.index))
-    println(indices)
-    indices.sum
+    input
+      .flatMap(p => Option.when(compareLists(p.left, p.right) < 0)(p.index))
+      .sum
   }
 
   private def compareLists(left: Packet, right: Packet): Int = {
     left.map(l => {
       val r = right.get(l._1)
       if (r.isEmpty)
-        -1
+        1
       else if (!l._2.isJsonArray && !r.get.isJsonArray)
         l._2.compare(r.get)
       else
         compareLists(l._2.asPacket, r.get.asPacket)
     })
-      .find(_ != 0).getOrElse(right.size.compare(left.size))
+      .find(_ != 0).getOrElse(left.size.compare(right.size))
   }
 
   extension (array: JsonArray) {
