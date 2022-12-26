@@ -24,9 +24,9 @@ object day13 {
   }
 
   def part2: Long = {
-    val mapped = (lines ++ Seq("[[2]]", "[[6]]")).map(l => (l.asInt, l))
-    val firstDivider = mapped.count(_._1 < 2) + 1
-    val secondDivider = mapped.count(_._1 < 6) + 1
+    val mapped = (lines ++ Seq("[[2]]", "[[6]]")).map(asInt)
+    val firstDivider = mapped.count(_ < 2) + 1
+    val secondDivider = mapped.count(_ < 6) + 1
     firstDivider * secondDivider
   }
 
