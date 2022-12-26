@@ -27,9 +27,8 @@ object day13 {
         true
       else if (l._2.isJsonPrimitive && r.get.isJsonPrimitive)
         compareItems(l._2, r.get)
-      else {
+      else
         compareLists(l._2.asPacket, r.get.asPacket)
-      }
     })
   }
 
