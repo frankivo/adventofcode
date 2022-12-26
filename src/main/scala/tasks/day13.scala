@@ -16,21 +16,8 @@ object day13 {
 
   def part1: Long = {
     input
-      .flatMap(p => Option.when(compareLists(p.left, p.right) < 0)(p.index))
+      .flatMap(p => Option.when(p.left.compare(p.right) < 0)(p.index))
       .sum
-  }
-
-  private def compareLists(left: Packet, right: Packet): Int = {
-    left.map(l => {
-      val r = right.get(l._1)
-      if (r.isEmpty)
-        1
-      else if (!l._2.isJsonArray && !r.get.isJsonArray)
-        l._2.compare(r.get)
-      else
-        compareLists(l._2.asPacket, r.get.asPacket)
-    })
-      .find(_ != 0).getOrElse(left.size.compare(right.size))
   }
 
   extension (array: JsonArray) {
@@ -46,6 +33,21 @@ object day13 {
     }
 
     def compare(other: JsonElement): Int = element.getAsInt.compare(other.getAsInt)
+  }
+
+  extension (packet: Packet) {
+    def compare(other: Packet): Int = {
+      packet.map(l => {
+        val r = other.get(l._1)
+        if (r.isEmpty)
+          1
+        else if (!l._2.isJsonArray && !r.get.isJsonArray)
+          l._2.compare(r.get)
+        else
+          l._2.asPacket.compare(r.get.asPacket)
+      })
+        .find(_ != 0).getOrElse(packet.size.compare(other.size))
+    }
   }
 
   private val input: Seq[Pair] = util.get("day13.txt")
