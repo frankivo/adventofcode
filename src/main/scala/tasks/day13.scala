@@ -4,10 +4,13 @@ package tasks
 import com.google.gson.{JsonArray, JsonElement, JsonParser}
 
 import scala.jdk.CollectionConverters.*
+import scala.util.Try
 
 object day13 {
   def main(args: Array[String]): Unit = {
     println(s"Sum of sorted pair indices: $part1")
+    println(s"Sum of divider indices: $part2")
+
   }
 
   type Packet = Map[Int, JsonElement]
@@ -18,6 +21,17 @@ object day13 {
     input
       .flatMap(p => Option.when(p.left.compare(p.right) < 0)(p.index))
       .sum
+  }
+
+  def part2: Long = {
+    val mapped = (lines ++ Seq("[[2]]", "[[6]]")).map(l => (l.asInt, l))
+    val firstDivider = mapped.count(_._1 < 2) + 1
+    val secondDivider = mapped.count(_._1 < 6) + 1
+    firstDivider * secondDivider
+  }
+
+  extension (string: String) {
+    def asInt: Int = """([0-9]+|\[])""".r.findFirstIn(string).get.toIntOption.getOrElse(0)
   }
 
   extension (array: JsonArray) {
@@ -59,4 +73,7 @@ object day13 {
     .zip(LazyList.from(1))
     .map(p => Pair(p._2, p._1.head, p._1.last))
     .toSeq
+
+  private val lines: Seq[String] = util.get("day13.txt")
+    .filterNot(_.isEmpty)
 }
