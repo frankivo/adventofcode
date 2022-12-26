@@ -6,4 +6,8 @@ lazy val root = (project in file("."))
   .settings(
     name := "adventofcode2022",
     idePackagePrefix := Some("com.github.frankivo"),
-  )
+
+    libraryDependencies ++= Seq(
+        "com.google.code.gson" % "gson" % "2.10",
+    )
+)
