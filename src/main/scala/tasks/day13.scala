@@ -7,7 +7,12 @@ import scala.jdk.CollectionConverters.*
 
 object day13 {
   def main(args: Array[String]): Unit = {
-    println(s"Sum of sorted pair indices: $part1")
+    //    println(s"Sum of sorted pair indices: $part1")
+
+    println(1 compare 0)
+    println(0 compare 0)
+    println(1 compare 1)
+
   }
 
   type Packet = Map[Int, JsonElement]
@@ -15,24 +20,27 @@ object day13 {
   private case class Pair(index: Int, left: Packet, right: Packet)
 
   def part1: Long = {
-    val indices = input.flatMap(p => Option.when(compareLists(p.left, p.right))(p.index))
+    val i = input
+    //      .filter(_.index == 1)
+
+    val indices = i
+      .flatMap(p => Option.when(compareLists(p.left, p.right) > 0)(p.index))
     println(indices)
     indices.sum
   }
 
-  private def compareLists(left: Packet, right: Packet): Boolean = {
-    left.forall(l => {
+  private def compareLists(left: Packet, right: Packet): Int = {
+    left.map(l => {
       val r = right.get(l._1)
       if (r.isEmpty)
-        true
-      else if (l._2.isJsonPrimitive && r.get.isJsonPrimitive)
-        compareItems(l._2, r.get)
+        -1
+      else if (!l._2.isJsonArray && !r.get.isJsonArray)
+        l._2.compare(r.get)
       else
         compareLists(l._2.asPacket, r.get.asPacket)
     })
+      .find(_ != 0).getOrElse(right.size.compare(left.size))
   }
-
-  private def compareItems(left: JsonElement, right: JsonElement): Boolean = left.getAsInt <= right.getAsInt
 
   extension (array: JsonArray) {
     def asPacket: Packet = array.asList().asScala.zipWithIndex.map(i => (i._2, i._1)).toMap
@@ -45,6 +53,8 @@ object day13 {
       else
         JsonParser.parseString(s"[$element]").getAsJsonArray.asPacket
     }
+
+    def compare(other: JsonElement): Int = element.getAsInt.compare(other.getAsInt)
   }
 
   private val input: Seq[Pair] = util.get("day13.txt")
