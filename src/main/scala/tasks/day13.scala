@@ -14,7 +14,11 @@ object day13 {
 
   private case class Pair(index: Int, left: Packet, right: Packet)
 
-  def part1: Long = rawInput.flatMap(p => Option.when(compareLists(p.left, p.right))(p.index)).sum
+  def part1: Long = {
+    val indices = input.flatMap(p => Option.when(compareLists(p.left, p.right))(p.index))
+    println(indices)
+    indices.sum
+  }
 
   private def compareLists(left: Packet, right: Packet): Boolean = {
     left.forall(l => {
@@ -44,7 +48,7 @@ object day13 {
     }
   }
 
-  private val rawInput: Seq[Pair] = util.get("day13.txt")
+  private val input: Seq[Pair] = util.get("day13.txt")
     .filterNot(_.isEmpty)
     .map(JsonParser.parseString)
     .map(_.getAsJsonArray)
