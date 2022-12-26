@@ -10,7 +10,6 @@ object day13 {
   def main(args: Array[String]): Unit = {
     println(s"Sum of sorted pair indices: $part1")
     println(s"Sum of divider indices: $part2")
-
   }
 
   type Packet = Map[Int, JsonElement]
