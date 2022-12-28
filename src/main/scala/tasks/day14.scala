@@ -8,14 +8,12 @@ object day14 {
 
   def show(): Unit = {
     (0 to input.maxBy(_.y).y).foreach(y => {
-      (input.minBy(_.x).x to input.maxBy(_.x).x).foreach(x => {
-        print(if (isRock(x, y)) '#' else '.')
-      })
+      (input.minBy(_.x).x to input.maxBy(_.x).x).foreach(x => print(inputAt(x, y)))
       println
     })
   }
 
-  def isRock(x: Int, y: Int): Boolean = input.exists(i => i.x == x && i.y == y)
+  def inputAt(x: Int, y: Int): Char = input.find(i => i.x == x && i.y == y).map(_.name.head).getOrElse('.')
 
   val input: Set[coordinate] = {
     util.get("day14.txt")
@@ -33,6 +31,6 @@ object day14 {
 
             all
           })
-      }).toSet
+      }).toSet + coordinate(500, 0, "+")
   }
 }
