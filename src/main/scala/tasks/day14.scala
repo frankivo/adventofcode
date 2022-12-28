@@ -17,6 +17,8 @@ object day14 {
     }
   }
 
+  val sandSource: coordinate = coordinate(500, 0, "+")
+
   val input: Set[coordinate] = {
     util.get("day14.txt")
       .flatMap(l => {
@@ -33,6 +35,6 @@ object day14 {
 
             all
           })
-      }).toSet + coordinate(500, 0, "+")
+      }).toSet + sandSource
   }
 }
