@@ -3,17 +3,19 @@ package tasks
 
 object day14 {
   def main(args: Array[String]): Unit = {
-    show()
+    input.show()
   }
 
-  def show(): Unit = {
-    (0 to input.maxBy(_.y).y).foreach(y => {
-      (input.minBy(_.x).x to input.maxBy(_.x).x).foreach(x => print(inputAt(x, y)))
-      println
-    })
-  }
+  extension (field: Set[coordinate]) {
+    def charAt(x: Int, y: Int): Char = field.find(i => i.x == x && i.y == y).map(_.name.head).getOrElse('.')
 
-  def inputAt(x: Int, y: Int): Char = input.find(i => i.x == x && i.y == y).map(_.name.head).getOrElse('.')
+    def show(): Unit = {
+      (0 to field.maxBy(_.y).y).foreach(y =>
+        (field.minBy(_.x).x to field.maxBy(_.x).x).foreach(x => print(field.charAt(x, y)))
+        println
+      )
+    }
+  }
 
   val input: Set[coordinate] = {
     util.get("day14.txt")
