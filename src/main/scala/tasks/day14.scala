@@ -3,12 +3,22 @@ package tasks
 
 object day14 {
   def main(args: Array[String]): Unit = {
-    input.foreach(println)
+    show()
   }
+
+  def show(): Unit = {
+    (0 to input.maxBy(_.y).y).foreach(y => {
+      (input.minBy(_.x).x to input.maxBy(_.x).x).foreach(x => {
+        print(if (isRock(x, y)) '#' else '.')
+      })
+      println
+    })
+  }
+
+  def isRock(x: Int, y: Int): Boolean = input.exists(i => i.x == x && i.y == y)
 
   val input: Set[coordinate] = {
     util.get("day14.txt")
-      .drop(1)
       .flatMap(l => {
         l.split("->").map(_.trim).sliding(2).toSeq
           .flatMap(p => {
