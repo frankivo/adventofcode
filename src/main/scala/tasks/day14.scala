@@ -4,6 +4,7 @@ package tasks
 object day14 {
   def main(args: Array[String]): Unit = {
     println(s"Max items of sand before falling off: $part1")
+    println(s"Max items of sand before hitting top: $part2")
   }
 
   private type Field = Set[coordinate]
@@ -11,9 +12,14 @@ object day14 {
   private val air: String = "."
   private val rock: String = "#"
   private val sand: String = "o"
+  private val sandSource: coordinate = coordinate(500, 0, "+")
 
-  def part1: Long = {
-    Seq.unfold(input) {
+  private def part1: Long = countSand(fieldWithoutFloor)
+
+  private def part2: Long = countSand(fieldWithFloor) + 1
+
+  private def countSand(start: Field): Long = {
+    Seq.unfold(start) {
       field => {
         val update = field.addSand()
         if (update.isEmpty) None
@@ -22,17 +28,21 @@ object day14 {
     }.max
   }
 
-  extension (field: Set[coordinate]) {
+  extension (field: Field) {
     def itemAt(x: Int, y: Int): String = field.find(i => i.x == x && i.y == y).map(_.name).getOrElse(air)
 
     def show(): Unit = {
       (0 to depth).foreach(y =>
-        (field.minBy(_.x).x to field.maxBy(_.x).x).foreach(x => print(field.itemAt(x, y)))
+        (left to right).foreach(x => print(field.itemAt(x, y)))
         println
       )
     }
 
     def depth: Int = field.maxBy(_.y).y
+
+    def left: Int = field.minBy(_.x).x
+
+    def right: Int = field.maxBy(_.x).x
 
     def addSand(): Option[Field] = {
       var canMove = true
@@ -53,18 +63,19 @@ object day14 {
         else
           canMove = false
 
-        if (y > depth) canMove = false
+        if (y > depth)
+          canMove = false
+        if (sandSource.x == x && sandSource.y == y)
+          canMove = false
       }
 
-      Option.when(y <= depth)(field + coordinate(x, y, sand))
+      Option.when(y <= depth && !(sandSource.x == x && sandSource.y == y))(field + coordinate(x, y, sand))
     }
 
     def isBlocked(x: Int, y: Int): Boolean = Seq(rock, sand).contains(field.itemAt(x, y))
   }
 
-  val sandSource: coordinate = coordinate(500, 0, "+")
-
-  val input: Set[coordinate] = {
+  private def fieldWithoutFloor: Field = {
     util.get("day14.txt")
       .flatMap(l => {
         l.split("->").map(_.trim).sliding(2).toSeq
@@ -81,5 +92,13 @@ object day14 {
             all
           })
       }).toSet + sandSource
+  }
+
+  private def fieldWithFloor: Field = {
+    val field = fieldWithoutFloor
+    val floorDepth = field.depth + 2
+
+    field ++
+      ((field.left - 500) to (field.right + 500)).map(x => coordinate(x, floorDepth, rock))
   }
 }
