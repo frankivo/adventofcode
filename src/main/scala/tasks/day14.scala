@@ -13,7 +13,7 @@ object day14 {
   private val sand: String = "o"
 
   def part1: Long = {
-    val end = (0 to 5).foldLeft(input) {
+    val end = (0 until 24).foldLeft(input) {
       (field, _) => field.addSand()
     }
     end.show()
@@ -36,14 +36,24 @@ object day14 {
       var y = sandSource.y
 
       while (canMove) {
-        if (!Seq(rock, sand).contains(field.itemAt(x, y + 1)))
+        if (!isBlocked(x, y + 1))
           y += 1 // fall down!
+        else if (!isBlocked(x - 1, y + 1)) {
+          y += 1
+          x -= 1
+        }
+        else if (!isBlocked(x + 1, y + 1)) {
+          y += 1
+          x += 1
+        }
         else
           canMove = false
       }
 
       field + coordinate(x, y, sand)
     }
+
+    def isBlocked(x: Int, y: Int): Boolean = Seq(rock, sand).contains(field.itemAt(x, y))
   }
 
   val sandSource: coordinate = coordinate(500, 0, "+")
