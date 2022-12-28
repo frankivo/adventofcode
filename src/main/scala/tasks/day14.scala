@@ -6,35 +6,43 @@ object day14 {
     println(part1)
   }
 
+  private type Field = Set[coordinate]
+
+  private val air: String = "."
+  private val rock: String = "#"
+  private val sand: String = "o"
+
   def part1: Long = {
-    var field = input
-
-    var canMove = true
-    var x = sandSource.x
-    var y = sandSource.y
-
-    while (canMove) {
-      if (field.charAt(x, y + 1) == '#') {
-        canMove = false
-        field += coordinate(x, y, "o")
-      } else {
-        y += 1 // fall down!
-      }
-    }
-
-    field.show()
-
-    y
+    val t = input.addSand().addSand()
+    t.show()
+    0
   }
 
   extension (field: Set[coordinate]) {
-    def charAt(x: Int, y: Int): Char = field.find(i => i.x == x && i.y == y).map(_.name.head).getOrElse('.')
+    def itemAt(x: Int, y: Int): String = field.find(i => i.x == x && i.y == y).map(_.name).getOrElse(air)
 
     def show(): Unit = {
       (0 to field.maxBy(_.y).y).foreach(y =>
-        (field.minBy(_.x).x to field.maxBy(_.x).x).foreach(x => print(field.charAt(x, y)))
+        (field.minBy(_.x).x to field.maxBy(_.x).x).foreach(x => print(field.itemAt(x, y)))
         println
       )
+    }
+
+    def addSand(): Field = {
+      var canMove = true
+      var x = sandSource.x
+      var y = sandSource.y
+
+      while (canMove) {
+        if (!Seq(rock, sand).contains(field.itemAt(x, y + 1))) {
+          y += 1 // fall down!
+        } else {
+          canMove = false
+
+        }
+      }
+
+      field + coordinate(x, y, sand)
     }
   }
 
@@ -50,8 +58,8 @@ object day14 {
             val xs = Seq(c.head.head, c.last.head).distinct.sorted
             val ys = Seq(c.head.last, c.last.last).distinct.sorted
 
-            val horizontal = (xs.head to xs.last).map(x => coordinate(x, ys.head, "#"))
-            val vertical = (ys.head to ys.last).map(y => coordinate(xs.head, y, "#"))
+            val horizontal = (xs.head to xs.last).map(x => coordinate(x, ys.head, rock))
+            val vertical = (ys.head to ys.last).map(y => coordinate(xs.head, y, rock))
             val all = horizontal ++ vertical
 
             all
