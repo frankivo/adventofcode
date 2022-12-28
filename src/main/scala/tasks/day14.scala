@@ -3,25 +3,26 @@ package tasks
 
 object day14 {
   def main(args: Array[String]): Unit = {
-    println("Hello, World!")
-    println(input)
+    input.foreach(println)
   }
 
-  val input: Seq[coordinate] = {
+  val input: Set[coordinate] = {
     util.get("day14.txt")
-      .map(l => {
+      .drop(1)
+      .flatMap(l => {
         l.split("->").map(_.trim).sliding(2).toSeq
-          .map(p => {
-            val c = p.map(_.split(",").toSeq).sorted
+          .flatMap(p => {
+            val c = p.map(_.split(",").map(_.toInt).toSeq)
 
-            
+            val xs = Seq(c.head.head, c.last.head).distinct.sorted
+            val ys = Seq(c.head.last, c.last.last).distinct.sorted
 
-            println(s"${c.head} to ${c.last}")
+            val horizontal = (xs.head to xs.last).map(x => coordinate(x, ys.head, "#"))
+            val vertical = (ys.head to ys.last).map(y => coordinate(xs.head, y, "#"))
+            val all = horizontal ++ vertical
 
+            all
           })
-      })
-      .foreach(println)
-
-    Seq()
+      }).toSet
   }
 }
