@@ -13,8 +13,10 @@ object day14 {
   private val sand: String = "o"
 
   def part1: Long = {
-    val t = input.addSand().addSand()
-    t.show()
+    val end = (0 to 5).foldLeft(input) {
+      (field, _) => field.addSand()
+    }
+    end.show()
     0
   }
 
@@ -34,12 +36,10 @@ object day14 {
       var y = sandSource.y
 
       while (canMove) {
-        if (!Seq(rock, sand).contains(field.itemAt(x, y + 1))) {
+        if (!Seq(rock, sand).contains(field.itemAt(x, y + 1)))
           y += 1 // fall down!
-        } else {
+        else
           canMove = false
-
-        }
       }
 
       field + coordinate(x, y, sand)
