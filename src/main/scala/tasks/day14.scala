@@ -3,7 +3,28 @@ package tasks
 
 object day14 {
   def main(args: Array[String]): Unit = {
-    input.show()
+    println(part1)
+  }
+
+  def part1: Long = {
+    var field = input
+
+    var canMove = true
+    var x = sandSource.x
+    var y = sandSource.y
+
+    while (canMove) {
+      if (field.charAt(x, y + 1) == '#') {
+        canMove = false
+        field += coordinate(x, y, "o")
+      } else {
+        y += 1 // fall down!
+      }
+    }
+
+    field.show()
+
+    y
   }
 
   extension (field: Set[coordinate]) {
