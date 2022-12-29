@@ -4,7 +4,7 @@ package tasks
 object day14 {
   def main(args: Array[String]): Unit = {
     println(s"Max items of sand before falling off: $part1")
-    println(s"Max items of sand before hitting top: $part2")
+    //    println(s"Max items of sand before hitting top: $part2")
   }
 
   private type Field = Set[coordinate]
@@ -45,31 +45,21 @@ object day14 {
     def right: Int = field.maxBy(_.x).x
 
     def addSand(): Option[Field] = {
-      var canMove = true
-      var x = sandSource.x
-      var y = sandSource.y
-
-      while (canMove) {
-        if (!isBlocked(x, y + 1))
-          y += 1 // fall down!
-        else if (!isBlocked(x - 1, y + 1)) {
-          y += 1 // fall left
-          x -= 1
+      val end = Seq.unfold(sandSource) {
+        state => {
+          if (state.y + 1 > depth + 2) None
+          else {
+            if (!isBlocked(state.x, state.y + 1))
+              Some(coordinate(state.x, state.y + 1, sand), coordinate(state.x, state.y + 1))
+            else if (!isBlocked(state.x - 1, state.y + 1))
+              Some(coordinate(state.x - 1, state.y + 1, sand), coordinate(state.x - 1, state.y + 1))
+            else if (!isBlocked(state.x + 1, state.y + 1))
+              Some(coordinate(state.x + 1, state.y + 1, sand), coordinate(state.x + 1, state.y + 1))
+            else None
+          }
         }
-        else if (!isBlocked(x + 1, y + 1)) {
-          y += 1 // fall right
-          x += 1
-        }
-        else
-          canMove = false
-
-        if (y > depth)
-          canMove = false
-        if (sandSource.x == x && sandSource.y == y)
-          canMove = false
-      }
-
-      Option.when(y <= depth && !(sandSource.x == x && sandSource.y == y))(field + coordinate(x, y, sand))
+      }.last
+      Option.when(end.y <= depth)(field + end)
     }
 
     def isBlocked(x: Int, y: Int): Boolean = Seq(rock, sand).contains(field.itemAt(x, y))
