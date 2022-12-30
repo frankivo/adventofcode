@@ -3,7 +3,7 @@ package tasks
 
 object day14 {
   def main(args: Array[String]): Unit = {
-    //    println(s"Max items of sand before falling off: $part1")
+    println(s"Max items of sand before falling off: $part1")
     println(s"Max items of sand before hitting top: $part2")
   }
 
@@ -16,7 +16,7 @@ object day14 {
 
   private def part1: Long = countSand(fieldWithoutFloor)
 
-  private def part2: Long = explore
+  private def part2: Long = explore + 1
 
   private def countSand(start: Field): Long = {
     Seq.unfold(start) {
@@ -29,7 +29,7 @@ object day14 {
   }
 
   private def explore: Int = {
-    val field = Set[coordinate](sandSource)
+    val field = fieldWithFloor
     val explorable = Seq[coordinate](sandSource)
 
     Seq.unfold(field, explorable) {
@@ -38,17 +38,17 @@ object day14 {
         else {
           val cur = e.minBy(_.y)
 
-          val newF = f ++ cur.adjecent
-          val newE = e.filterNot(_.eq(cur)) ++ cur.adjecent.filterNot(f.contains)
+          val adj = cur.adjecent.filterNot(a => f.isBlocked(a.x, a.y))
 
-//          println(newF.depth + s" (${e.length}) (${f.depth})" )
-          val sandC = newF.count(_.name.eq( sand))
+          val newF = f ++ adj
+          val newE = e.filterNot(_.eq(cur)) ++ adj.filterNot(f.contains)
+
+          val sandC = newF.count(_.name.eq(sand))
 
           Some(sandC, (newF, newE))
         }
       }
     }.last
-//      .getOrElse(Int.MaxValue)
   }
 
   extension (coord: coordinate) {
