@@ -30,7 +30,7 @@ object day14 {
 
   private def explore: Int = {
     val field = fieldWithFloor
-    val explorable = Seq[coordinate](sandSource)
+    val explorable = Set[coordinate](sandSource)
 
     Seq.unfold(field, explorable) {
       (f, e) => {
