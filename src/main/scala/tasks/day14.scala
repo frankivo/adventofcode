@@ -3,7 +3,7 @@ package tasks
 
 object day14 {
   def main(args: Array[String]): Unit = {
-//    println(s"Max items of sand before falling off: $part1")
+    //    println(s"Max items of sand before falling off: $part1")
     println(s"Max items of sand before hitting top: $part2")
   }
 
@@ -41,24 +41,25 @@ object day14 {
           val newF = f ++ cur.adjecent
           val newE = e.filterNot(_.eq(cur)) ++ cur.adjecent.filterNot(f.contains)
 
-          println(newF.depth + s" (${e.length})")
+//          println(newF.depth + s" (${e.length}) (${f.depth})" )
+          val sandC = newF.count(_.name.eq( sand))
 
-          Some(0, (newF, newE))
+          Some(sandC, (newF, newE))
         }
       }
-    }.minOption
-      .getOrElse(Int.MaxValue)
+    }.last
+//      .getOrElse(Int.MaxValue)
   }
 
   extension (coord: coordinate) {
     private def adjecent: Seq[coordinate] = {
       if (coord.y + 1 > fieldWithFloor.depth) Seq()
-
-      Seq(
-        coordinate(coord.x, coord.y + 1),
-        coordinate(coord.x - 1, coord.y + 1),
-        coordinate(coord.x + 1, coord.y + 1),
-      )
+      else
+        Seq(
+          coordinate(coord.x, coord.y + 1, sand),
+          coordinate(coord.x - 1, coord.y + 1, sand),
+          coordinate(coord.x + 1, coord.y + 1, sand),
+        )
     }
   }
 
