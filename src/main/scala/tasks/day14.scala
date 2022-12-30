@@ -3,8 +3,8 @@ package tasks
 
 object day14 {
   def main(args: Array[String]): Unit = {
-    println(s"Max items of sand before falling off: $part1")
-    //    println(s"Max items of sand before hitting top: $part2")
+//    println(s"Max items of sand before falling off: $part1")
+    println(s"Max items of sand before hitting top: $part2")
   }
 
   private type Field = Set[coordinate]
@@ -16,7 +16,7 @@ object day14 {
 
   private def part1: Long = countSand(fieldWithoutFloor)
 
-  private def part2: Long = countSand(fieldWithFloor) + 1
+  private def part2: Long = explore
 
   private def countSand(start: Field): Long = {
     Seq.unfold(start) {
@@ -26,6 +26,40 @@ object day14 {
         else Some(update.get.count(f => f.name == sand), update.get)
       }
     }.max
+  }
+
+  private def explore: Int = {
+    val field = Set[coordinate](sandSource)
+    val explorable = Seq[coordinate](sandSource)
+
+    Seq.unfold(field, explorable) {
+      (f, e) => {
+        if (e.isEmpty) None
+        else {
+          val cur = e.minBy(_.y)
+
+          val newF = f ++ cur.adjecent
+          val newE = e.filterNot(_.eq(cur)) ++ cur.adjecent.filterNot(f.contains)
+
+          println(newF.depth + s" (${e.length})")
+
+          Some(0, (newF, newE))
+        }
+      }
+    }.minOption
+      .getOrElse(Int.MaxValue)
+  }
+
+  extension (coord: coordinate) {
+    private def adjecent: Seq[coordinate] = {
+      if (coord.y + 1 > fieldWithFloor.depth) Seq()
+
+      Seq(
+        coordinate(coord.x, coord.y + 1),
+        coordinate(coord.x - 1, coord.y + 1),
+        coordinate(coord.x + 1, coord.y + 1),
+      )
+    }
   }
 
   extension (field: Field) {
@@ -65,7 +99,7 @@ object day14 {
     def isBlocked(x: Int, y: Int): Boolean = Seq(rock, sand).contains(field.itemAt(x, y))
   }
 
-  private def fieldWithoutFloor: Field = {
+  private val fieldWithoutFloor: Field = {
     util.get("day14.txt")
       .flatMap(l => {
         l.split("->").map(_.trim).sliding(2).toSeq
@@ -84,7 +118,7 @@ object day14 {
       }).toSet + sandSource
   }
 
-  private def fieldWithFloor: Field = {
+  private val fieldWithFloor: Field = {
     val field = fieldWithoutFloor
     val floorDepth = field.depth + 2
 
