@@ -3,14 +3,36 @@ package tasks
 
 object day15 {
   def main(args: Array[String]): Unit = {
-    println("Hello, World!")
-    input.foreach(i => {
-      println(s"$i : ${i.distance}")
-    })
+    println(s"Input size: ${input.size}")
+    println(s"No beacon at positions: $part1")
+  }
+
+  private def emptyZones: Set[coordinate] = input.flatMap(_.emptyZone)
+
+  private def part1: Long = {
+    val line = if (sys.env.contains("DEMO")) 10 else 2000000
+    emptyZones.count(_.y == line)
+  }
+
+  private val empty: String = "#"
+
+  extension (coord: coordinate) {
+    def manhatten(other: coordinate): Int = (coord.x - other.x).abs + (coord.y - other.y).abs
   }
 
   private case class sensor(sensor: coordinate, beacon: coordinate) {
-    def distance: Int = (sensor.x - beacon.x).abs + (sensor.y - beacon.y).abs
+    private def distance: Int = sensor.manhatten(beacon)
+
+    def emptyZone: Set[coordinate] = {
+      (sensor.y - distance to sensor.y + distance).flatMap(y => {
+        (sensor.x - distance to sensor.x + distance).map(x => {
+          coordinate(x, y, empty)
+        })
+          .filter(_.manhatten(sensor) <= distance)
+      })
+        .filterNot(e => e.equals(beacon))
+        .toSet
+    }
   }
 
   private val input: Set[sensor] = {
