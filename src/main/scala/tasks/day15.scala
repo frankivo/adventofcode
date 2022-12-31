@@ -9,10 +9,9 @@ object day15 {
 
   private def emptyZones: Set[coordinate] = input.flatMap(_.emptyZone)
 
-  private def part1: Long = {
-    val line = if (sys.env.contains("DEMO")) 10 else 2000000
-    emptyZones.count(_.y == line)
-  }
+  private val scanLine: Int = if (sys.env.contains("DEMO")) 10 else 2000000
+
+  private def part1: Long = emptyZones.count(_.y == scanLine)
 
   private val empty: String = "#"
 
@@ -24,7 +23,7 @@ object day15 {
     private def distance: Int = sensor.manhatten(beacon)
 
     def emptyZone: Set[coordinate] = {
-      (sensor.y - distance to sensor.y + distance).flatMap(y => {
+      (sensor.y - distance to sensor.y + distance).filter(_ == scanLine).flatMap(y => {
         (sensor.x - distance to sensor.x + distance).map(x => {
           coordinate(x, y, empty)
         })
