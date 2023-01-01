@@ -1,23 +1,40 @@
 package com.github.frankivo
 package tasks
 
+
 object day15 {
   def main(args: Array[String]): Unit = {
-    println(s"Input size: ${input.size}")
-    println(s"No beacon at positions: $part1")
+    //    println(s"No beacon at positions: $part1")
+    println(s"No beacon at positions: $part2")
   }
 
-  private def emptyZones: Set[coordinate] = input.flatMap(_.emptyZone)
+  private val scanLine: Int = if (sys.env.contains("DEMO")) 10 else 2_000_000
+  private val scanRange: Int = if (sys.env.contains("DEMO")) 20 else 4_000_000
 
-  private val scanLine: Int = if (sys.env.contains("DEMO")) 10 else 2000000
+  private def part1: Long = input.flatMap(_.emptyZone).count(_.y == scanLine)
 
-  private def part1: Long = emptyZones.count(_.y == scanLine)
+  private def part2: Long = {
+    val emptyZone = input.map(_.stressSignal).reduce(_ ++ _)
+    println(emptyZone.size)
+
+    val range = (0 to scanRange).toSet
+    val a = range.flatMap(l => {
+      val b = emptyZone.filter(_.line == l)
+      val c = b.foldLeft(range) {
+        (r, cur) => r.filterNot(i => i >= cur.left && i <= cur.right)
+      }
+      Option.when(c.nonEmpty)(coordinate(c.head, l))
+    })
+    (a.head.x * 4000000) + a.head.y
+  }
 
   private val empty: String = "#"
 
   extension (coord: coordinate) {
     def manhatten(other: coordinate): Int = (coord.x - other.x).abs + (coord.y - other.y).abs
   }
+
+  private case class lineblock(line: Int, left: Int, right: Int)
 
   private case class sensor(sensor: coordinate, beacon: coordinate) {
     private def distance: Int = sensor.manhatten(beacon)
@@ -31,6 +48,14 @@ object day15 {
       })
         .filterNot(e => e.equals(beacon))
         .toSet
+    }
+
+    def stressSignal: Set[lineblock] = {
+      (Seq(0, sensor.y - distance).max to Seq(scanRange, sensor.y + distance).min)
+        .map(y => {
+          val leftover = distance - (sensor.y - y).abs
+          lineblock(y, Seq(0, sensor.x - leftover).max, Seq(scanRange, sensor.x + leftover).min)
+        }).toSet
     }
   }
 
