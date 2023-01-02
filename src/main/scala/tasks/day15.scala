@@ -51,7 +51,7 @@ object day15 {
         })
           .filter(p => manhattan(sensor.x, sensor.y, p.x, p.y) <= distance)
       })
-        .filterNot(e => e.equals(beacon))
+        .filterNot(e => e.x == beacon.x && e.y == beacon.y)
         .toSet
     }
   }
