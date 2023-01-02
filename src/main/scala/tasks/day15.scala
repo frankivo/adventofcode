@@ -1,10 +1,14 @@
 package com.github.frankivo
 package tasks
 
+/**
+ * This video helped me trough part 2: https://www.youtube.com/watch?v=pV5nNyjMdFA
+ */
+
 object day15 {
   def main(args: Array[String]): Unit = {
-    //    println(s"No beacon at positions: $part1")
-    println(s"No beacon at positions: $part2")
+    println(s"No beacon at positions: $part1")
+    println(s"Beacon tuning frequency: $part2")
   }
 
   private val scanLine: Int = if (sys.env.contains("DEMO")) 10 else 2_000_000
@@ -13,65 +17,42 @@ object day15 {
   private def part1: Long = input.flatMap(_.emptyZone).count(_.y == scanLine)
 
   private def part2: Long = {
-    val findY = input
-      .foldLeft(input) {
-        (res, i) => {
-          res.filter(input
-            .filterNot(x => i.minX > x.minX && i.minX < x.maxX)
-            .filterNot(x => i.maxX > x.minX && i.maxX < x.maxX)
-          )
-        }
-      }
+    val sensors = input.map(i => (i.sensor.x, i.sensor.y, i.distance))
+    val stressBeacon = sensors.flatMap(s => {
+      (0 to s._3 + 2).flatMap(dx => {
+        val dy = s._3 + 1 - dx
+        Seq(
+          (s._1 + dx, s._2 + dy),
+          (s._1 + dx, s._2 - dy),
+          (s._1 - dx, s._2 + dy),
+          (s._1 - dx, s._2 - dy),
+        )
+          .find(xy => {
+            (xy._1 >= 0 && xy._1 <= scanRange && xy._2 >= 0 && xy._2 <= scanRange) &&
+              sensors.forall(s => manhattan(xy._1, xy._2, s._1, s._2) > s._3)
+          })
+      })
+    }).head
 
-    val findX = input
-      .foldLeft(input) {
-        (res, i) => {
-          res.filter(input
-            .filterNot(y => i.minY > y.minY && i.minY < y.maxY)
-            .filterNot(y => i.maxY > y.minY && i.maxY < y.maxY)
-          )
-        }
-      }
-
-    (findX.head.sensor.x * 4_000_000) + findY.head.sensor.y
+    (400_000_000L * stressBeacon._1) + stressBeacon._2
   }
 
   private val empty: String = "#"
 
-  extension (coord: coordinate) {
-    def manhatten(other: coordinate): Int = (coord.x - other.x).abs + (coord.y - other.y).abs
-  }
-
-  private case class lineblock(line: Int, left: Int, right: Int)
+  private def manhattan(x1: Int, y1: Int, x2: Int, y2: Int): Int = (x1 - x2).abs + (y1 - y2).abs
 
   private case class sensor(sensor: coordinate, beacon: coordinate) {
-    private def distance: Int = sensor.manhatten(beacon)
-
-    def minX = Seq(0, sensor.x - distance).max + 1
-
-    def maxX = Seq(scanRange, sensor.x + distance).min + 1
-
-    def minY = Seq(0, sensor.y - distance).max + 1
-
-    def maxY = Seq(scanRange, sensor.y + distance).min + 1
+    def distance: Int = manhattan(sensor.x, sensor.y, beacon.x, beacon.y)
 
     def emptyZone: Set[coordinate] = {
       (sensor.y - distance to sensor.y + distance).filter(_ == scanLine).flatMap(y => {
         (sensor.x - distance to sensor.x + distance).map(x => {
           coordinate(x, y, empty)
         })
-          .filter(_.manhatten(sensor) <= distance)
+          .filter(p => manhattan(sensor.x, sensor.y, p.x, p.y) <= distance)
       })
         .filterNot(e => e.equals(beacon))
         .toSet
-    }
-
-    def stressSignal: Set[lineblock] = {
-      (Seq(0, sensor.y - distance).max to Seq(scanRange, sensor.y + distance).min)
-        .map(y => {
-          val leftover = distance - (sensor.y - y).abs
-          lineblock(y, Seq(0, sensor.x - leftover).max, Seq(scanRange, sensor.x + leftover).min)
-        }).toSet
     }
   }
 
