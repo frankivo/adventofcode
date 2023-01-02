@@ -1,7 +1,6 @@
 package com.github.frankivo
 package tasks
 
-
 object day15 {
   def main(args: Array[String]): Unit = {
     //    println(s"No beacon at positions: $part1")
@@ -14,18 +13,27 @@ object day15 {
   private def part1: Long = input.flatMap(_.emptyZone).count(_.y == scanLine)
 
   private def part2: Long = {
-    val emptyZone = input.map(_.stressSignal).reduce(_ ++ _)
-    println(emptyZone.size)
-
-    val range = (0 to scanRange).toSet
-    val a = range.flatMap(l => {
-      val b = emptyZone.filter(_.line == l)
-      val c = b.foldLeft(range) {
-        (r, cur) => r.filterNot(i => i >= cur.left && i <= cur.right)
+    val findY = input
+      .foldLeft(input) {
+        (res, i) => {
+          res.filter(input
+            .filterNot(x => i.minX > x.minX && i.minX < x.maxX)
+            .filterNot(x => i.maxX > x.minX && i.maxX < x.maxX)
+          )
+        }
       }
-      Option.when(c.nonEmpty)(coordinate(c.head, l))
-    })
-    (a.head.x * 4000000) + a.head.y
+
+    val findX = input
+      .foldLeft(input) {
+        (res, i) => {
+          res.filter(input
+            .filterNot(y => i.minY > y.minY && i.minY < y.maxY)
+            .filterNot(y => i.maxY > y.minY && i.maxY < y.maxY)
+          )
+        }
+      }
+
+    (findX.head.sensor.x * 4_000_000) + findY.head.sensor.y
   }
 
   private val empty: String = "#"
@@ -38,6 +46,14 @@ object day15 {
 
   private case class sensor(sensor: coordinate, beacon: coordinate) {
     private def distance: Int = sensor.manhatten(beacon)
+
+    def minX = Seq(0, sensor.x - distance).max + 1
+
+    def maxX = Seq(scanRange, sensor.x + distance).min + 1
+
+    def minY = Seq(0, sensor.y - distance).max + 1
+
+    def maxY = Seq(scanRange, sensor.y + distance).min + 1
 
     def emptyZone: Set[coordinate] = {
       (sensor.y - distance to sensor.y + distance).filter(_ == scanLine).flatMap(y => {
