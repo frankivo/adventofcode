@@ -3,26 +3,23 @@ package tasks
 
 object day16 {
   def main(args: Array[String]): Unit = {
-    input.foreach(println)
-    explore()
+    println(input.size)+
+    println(explore().size)
   }
 
-  def explore(): Unit = {
-    var distances = Map[String, Int]("AA" -> 0)
-    var explorable = Set[String]("AA")
-
-    while (explorable.nonEmpty) {
-      val cur = explorable.head
-      val dist = distances(cur) + 1
-
-      val adj = input(cur).tunnels
-
-      explorable = explorable.filterNot(_ == cur) ++ adj.filterNot(distances.contains)
-      distances = distances ++ adj.filterNot(distances.contains).map(_ -> dist)
-    }
-
-    println(distances)
-
+  def explore(): Map[String, Int] = {
+    Seq.unfold(Set[String]("AA"), Map[String, Int]("AA" -> 0)) {
+      (explorable, distances) => {
+        Option.when(explorable.nonEmpty) {
+          val cur = explorable.head
+          val adj = input(cur).tunnels
+          (distances, (
+            explorable.filterNot(_ == cur) ++ adj.filterNot(distances.contains),
+            distances ++ adj.filterNot(distances.contains).map(_ -> (distances(cur) + 1))
+          ))
+        }
+      }
+    }.last
   }
 
   private case class Valve(flowRate: Int, tunnels: Set[String])
