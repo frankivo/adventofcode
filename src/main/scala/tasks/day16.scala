@@ -44,6 +44,8 @@ object day16 {
   private def pressure(valves: Set[(String, Boolean)]): Int =
     valves.filter(_._2).map(v => input(v._1).flowRate).sum
 
+  // TODO: track steps
+  // TODO: track gain (remaining minutes * flowrate)
   private def explore(start: String): Map[String, Int] = {
     Seq.unfold(Set[String](start), Map[String, Int](start -> 0)) {
       (explorable, distances) => {
