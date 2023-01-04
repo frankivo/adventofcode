@@ -11,28 +11,26 @@ object day16 {
   private val StartNode: String = "AA"
 
   private def part1(): Int = {
-    allDistances.foreach(println)
-    findBest(StartNode, allDistances(StartNode).keys.map(v => (v, input(v).flowRate == 0)).toMap, 30, 0)
+    allDistances.foreach(x =>
+      val s = x._2.toSeq.sortBy(v => (v._2, v._1))
+      println(s"${x._1} --> $s")
+    )
+    findBest(StartNode, allDistances(StartNode).keys.map(v => (v, input(v).flowRate == 0)).toMap, 30)
   }
 
-  private def findBest(node: String, valveStates: Map[String, Boolean], timeLeft: Int, bestScore: Int): Int = {
-    val newState = valveStates.filterNot(_._1 == node) + (node -> true)
-    val dist = allDistances(node)
+  private def findBest(valve: String, valveStates: Map[String, Boolean], time: Int): Int = {
+    var maxval = 0
 
-    val newScore = bestScore + currentFlowrate(valveStates)
+    allDistances(valve).keys.foreach(neighbour => {
+      val remtime = time - allDistances(valve)(neighbour) - 1
+      if (remtime > 0 && !valveStates(neighbour)) {
+        val newState = valveStates.filterNot(_._1 == neighbour) + (neighbour -> true)
+        val score = findBest(neighbour, newState, remtime) + input(neighbour).flowRate * remtime
+        maxval = Seq(maxval, score).max
+      }
+    })
 
-    valveStates
-      .filterNot(_._2) // Already open
-      .filterNot(vs => dist(vs._1) >= timeLeft) // Unreachable within remaining time
-
-      .map(vs => {
-        findBest(vs._1, newState, timeLeft - (dist(vs._1) + 1), newScore)
-      })
-      .maxOption.getOrElse(newScore + (currentFlowrate(valveStates) * timeLeft))
-  }
-
-  private def currentFlowrate(valveStates: Map[String, Boolean]): Int = {
-    valveStates.filter(_._2).map(vs => input(vs._1).flowRate).sum
+    maxval
   }
 
   private def explore(start: String): Map[String, Int] = {
@@ -62,7 +60,7 @@ object day16 {
     input
       .filter(v => v._1 == "AA" || v._2.flowRate > 0)
       .keys
-      .map(k => (k, explore(k).filterNot(v => input(v._1).flowRate == 0)))
+      .map(k => (k, explore(k).filterNot(v => input(v._1).flowRate == 0).filterNot(_._1 == k)))
       .toMap
   }
 }
