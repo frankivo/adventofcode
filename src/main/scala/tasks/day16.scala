@@ -3,7 +3,7 @@ package tasks
 
 object day16 {
   def main(args: Array[String]): Unit = {
-    println(part1())
+    println(s"Most pressure to release: ${part1()}")
   }
 
   private case class Valve(flowRate: Int, tunnels: Set[String])
