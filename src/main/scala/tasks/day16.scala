@@ -3,13 +3,25 @@ package tasks
 
 object day16 {
   def main(args: Array[String]): Unit = {
-    part1()
+    println(part1())
   }
 
   private case class Valve(flowRate: Int, tunnels: Set[String])
 
-  private def part1(): Unit = {
+  private val StartNode: String = "AA"
+
+  private def part1(): Int = {
     allDistances.foreach(println)
+    open(StartNode, allDistances(StartNode).keys.map(v => (v, input(v).flowRate == 0)).toMap)
+  }
+
+  private def open(node: String, valveStates: Map[String, Boolean]): Int = {
+    if (valveStates.forall(_._2))
+      1
+    else {
+      val newState = valveStates.filterNot(_._1 == node) + (node -> true)
+      1 + open(valveStates.filterNot(_._2).head._1, newState)
+    }
   }
 
   private def explore(start: String): Map[String, Int] = {
@@ -43,7 +55,7 @@ object day16 {
         (k,
           explore(k)
             .filterNot(v => input(v._1).flowRate == 0)
-            .filterNot(_._1 == k)
+          //            .filterNot(_._1 == k)
         )
       }).toMap
   }
