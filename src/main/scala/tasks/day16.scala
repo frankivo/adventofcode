@@ -12,16 +12,28 @@ object day16 {
 
   private def part1(): Int = {
     allDistances.foreach(println)
-    open(StartNode, allDistances(StartNode).keys.map(v => (v, input(v).flowRate == 0)).toMap)
+    findBest(StartNode, allDistances(StartNode).keys.map(v => (v, input(v).flowRate == 0)).toMap, 30, 0)
   }
 
-  private def open(node: String, valveStates: Map[String, Boolean]): Int = {
-    if (valveStates.forall(_._2))
-      1
-    else {
-      val newState = valveStates.filterNot(_._1 == node) + (node -> true)
-      1 + open(valveStates.filterNot(_._2).head._1, newState)
-    }
+  private def findBest(node: String, valveStates: Map[String, Boolean], timeLeft: Int, bestScore: Int): Int = {
+    val newState = valveStates.filterNot(_._1 == node) + (node -> true)
+    val dist = allDistances(node)
+
+    val cfr = currentFlowrate(valveStates) * timeLeft
+
+    val bestOption = valveStates
+      .filterNot(_._2) // Already open
+      .filterNot(vs => dist(vs._1) >= timeLeft) // Unreachable within remaining time
+      .map(vs => {
+        currentFlowrate(valveStates) + findBest(vs._1, newState, timeLeft - (dist(vs._1) + 1), bestScore)
+      })
+      .maxOption.getOrElse(-1)
+
+    Seq(bestScore, cfr, bestOption).max
+  }
+
+  private def currentFlowrate(valveStates: Map[String, Boolean]): Int = {
+    valveStates.filter(_._2).map(vs => input(vs._1).flowRate).sum
   }
 
   private def explore(start: String): Map[String, Int] = {
