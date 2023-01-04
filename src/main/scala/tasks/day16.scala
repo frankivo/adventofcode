@@ -11,10 +11,6 @@ object day16 {
   private val StartNode: String = "AA"
 
   private def part1(): Int = {
-    allDistances.foreach(x =>
-      val s = x._2.toSeq.sortBy(v => (v._2, v._1))
-      println(s"${x._1} --> $s")
-    )
     findBest(StartNode, allDistances(StartNode).keys.map(v => (v, input(v).flowRate == 0)).toMap, 30)
   }
 
@@ -39,13 +35,19 @@ object day16 {
         Option.when(explorable.nonEmpty) {
           val cur = explorable.head
           val adj = input(cur).tunnels
+
           (distances, (
             explorable.filterNot(_ == cur) ++ adj.filterNot(distances.contains),
-            distances ++ adj.filterNot(distances.contains).map(_ -> (distances(cur) + 1))
+            mergeDistances(distances, adj.map(_ -> (distances(cur) + 1)).toMap)
           ))
         }
       }
     }.last
+  }
+
+  private def mergeDistances(old: Map[String, Int], updates: Map[String, Int]): Map[String, Int] = {
+    old.map(o => (o._1, Seq(o._2, updates.getOrElse(o._1, Int.MaxValue)).min)) ++
+      updates.filterNot(u => old.keys.exists(_ == u._1))
   }
 
   private val input: Map[String, Valve] = {
