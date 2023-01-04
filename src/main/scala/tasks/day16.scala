@@ -19,18 +19,18 @@ object day16 {
   }
 
   private def findBest(valve: String, valveStates: Map[String, Boolean], time: Int): Int = {
-    var maxval = 0
-
-    allDistances(valve).keys.foreach(neighbour => {
-      val remtime = time - allDistances(valve)(neighbour) - 1
-      if (remtime > 0 && !valveStates(neighbour)) {
-        val newState = valveStates.filterNot(_._1 == neighbour) + (neighbour -> true)
-        val score = findBest(neighbour, newState, remtime) + input(neighbour).flowRate * remtime
-        maxval = Seq(maxval, score).max
-      }
-    })
-
-    maxval
+    allDistances(valve)
+      .keys
+      .filterNot(valveStates) // Don't attempt to open opened valves
+      .flatMap(neighbour => {
+        val remtime = time - allDistances(valve)(neighbour) - 1 // Distance to neighbour valve and time to open
+        Option.when(remtime > 0) { // No point in opening when there is no time left after opening
+          val newState = valveStates.filterNot(_._1 == neighbour) + (neighbour -> true) // Open valve
+          findBest(neighbour, newState, remtime) + input(neighbour).flowRate * remtime // Generate flow
+        }
+      })
+      .maxOption
+      .getOrElse(0)
   }
 
   private def explore(start: String): Map[String, Int] = {
