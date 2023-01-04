@@ -19,17 +19,16 @@ object day16 {
     val newState = valveStates.filterNot(_._1 == node) + (node -> true)
     val dist = allDistances(node)
 
-    val cfr = currentFlowrate(valveStates) * timeLeft
+    val newScore = bestScore + currentFlowrate(valveStates)
 
-    val bestOption = valveStates
+    valveStates
       .filterNot(_._2) // Already open
       .filterNot(vs => dist(vs._1) >= timeLeft) // Unreachable within remaining time
-      .map(vs => {
-        currentFlowrate(valveStates) + findBest(vs._1, newState, timeLeft - (dist(vs._1) + 1), bestScore)
-      })
-      .maxOption.getOrElse(-1)
 
-    Seq(bestScore, cfr, bestOption).max
+      .map(vs => {
+        findBest(vs._1, newState, timeLeft - (dist(vs._1) + 1), newScore)
+      })
+      .maxOption.getOrElse(newScore + (currentFlowrate(valveStates) * timeLeft))
   }
 
   private def currentFlowrate(valveStates: Map[String, Boolean]): Int = {
@@ -63,12 +62,7 @@ object day16 {
     input
       .filter(v => v._1 == "AA" || v._2.flowRate > 0)
       .keys
-      .map(k => {
-        (k,
-          explore(k)
-            .filterNot(v => input(v._1).flowRate == 0)
-          //            .filterNot(_._1 == k)
-        )
-      }).toMap
+      .map(k => (k, explore(k).filterNot(v => input(v._1).flowRate == 0)))
+      .toMap
   }
 }
