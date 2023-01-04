@@ -36,12 +36,15 @@ object day16 {
   }
 
   private val allDistances: Map[String, Map[String, Int]] = {
-    input.keys.map(k => {
-      (k,
-        explore(k)
-          .filterNot(v => input(v._1).flowRate == 0)
-          .filterNot(_._1 == k)
-      )
-    }).toMap
+    input
+      .filter(v => v._1 == "AA" || v._2.flowRate > 0)
+      .keys
+      .map(k => {
+        (k,
+          explore(k)
+            .filterNot(v => input(v._1).flowRate == 0)
+            .filterNot(_._1 == k)
+        )
+      }).toMap
   }
 }
