@@ -29,20 +29,10 @@ object day16 {
   }
 
   private def part2(): Int = {
-    var m = 0
-
-    val states = permutations.map(p => {
-      (p._1.map((_, false)), p._2.map((_, false)))
-    })
-
-    println(Instant.now)
-
-    states.foreach(s => {
-      val left = findBest("AA", s._1.toMap, 26)
-      val right = findBest("AA", s._2.toMap, 26)
-      m = Seq(m, left + right).max
-    })
-    m
+    permutations
+      .map(p => (p._1.map((_, false)), p._2.map((_, false))))
+      .map(s => findBest("AA", s._1.toMap, 26) + findBest("AA", s._2.toMap, 26))
+      .max
   }
 
   private def permutations: Iterator[(Seq[String], Seq[String])] = {
