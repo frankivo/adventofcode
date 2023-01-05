@@ -1,23 +1,10 @@
 package com.github.frankivo
 package tasks
 
-import java.time.Instant
-
 object day16 {
   def main(args: Array[String]): Unit = {
-    println(Instant.now())
     println(s"Most pressure to release: ${part1()}")
-    println(Instant.now())
-    println(part2())
-    //
-    //    val x = explore("AA")
-    //      .keys
-    //      .filterNot(k => input(k).flowRate == 0)
-    //      .toSeq
-    //    println(x.length)
-    //    println(x.permutations.length)
-    //    x.permutations.foreach(println)
-    println(Instant.now())
+    println(s"Most pressure with helper elephant: ${part2()}")
   }
 
   private case class Valve(flowRate: Int, tunnels: Set[String])
@@ -36,12 +23,11 @@ object day16 {
   }
 
   private def permutations: Iterator[(Seq[String], Seq[String])] = {
-    explore("AA")
-      .keys
-      .filterNot(k => input(k).flowRate == 0)
-      .toSeq
-      .permutations
-      .map(g => g.splitAt(g.length / 2))
+    val keys = explore("AA").keys.filterNot(input(_).flowRate == 0).toSeq
+    keys
+      .combinations((keys.length / 2.0).ceil.toInt)
+      .map(_.sorted).distinct
+      .map(u => (u, keys.filterNot(u.contains)))
   }
 
   private def findBest(valve: String, valveStates: Map[String, Boolean], time: Int): Int = {
