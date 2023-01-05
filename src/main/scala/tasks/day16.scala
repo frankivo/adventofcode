@@ -17,7 +17,7 @@ object day16 {
 
   private def part2(): Int = {
     val b = (1 << allDistances(StartNode).size) - 1
-    (0 until  (b  / 2.0).toInt)
+    (0 to (b / 2.0).floor.toInt)
       .map(s => findBest(StartNode, s, 26) + findBest(StartNode, b ^ s, 26))
       .max
   }
@@ -25,14 +25,11 @@ object day16 {
   private def findBest(valve: String, valveStates: Int, time: Int): Int = {
     allDistances(valve)
       .keys
-      .filterNot(x => {
-        val bit = 1 << indices(x)
-        (valveStates & bit) == bit
-      }) // Don't attempt to open opened valves
+      .filterNot(x => (valveStates & bits(x)) == bits(x)) // Don't attempt to open opened valves
       .flatMap(neighbour => {
         val remtime = time - allDistances(valve)(neighbour) - 1 // Distance to neighbour valve and time to open
         Option.when(remtime > 0) { // No point in opening when there is no time left after opening
-          findBest(neighbour, valveStates | (1 << indices(neighbour)), remtime) + input(neighbour).flowRate * remtime // Generate flow
+          findBest(neighbour, valveStates | bits(neighbour), remtime) + input(neighbour).flowRate * remtime // Generate flow
         }
       })
       .maxOption
@@ -76,5 +73,5 @@ object day16 {
       .toMap
   }
 
-  private val indices = allDistances(StartNode).keys.zipWithIndex.toMap
+  private val bits : Map[String, Int] = allDistances(StartNode).keys.zipWithIndex.toMap.map(i => (i._1, 1 << i._2))
 }
