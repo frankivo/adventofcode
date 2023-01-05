@@ -4,7 +4,9 @@ package tasks
 object day16 {
   def main(args: Array[String]): Unit = {
     println(s"Most pressure to release: ${part1()}")
-    println(s"Most pressure with helper elephant: ${part2()}")
+    //    println(s"Most pressure with helper elephant: ${part2()}")
+
+    allDistances.foreach(println)
   }
 
   private case class Valve(flowRate: Int, tunnels: Set[String])
@@ -12,34 +14,43 @@ object day16 {
   private val StartNode: String = "AA"
 
   private def part1(): Int = {
-    findBest(StartNode, allDistances(StartNode).keys.map(v => (v, input(v).flowRate == 0)).toMap, 30)
+    findBest(StartNode, 0, 30)
   }
 
   private def part2(): Int = {
-    permutations
-      .map(p => (p._1.map((_, false)), p._2.map((_, false))))
-      .map(s => findBest("AA", s._1.toMap, 26) + findBest("AA", s._2.toMap, 26))
-      .max
+    //    permutations
+    //      .map(p => (p._1.map((_, false)), p._2.map((_, false))))
+    //      .map(s => findBest("AA", s._1.toMap, 26) + findBest("AA", s._2.toMap, 26))
+    //      .max
+
+    0
   }
 
   private def permutations: Iterator[(Seq[String], Seq[String])] = {
     val keys = explore("AA").keys.filterNot(input(_).flowRate == 0).toSeq
+
+    println(keys)
+    println(keys.length)
+
     keys
       .combinations((keys.length / 2.0).ceil.toInt)
       .map(_.sorted).distinct
       .map(u => (u, keys.filterNot(u.contains)))
   }
 
-  private def findBest(valve: String, valveStates: Map[String, Boolean], time: Int): Int = {
+
+  private def findBest(valve: String, valveStates: Int, time: Int): Int = {
     allDistances(valve)
       .keys
-      .filter(valveStates.contains)
-      .filterNot(valveStates) // Don't attempt to open opened valves
+      //      .filter(valveStates.contains)
+      .filterNot(x => {
+        val bit = 1 << indices(x)
+        (valveStates & bit) == bit
+      }) // Don't attempt to open opened valves
       .flatMap(neighbour => {
         val remtime = time - allDistances(valve)(neighbour) - 1 // Distance to neighbour valve and time to open
         Option.when(remtime > 0) { // No point in opening when there is no time left after opening
-          val newState = valveStates.filterNot(_._1 == neighbour) + (neighbour -> true) // Open valve
-          findBest(neighbour, newState, remtime) + input(neighbour).flowRate * remtime // Generate flow
+          findBest(neighbour, valveStates | (1 << indices(neighbour)), remtime) + input(neighbour).flowRate * remtime // Generate flow
         }
       })
       .maxOption
@@ -81,5 +92,12 @@ object day16 {
       .keys
       .map(k => (k, explore(k).filterNot(v => input(v._1).flowRate == 0).filterNot(_._1 == k)))
       .toMap
+  }
+
+  private val indices = allDistances.keys.zipWithIndex.toMap
+
+  private val bits: Map[String, Int] = {
+    val indices = allDistances.keys.zipWithIndex.toMap
+    allDistances.keys.map(k => (k, 1 << indices(k))).toMap
   }
 }
