@@ -1,9 +1,23 @@
 package com.github.frankivo
 package tasks
 
+import java.time.Instant
+
 object day16 {
   def main(args: Array[String]): Unit = {
+    println(Instant.now())
     println(s"Most pressure to release: ${part1()}")
+    println(Instant.now())
+    println(part2())
+    //
+    //    val x = explore("AA")
+    //      .keys
+    //      .filterNot(k => input(k).flowRate == 0)
+    //      .toSeq
+    //    println(x.length)
+    //    println(x.permutations.length)
+    //    x.permutations.foreach(println)
+    println(Instant.now())
   }
 
   private case class Valve(flowRate: Int, tunnels: Set[String])
@@ -14,9 +28,36 @@ object day16 {
     findBest(StartNode, allDistances(StartNode).keys.map(v => (v, input(v).flowRate == 0)).toMap, 30)
   }
 
+  private def part2(): Int = {
+    var m = 0
+
+    val states = permutations.map(p => {
+      (p._1.map((_, false)), p._2.map((_, false)))
+    })
+
+    println(Instant.now)
+
+    states.foreach(s => {
+      val left = findBest("AA", s._1.toMap, 26)
+      val right = findBest("AA", s._2.toMap, 26)
+      m = Seq(m, left + right).max
+    })
+    m
+  }
+
+  private def permutations: Iterator[(Seq[String], Seq[String])] = {
+    explore("AA")
+      .keys
+      .filterNot(k => input(k).flowRate == 0)
+      .toSeq
+      .permutations
+      .map(g => g.splitAt(g.length / 2))
+  }
+
   private def findBest(valve: String, valveStates: Map[String, Boolean], time: Int): Int = {
     allDistances(valve)
       .keys
+      .filter(valveStates.contains)
       .filterNot(valveStates) // Don't attempt to open opened valves
       .flatMap(neighbour => {
         val remtime = time - allDistances(valve)(neighbour) - 1 // Distance to neighbour valve and time to open
