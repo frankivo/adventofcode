@@ -4,9 +4,7 @@ package tasks
 object day16 {
   def main(args: Array[String]): Unit = {
     println(s"Most pressure to release: ${part1()}")
-    //    println(s"Most pressure with helper elephant: ${part2()}")
-
-    allDistances.foreach(println)
+    println(s"Most pressure with helper elephant: ${part2()}")
   }
 
   private case class Valve(flowRate: Int, tunnels: Set[String])
@@ -18,31 +16,15 @@ object day16 {
   }
 
   private def part2(): Int = {
-    //    permutations
-    //      .map(p => (p._1.map((_, false)), p._2.map((_, false))))
-    //      .map(s => findBest("AA", s._1.toMap, 26) + findBest("AA", s._2.toMap, 26))
-    //      .max
-
-    0
+    val b = (1 << allDistances(StartNode).size) - 1
+    (0 until  (b  / 2.0).toInt)
+      .map(s => findBest(StartNode, s, 26) + findBest(StartNode, b ^ s, 26))
+      .max
   }
-
-  private def permutations: Iterator[(Seq[String], Seq[String])] = {
-    val keys = explore("AA").keys.filterNot(input(_).flowRate == 0).toSeq
-
-    println(keys)
-    println(keys.length)
-
-    keys
-      .combinations((keys.length / 2.0).ceil.toInt)
-      .map(_.sorted).distinct
-      .map(u => (u, keys.filterNot(u.contains)))
-  }
-
 
   private def findBest(valve: String, valveStates: Int, time: Int): Int = {
     allDistances(valve)
       .keys
-      //      .filter(valveStates.contains)
       .filterNot(x => {
         val bit = 1 << indices(x)
         (valveStates & bit) == bit
@@ -88,16 +70,11 @@ object day16 {
 
   private val allDistances: Map[String, Map[String, Int]] = {
     input
-      .filter(v => v._1 == "AA" || v._2.flowRate > 0)
+      .filter(v => v._1 == StartNode || v._2.flowRate > 0)
       .keys
       .map(k => (k, explore(k).filterNot(v => input(v._1).flowRate == 0).filterNot(_._1 == k)))
       .toMap
   }
 
-  private val indices = allDistances.keys.zipWithIndex.toMap
-
-  private val bits: Map[String, Int] = {
-    val indices = allDistances.keys.zipWithIndex.toMap
-    allDistances.keys.map(k => (k, 1 << indices(k))).toMap
-  }
+  private val indices = allDistances(StartNode).keys.zipWithIndex.toMap
 }
