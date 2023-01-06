@@ -35,7 +35,7 @@ object day16 {
   }
 
   private def explore(start: String): Map[String, Int] = {
-    Seq.unfold(Set[String](start), Map[String, Int](start -> 0)) {
+    Seq.unfold(Seq[String](start), Map[String, Int](start -> 0)) {
       (explorable, distances) => {
         Option.when(explorable.nonEmpty) {
           val cur = explorable.head
