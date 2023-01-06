@@ -11,14 +11,12 @@ object day16 {
 
   private val StartNode: String = "AA"
 
-  private def part1(): Int = {
-    findBest(StartNode, 0, 30)
-  }
+  private def part1(): Int = findBest(StartNode, 0, 30)
 
   private def part2(): Int = {
-    val b = (1 << allDistances(StartNode).size) - 1
-    (0 to (b / 2.0).floor.toInt)
-      .map(s => findBest(StartNode, s, 26) + findBest(StartNode, b ^ s, 26))
+    val mask = (1 << allDistances(StartNode).size) - 1
+    (0 to (mask / 2.0).floor.toInt)
+      .map(i => findBest(StartNode, i, 26) + findBest(StartNode, mask ^ i, 26))
       .max
   }
 
@@ -73,5 +71,5 @@ object day16 {
       .toMap
   }
 
-  private val bits : Map[String, Int] = allDistances(StartNode).keys.zipWithIndex.toMap.map(i => (i._1, 1 << i._2))
+  private val bits: Map[String, Int] = allDistances(StartNode).keys.zipWithIndex.toMap.map(i => (i._1, 1 << i._2))
 }
