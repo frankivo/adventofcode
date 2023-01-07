@@ -44,7 +44,6 @@ object day17 {
     }
 
     end.show()
-    println(end)
   }
 
   extension (coordinates: Set[coordinate]) {
@@ -101,11 +100,10 @@ object day17 {
     }
 
     private def isBlockedVertical: Boolean = {
-      // TODO: check against other rocks in every X
-      val btm = getRock.minBy(_.y) // Bottom of the rock
-
-      btm.y - 1 == 0 // Floor
-        || coordinates.find(c => c.x == btm.x && c.y == btm.y - 1).map(_.name).getOrElse(air) == rockStatic // Rock
+      getRock.exists(r => {
+        r.y - 1 == 0 ||
+          coordinates.find(c => c.x == r.x && c.y == r.y - 1).map(_.name).getOrElse(air) == rockStatic
+      })
     }
   }
 
