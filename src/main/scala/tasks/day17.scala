@@ -19,7 +19,7 @@ object day17 {
   private def part1(): Unit = {
     val start = Set.empty[coordinate]
 
-    val end = (0 until 3).foldLeft(start) {
+    val end = (0 until 4).foldLeft(start) {
       (state1, _) => {
         val f = state1.addRock()
         println("Shape")
@@ -120,25 +120,18 @@ object day17 {
 
     def next(top: Int): Seq[coordinate] = {
       val shape = iterator.next() % 5
-      shape match
+      val xys = shape match
         case 0 => // Horizontal line
-          (3 to 6).map(i => coordinate(i, top + 4, rockMoving))
+          (3 to 6).map(i => (i, top + 4))
         case 1 => // Cross
-          Seq(
-            coordinate(4, top + 6, rockMoving), // Top
-            coordinate(3, top + 5, rockMoving),
-            coordinate(4, top + 5, rockMoving),
-            coordinate(5, top + 5, rockMoving),
-            coordinate(4, top + 4, rockMoving), // Bottom
-          )
+          Seq((4, top + 6), (3, top + 5), (4, top + 5), (5, top + 5), (4, top + 4))
         case 2 => // Reverse L
           Seq(
-            coordinate(5, top + 6, rockMoving), // Top
-            coordinate(5, top + 5, rockMoving),
-            coordinate(5, top + 4, rockMoving),
-            coordinate(4, top + 4, rockMoving),
-            coordinate(3, top + 4, rockMoving), // Bottom left
-          )
+            (5, top + 6), (5, top + 5), (5, top + 4), (4, top + 4), (3, top + 4))
+        case 3 => // Vertical line
+          (3 to 6).map(i => (3, top + i))
+
+      xys.map(xy => coordinate(xy._1, xy._2, rockMoving))
     }
   }
 }
