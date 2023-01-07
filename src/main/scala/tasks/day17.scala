@@ -4,7 +4,8 @@ package tasks
 
 object day17 {
   def main(args: Array[String]): Unit = {
-    println(s"Tower is ${part1()} units tall")
+//    println(s"Tower is ${part1()} units tall")
+    println(s"Tower is ${part2()} units tall")
   }
 
   private val jetStream = JetStream()
@@ -16,10 +17,17 @@ object day17 {
   private val rockMoving = "@"
   private val air = "."
 
-  private def part1(): Int = {
-    val start = Set.empty[coordinate]
+  private def part1(): Int = solve(Set.empty[coordinate], moveCount).maxBy(_.y).y
 
-    val end = (0 until moveCount).foldLeft(start) {
+  private def part2(): Long = {
+    val p1 = solve(Set.empty[coordinate], 200)
+    p1.show()
+    0
+  }
+
+  private def solve(start: Set[coordinate], moves: Int): Set[coordinate] = {
+    val end = (0 until moves
+      ).foldLeft(start) {
       (state1, _) => {
         Seq.unfold(state1.addRock()) {
           field => {
@@ -37,7 +45,7 @@ object day17 {
       }
     }
 
-    end.maxBy(_.y).y
+    end
   }
 
   extension (coordinates: Set[coordinate]) {
@@ -105,6 +113,8 @@ object day17 {
     private val iterator: Iterator[Int] = LazyList.from(0).iterator
 
     def next: Char = jets(iterator.next() % jets.length)
+
+    val size: Int = jets.length
   }
 
   private class RockStream {
