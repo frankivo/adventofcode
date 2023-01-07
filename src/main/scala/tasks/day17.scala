@@ -22,7 +22,6 @@ object day17 {
     val end = (0 until 4).foldLeft(start) {
       (state1, _) => {
         val f = state1.addRock()
-        println("Shape")
         f.show()
         Seq.unfold(f) {
           field => {
@@ -30,12 +29,9 @@ object day17 {
             Option.when(rock.nonEmpty) {
               val movedRock = field.blowJet
               val movedField = field.diff(rock) ++ movedRock
-              movedField.show()
-              println("Fall")
               val fallen = movedField.fall
 
               val fallenField = movedField.diff(movedField.getRock) ++ fallen
-              fallenField.show()
               (fallenField, fallenField)
             }
           }
@@ -70,8 +66,6 @@ object day17 {
 
     private def blowJet: Set[coordinate] = {
       val jet = jetStream.next
-      println(s"Move $jet")
-
       getRock
         .map(r => {
           val direction = if (jet == '>') 1 else -1
