@@ -25,16 +25,17 @@ object day17 {
         Seq.unfold(f) {
           field => {
             val rock = field.getRock
+            Option.when(rock.nonEmpty) {
+              val movedRock = field.moveByJet
+              val movedField = field.diff(rock) ++ movedRock
+              movedField.show()
+              println("Fall")
+              val fallen = movedField.fall
 
-            val movedRock = field.moveByJet
-            val movedField = field.diff(rock) ++ movedRock
-            movedField.show()
-            println("Fall")
-            val fallen = movedField.fall
-
-            val fallenField = movedField.diff(movedField.getRock) ++ fallen
-            fallen.show()
-            Option.when(rock.nonEmpty)(fallenField, fallenField)
+              val fallenField = movedField.diff(movedField.getRock) ++ fallen
+              fallenField.show()
+              (fallenField, fallenField)
+            }
           }
         }.last
       }
