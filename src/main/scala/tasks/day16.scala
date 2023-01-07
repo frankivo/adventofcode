@@ -1,6 +1,8 @@
 package com.github.frankivo
 package tasks
 
+import scala.collection.mutable
+
 object day16 {
   def main(args: Array[String]): Unit = {
     println(s"Most pressure to release: ${part1()}")
@@ -13,6 +15,8 @@ object day16 {
 
   private def part1(): Int = findBest(StartNode, 0, 30)
 
+  private val cache: mutable.Map[(String, Int, Int), Int] = scala.collection.mutable.Map[(String, Int, Int), Int]()
+
   private def part2(): Int = {
     val mask = (1 << allDistances(StartNode).size) - 1
     (0 to (mask / 2.0).floor.toInt)
@@ -21,7 +25,10 @@ object day16 {
   }
 
   private def findBest(valve: String, valveStates: Int, time: Int): Int = {
-    allDistances(valve)
+    if (cache.contains((valve, valveStates, time)))
+      return cache(valve, valveStates, time)
+
+    val best = allDistances(valve)
       .keys
       .filterNot(x => (valveStates & bits(x)) == bits(x)) // Don't attempt to open opened valves
       .flatMap(neighbour => {
@@ -32,6 +39,9 @@ object day16 {
       })
       .maxOption
       .getOrElse(0)
+
+    cache((valve, valveStates, time)) = best
+    best
   }
 
   private def explore(start: String): Map[String, Int] = {
