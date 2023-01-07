@@ -4,7 +4,7 @@ package tasks
 
 object day17 {
   def main(args: Array[String]): Unit = {
-    part1()
+    println(s"Tower is ${part1()} units tall")
   }
 
   private val jetStream = JetStream()
@@ -16,14 +16,12 @@ object day17 {
   private val rockMoving = "@"
   private val air = "."
 
-  private def part1(): Unit = {
+  private def part1(): Int = {
     val start = Set.empty[coordinate]
 
-    val end = (0 until 10).foldLeft(start) {
+    val end = (0 until moveCount).foldLeft(start) {
       (state1, _) => {
-        val f = state1.addRock()
-        f.show()
-        Seq.unfold(f) {
+        Seq.unfold(state1.addRock()) {
           field => {
             val rock = field.getRock
             Option.when(rock.nonEmpty) {
@@ -39,7 +37,7 @@ object day17 {
       }
     }
 
-    end.show()
+    end.maxBy(_.y).y
   }
 
   extension (coordinates: Set[coordinate]) {
