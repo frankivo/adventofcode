@@ -50,7 +50,14 @@ object day17 {
     private def getRock: Set[coordinate] = field.filter(_.name == "@")
 
     private def isBlocked(jet: Char): Boolean = {
-      false
+      // TODO: check every Y in shape
+      // TODO: check against other rocks
+      jet match {
+        case '>' =>
+          getRock.maxBy(_.x).x == 7
+        case '<' =>
+          getRock.minBy(_.x).x == 0
+      }
     }
 
     private def moveByJet: Set[coordinate] = {
