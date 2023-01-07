@@ -5,10 +5,11 @@ package tasks
 object day17 {
   def main(args: Array[String]): Unit = {
     part1()
+
   }
 
-  private val jets = Jetstream()
-  private val rocks = RockFactory()
+  private val jetStream = JetStream()
+  private val rockStream = RockStream()
 
   private val moveCount: Int = 2022
 
@@ -16,8 +17,15 @@ object day17 {
     val start = Set.empty[coordinate]
 
     val end = (0 until 1).foldLeft(start) {
-      (state, _) => {
-        state.addRock()
+      (state1, _) => {
+        Seq.unfold(state1.addRock()) {
+          state2 => {
+            val rock = state2.moveByJet
+
+
+            None
+          }
+        }.last
       }
     }
 
@@ -28,7 +36,7 @@ object day17 {
   extension (field: Set[coordinate]) {
     private def height: Int = field.maxByOption(_.y).map(_.y).getOrElse(0)
 
-    private def addRock(): Set[coordinate] = field ++ rocks.next(height)
+    private def addRock(): Set[coordinate] = field ++ rockStream.next(height)
 
     private def show(): Unit = {
       (0 to height).reverse.foreach(y => {
@@ -38,9 +46,25 @@ object day17 {
         println()
       })
     }
+
+    private def getRock: Set[coordinate] = field.filter(_.name == "@")
+
+    private def isBlocked(jet: Char): Boolean = {
+      false
+    }
+
+    private def moveByJet: Set[coordinate] = {
+      val jet = jetStream.next
+      getRock
+        .map(r => {
+          val direction = if (jet == '>') 1 else -1
+          val blocked = if (isBlocked(jet)) 0 else 1
+          coordinate(r.x + direction * blocked, r.y, r.name)
+        })
+    }
   }
 
-  private class Jetstream {
+  private class JetStream {
     private val jets: String = util.get("day17.txt").head
 
     private val iterator: Iterator[Int] = LazyList.from(0).iterator
@@ -48,7 +72,7 @@ object day17 {
     def next: Char = jets(iterator.next() % jets.length)
   }
 
-  private class RockFactory {
+  private class RockStream {
     private val iterator: Iterator[Int] = LazyList.from(0).iterator
 
     def next(top: Int): Seq[coordinate] = {
@@ -58,5 +82,4 @@ object day17 {
           (2 to 5).map(i => coordinate(i, top + 3, "@"))
     }
   }
-
 }
