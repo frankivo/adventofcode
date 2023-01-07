@@ -122,9 +122,9 @@ object day17 {
         case 2 => // Reverse L
           Seq((5, top + 6), (5, top + 5), (5, top + 4), (4, top + 4), (3, top + 4))
         case 3 => // Vertical line
-          (3 to 6).map(i => (3, top + i))
+          (4 to 7).map(i => (3, top + i))
         case 4 => // Square
-          Seq((3, top + 3), (4, top + 3), (3, top + 4), (4, top + 4))
+          Seq((3, top + 4), (4, top + 4), (3, top + 5), (4, top + 5))
 
       xys.map(xy => coordinate(xy._1, xy._2, rockMoving))
     }
