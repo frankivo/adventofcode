@@ -19,11 +19,10 @@ object day17 {
     val end = (0 until 1).foldLeft(start) {
       (state1, _) => {
         Seq.unfold(state1.addRock()) {
-          state2 => {
-            val rock = state2.moveByJet
-
-
-            None
+          field => {
+            val moved = field.diff(field.getRock) ++ field.moveByJet
+            val fallen = moved.diff(field.getRock) ++ field.fall
+            Option.when(fallen.getRock.nonEmpty)(fallen, fallen)
           }
         }.last
       }
@@ -33,23 +32,43 @@ object day17 {
     println(end)
   }
 
-  extension (field: Set[coordinate]) {
-    private def height: Int = field.maxByOption(_.y).map(_.y).getOrElse(0)
+  extension (coordinates: Set[coordinate]) {
+    private def height: Int = coordinates.maxByOption(_.y).map(_.y).getOrElse(0)
 
-    private def addRock(): Set[coordinate] = field ++ rockStream.next(height)
+    private def addRock(): Set[coordinate] = coordinates ++ rockStream.next(height)
 
     private def show(): Unit = {
       (0 to height).reverse.foreach(y => {
         (0 to 7).foreach(x => {
-          print(field.find(c => c.y == y && c.x == x).map(_.name).getOrElse("."))
+          print(coordinates.find(c => c.y == y && c.x == x).map(_.name).getOrElse("."))
         })
         println()
       })
     }
 
-    private def getRock: Set[coordinate] = field.filter(_.name == "@")
+    private def getRock: Set[coordinate] = coordinates.filter(_.name == "@")
 
-    private def isBlocked(jet: Char): Boolean = {
+    private def moveByJet: Set[coordinate] = {
+      val jet = jetStream.next
+      getRock
+        .map(r => {
+          val direction = if (jet == '>') 1 else -1
+          val blocked = if (isBlockedHorizontal(jet)) 0 else 1
+          coordinate(r.x + direction * blocked, r.y, r.name)
+        })
+    }
+
+    private def fall: Set[coordinate] = {
+      getRock
+        .map(r => {
+          coordinate(r.x, r.y - (if (isBlockedVertical()) 0 else 1), "@")
+        })
+        .map(r => {
+          coordinate(r.x, r.y, if (isBlockedVertical()) "@" else "#")
+        })
+    }
+
+    private def isBlockedHorizontal(jet: Char): Boolean = {
       // TODO: check every Y in shape
       // TODO: check against other rocks
       jet match {
@@ -60,14 +79,9 @@ object day17 {
       }
     }
 
-    private def moveByJet: Set[coordinate] = {
-      val jet = jetStream.next
-      getRock
-        .map(r => {
-          val direction = if (jet == '>') 1 else -1
-          val blocked = if (isBlocked(jet)) 0 else 1
-          coordinate(r.x + direction * blocked, r.y, r.name)
-        })
+    private def isBlockedVertical(): Boolean = {
+      // TODO: check against other rocks
+      getRock.maxBy(_.y).y == 0
     }
   }
 
