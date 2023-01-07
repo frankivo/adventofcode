@@ -14,6 +14,7 @@ object day17 {
   private val fieldWidth = 7
   private val rockStatic = "#"
   private val rockMoving = "@"
+  private val air = "."
 
   private def part1(): Unit = {
     val start = Set.empty[coordinate]
@@ -27,7 +28,7 @@ object day17 {
           field => {
             val rock = field.getRock
             Option.when(rock.nonEmpty) {
-              val movedRock = field.moveByJet
+              val movedRock = field.blowJet
               val movedField = field.diff(rock) ++ movedRock
               movedField.show()
               println("Fall")
@@ -59,7 +60,7 @@ object day17 {
           else if (x == 0 || x == fieldWidth + 1)
             print("|")
           else
-            print(coordinates.find(c => c.y == y && c.x == x).map(_.name).getOrElse("."))
+            print(coordinates.find(c => c.y == y && c.x == x).map(_.name).getOrElse(air))
         })
         println()
       })
@@ -68,7 +69,7 @@ object day17 {
 
     private def getRock: Set[coordinate] = coordinates.filter(_.name == rockMoving)
 
-    private def moveByJet: Set[coordinate] = {
+    private def blowJet: Set[coordinate] = {
       val jet = jetStream.next
       println(s"Move $jet")
 
@@ -92,14 +93,11 @@ object day17 {
     }
 
     private def isBlockedHorizontal(jet: Char): Boolean = {
-      // TODO: check every Y in shape
-      // TODO: check against other rocks
-      jet match {
-        case '>' =>
-          getRock.maxBy(_.x).x == 7
-        case '<' =>
-          getRock.minBy(_.x).x == 0
-      }
+      val move = if (jet == '>') 1 else -1
+      getRock.exists(r => {
+        Seq(0, fieldWidth + 1).contains(r.x + move) ||
+          coordinates.find(c => c.x == r.x + move && c.y == r.y).map(_.name).getOrElse(air) == rockStatic
+      })
     }
 
     private def isBlockedVertical: Boolean = {
@@ -107,7 +105,7 @@ object day17 {
       val btm = getRock.minBy(_.y) // Bottom of the rock
 
       btm.y - 1 == 0 // Floor
-        || coordinates.find(c => c.x == btm.x && c.y == btm.y - 1).map(_.name).getOrElse(".") == rockStatic // Rock
+        || coordinates.find(c => c.x == btm.x && c.y == btm.y - 1).map(_.name).getOrElse(air) == rockStatic // Rock
     }
   }
 
