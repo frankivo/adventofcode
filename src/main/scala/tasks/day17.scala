@@ -18,7 +18,7 @@ object day17 {
   private def part1(): Unit = {
     val start = Set.empty[coordinate]
 
-    val end = (0 until 1).foldLeft(start) {
+    val end = (0 until 2).foldLeft(start) {
       (state1, _) => {
         val f = state1.addRock()
         f.show()
@@ -102,7 +102,7 @@ object day17 {
 
     private def isBlockedVertical(): Boolean = {
       // TODO: check against other rocks
-      getRock.maxBy(_.y).y -1  == 0
+      getRock.maxBy(_.y).y - 1 == 0
     }
   }
 
@@ -122,6 +122,14 @@ object day17 {
       shape match
         case 0 => // Horizontal line
           (3 to 6).map(i => coordinate(i, top + 4, rockMoving))
+        case 1 => // Cross
+          Seq(
+            coordinate(4, top + 6, rockMoving), // Top
+            coordinate(3, top + 5, rockMoving),
+            coordinate(4, top + 5, rockMoving),
+            coordinate(5, top + 5, rockMoving),
+            coordinate(4, top + 4, rockMoving), // Bottom
+          )
     }
   }
 }
