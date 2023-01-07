@@ -39,20 +39,15 @@ object day16 {
       (explorable, distances) => {
         Option.when(explorable.nonEmpty) {
           val cur = explorable.head
-          val adj = input(cur).tunnels
+          val adj = input(cur).tunnels.filterNot(distances.contains)
 
           (distances, (
             explorable.filterNot(_ == cur) ++ adj.filterNot(distances.contains),
-            mergeDistances(distances, adj.map(_ -> (distances(cur) + 1)).toMap)
+            distances ++ adj.map(_ -> (distances(cur) + 1))
           ))
         }
       }
     }.last
-  }
-
-  private def mergeDistances(old: Map[String, Int], updates: Map[String, Int]): Map[String, Int] = {
-    old.map(o => (o._1, Seq(o._2, updates.getOrElse(o._1, Int.MaxValue)).min)) ++
-      updates.filterNot(u => old.keys.exists(_ == u._1))
   }
 
   private val input: Map[String, Valve] = {
