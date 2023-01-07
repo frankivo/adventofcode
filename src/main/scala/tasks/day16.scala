@@ -3,6 +3,11 @@ package tasks
 
 import scala.collection.mutable
 
+/**
+ * Used this as a reference to speed things up https://youtu.be/bLMj50cpOug
+ * Note to self: don't use Set in BFS for explorable options
+ */
+
 object day16 {
   def main(args: Array[String]): Unit = {
     println(s"Most pressure to release: ${part1()}")
@@ -52,7 +57,7 @@ object day16 {
           val adj = input(cur).tunnels.filterNot(distances.contains)
 
           (distances, (
-            explorable.filterNot(_ == cur) ++ adj.filterNot(distances.contains),
+            explorable.filterNot(_ == cur) ++ adj,
             distances ++ adj.map(_ -> (distances(cur) + 1))
           ))
         }
