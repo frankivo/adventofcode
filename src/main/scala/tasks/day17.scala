@@ -5,24 +5,36 @@ package tasks
 object day17 {
   def main(args: Array[String]): Unit = {
     part1()
-
   }
 
   private val jetStream = JetStream()
   private val rockStream = RockStream()
 
-  private val moveCount: Int = 2022
+  private val moveCount = 2022
+  private val fieldWidth = 7
+  private val rockStatic = "#"
+  private val rockMoving = "@"
 
   private def part1(): Unit = {
     val start = Set.empty[coordinate]
 
     val end = (0 until 1).foldLeft(start) {
       (state1, _) => {
-        Seq.unfold(state1.addRock()) {
+        val f = state1.addRock()
+        f.show()
+        Seq.unfold(f) {
           field => {
-            val moved = field.diff(field.getRock) ++ field.moveByJet
-            val fallen = moved.diff(field.getRock) ++ field.fall
-            Option.when(fallen.getRock.nonEmpty)(fallen, fallen)
+            val rock = field.getRock
+
+            val movedRock = field.moveByJet
+            val movedField = field.diff(rock) ++ movedRock
+            movedField.show()
+            println("Fall")
+            val fallen = movedField.fall
+
+            val fallenField = movedField.diff(movedField.getRock) ++ fallen
+            fallen.show()
+            Option.when(rock.nonEmpty)(fallenField, fallenField)
           }
         }.last
       }
@@ -39,32 +51,41 @@ object day17 {
 
     private def show(): Unit = {
       (0 to height).reverse.foreach(y => {
-        (0 to 7).foreach(x => {
-          print(coordinates.find(c => c.y == y && c.x == x).map(_.name).getOrElse("."))
+        (0 to fieldWidth + 1).foreach(x => {
+          if (y == 0)
+            print(if (x == 0 || x == fieldWidth + 1) "+" else "-")
+          else if (x == 0 || x == fieldWidth + 1)
+            print("|")
+          else
+            print(coordinates.find(c => c.y == y && c.x == x).map(_.name).getOrElse("."))
         })
         println()
       })
+      println()
     }
 
-    private def getRock: Set[coordinate] = coordinates.filter(_.name == "@")
+    private def getRock: Set[coordinate] = coordinates.filter(_.name == rockMoving)
 
     private def moveByJet: Set[coordinate] = {
       val jet = jetStream.next
+      println(s"Move $jet")
+
       getRock
         .map(r => {
           val direction = if (jet == '>') 1 else -1
           val blocked = if (isBlockedHorizontal(jet)) 0 else 1
-          coordinate(r.x + direction * blocked, r.y, r.name)
+          coordinate(r.x + (direction * blocked), r.y, r.name)
         })
     }
 
     private def fall: Set[coordinate] = {
       getRock
         .map(r => {
-          coordinate(r.x, r.y - (if (isBlockedVertical()) 0 else 1), "@")
-        })
-        .map(r => {
-          coordinate(r.x, r.y, if (isBlockedVertical()) "@" else "#")
+          coordinate(
+            r.x,
+            r.y - (if (isBlockedVertical()) 0 else 1),
+            if (isBlockedVertical()) rockStatic else rockMoving
+          )
         })
     }
 
@@ -81,7 +102,7 @@ object day17 {
 
     private def isBlockedVertical(): Boolean = {
       // TODO: check against other rocks
-      getRock.maxBy(_.y).y == 0
+      getRock.maxBy(_.y).y -1  == 0
     }
   }
 
@@ -100,7 +121,7 @@ object day17 {
       val shape = iterator.next() % 5
       shape match
         case 0 => // Horizontal line
-          (2 to 5).map(i => coordinate(i, top + 3, "@"))
+          (3 to 6).map(i => coordinate(i, top + 4, rockMoving))
     }
   }
 }
