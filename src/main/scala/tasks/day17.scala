@@ -18,9 +18,10 @@ object day17 {
   private def part1(): Unit = {
     val start = Set.empty[coordinate]
 
-    val end = (0 until 2).foldLeft(start) {
+    val end = (0 until 3).foldLeft(start) {
       (state1, _) => {
         val f = state1.addRock()
+        println("Shape")
         f.show()
         Seq.unfold(f) {
           field => {
@@ -133,6 +134,14 @@ object day17 {
             coordinate(4, top + 5, rockMoving),
             coordinate(5, top + 5, rockMoving),
             coordinate(4, top + 4, rockMoving), // Bottom
+          )
+        case 2 => // Reverse L
+          Seq(
+            coordinate(5, top + 6, rockMoving), // Top
+            coordinate(5, top + 5, rockMoving),
+            coordinate(5, top + 4, rockMoving),
+            coordinate(4, top + 4, rockMoving),
+            coordinate(3, top + 4, rockMoving), // Bottom left
           )
     }
   }
