@@ -84,8 +84,8 @@ object day17 {
         .map(r => {
           coordinate(
             r.x,
-            r.y - (if (isBlockedVertical()) 0 else 1),
-            if (isBlockedVertical()) rockStatic else rockMoving
+            r.y - (if (isBlockedVertical) 0 else 1),
+            if (isBlockedVertical) rockStatic else rockMoving
           )
         })
     }
@@ -101,9 +101,12 @@ object day17 {
       }
     }
 
-    private def isBlockedVertical(): Boolean = {
-      // TODO: check against other rocks
-      getRock.maxBy(_.y).y - 1 == 0
+    private def isBlockedVertical: Boolean = {
+      // TODO: check against other rocks in every X
+      val btm = getRock.minBy(_.y) // Bottom of the rock
+
+      btm.y - 1 == 0 // Floor
+        || coordinates.find(c => c.x == btm.x && c.y == btm.y - 1).map(_.name).getOrElse(".") == rockStatic // Rock
     }
   }
 
