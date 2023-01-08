@@ -92,17 +92,12 @@ object day17 {
     private def isBlockedHorizontal(jet: Char, field: Field): Boolean = {
       val move = if (jet == '>') 1 else -1
       rock.exists(r =>
-        Seq(-1, fieldWidth).contains(r.x + move) ||
-          (field.bitmask(r.y) & bits(r.x + move)) == bits(r.x + move)
+        Seq(-1, fieldWidth).contains(r.x + move) || (field.bitmask(r.y) & bits(r.x + move)) == bits(r.x + move)
       )
     }
 
-    private def isBlockedVertical(field: Field): Boolean = {
-      rock.exists(r => {
-        r.y - 1 == -1 ||
-          (field.bitmask(r.y - 1) & bits(r.x)) == bits(r.x)
-      })
-    }
+    private def isBlockedVertical(field: Field): Boolean =
+      rock.exists(r => r.y - 1 == -1 || (field.bitmask(r.y - 1) & bits(r.x)) == bits(r.x))
   }
 
   private class JetStream {
@@ -110,7 +105,7 @@ object day17 {
 
     private val iterator: Iterator[Int] = LazyList.from(0).iterator
 
-    def next: Char = jets((iterator.next() % jets.length.toLong).toInt)
+    def next: Char = jets((iterator.next() % jets.length))
   }
 
   private class RockStream {
