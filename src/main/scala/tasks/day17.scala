@@ -20,6 +20,7 @@ object day17 {
   private val rockStatic = "#"
   private val rockMoving = "@"
   private val air = "."
+  private val bits = (0 until 7).map(i => (i, 1 << i)).toMap
 
   private def part1(): Int = solve(Map.empty[Int, Int], moveCount).size
 
@@ -30,20 +31,20 @@ object day17 {
   }
 
   private def solve(start: Map[Int, Int], moves: Int): Map[Int, Int] = {
-    val end = (0 until 1).foldLeft(start) {
-      (state1, _) => {
-        val stopped = Seq.unfold(rockStream.next(state1.height)) {
+    val end = (0 until 2).foldLeft(start) {
+      (field, _) => {
+        val stopped = Seq.unfold(rockStream.next(field.height)) {
           r => {
             Option.when(r.exists(_.name == rockMoving)) {
-              val moved = r.blowJet
+              val moved = r.blowJet(field)
               val fallen = moved.fall
               (fallen, fallen)
             }
           }
         }.last
 
-        stopped.foldLeft(state1) {
-          (state2, cur) => state2 + (cur.y -> (state2.getOrElse(cur.y, 0) | 1 << cur.x))
+        stopped.foldLeft(field) {
+          (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
         }
       }
 
@@ -56,19 +57,17 @@ object day17 {
   extension (field: Map[Int, Int]) {
     private def height: Int = field.size
 
+    private def bitmask(y: Int): Int = field.getOrElse(y, 0)
+
     private def show(): Unit = {
       (-1 until height).reverse.foreach(y => {
-        val bitmask = field.getOrElse(y, 0)
-
         (-1 to fieldWidth).foreach(x => {
           if (y == -1)
-            print(if (x == -1 || x == fieldWidth ) "+" else "-")
-          else if (x == -1 || x == fieldWidth )
+            print(if (x == -1 || x == fieldWidth) "+" else "-")
+          else if (x == -1 || x == fieldWidth)
             print("|")
-          else {
-            val bit = 1 << x
-            print(if ((bitmask & bit) == bit) rockStatic else air)
-          }
+          else
+            print(if ((bitmask(y) & bits(x)) == bits(x)) rockStatic else air)
         })
         println()
       })
@@ -77,12 +76,12 @@ object day17 {
   }
 
   extension (rock: Seq[coordinate]) {
-    private def blowJet: Seq[coordinate] = {
+    private def blowJet(field: Map[Int, Int]): Seq[coordinate] = {
       val jet = jetStream.next
       rock
         .map(r => {
           val direction = if (jet == '>') 1 else -1
-          val blocked = if (isBlockedHorizontal(jet)) 0 else 1
+          val blocked = if (isBlockedHorizontal(jet, field)) 0 else 1
           coordinate(r.x + (direction * blocked), r.y, r.name)
         })
     }
@@ -98,16 +97,12 @@ object day17 {
         })
     }
 
-    private def isBlockedHorizontal(jet: Char): Boolean = {
+    private def isBlockedHorizontal(jet: Char, field: Map[Int, Int]): Boolean = {
       val move = if (jet == '>') 1 else -1
-      rock.exists(r => {
-        Seq(-1, fieldWidth).contains(r.x + move)
-      })
-
-      //      getRock.exists(r => {
-      //        Seq(0, fieldWidth + 1).contains(r.x + move) ||
-      //          coordinates.find(c => c.x == r.x + move && c.y == r.y).map(_.name).getOrElse(air) == rockStatic
-      //      })
+      rock.exists(r =>
+        Seq(-1, fieldWidth).contains(r.x + move) ||
+          (field.bitmask(r.y) & bits(r.x + move)) == bits(r.x + move)
+      )
     }
 
     private def isBlockedVertical: Boolean = {
