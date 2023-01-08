@@ -31,19 +31,18 @@ object day17 {
   private def solve(start: Map[Int, Int], moves: Int): Map[Int, Int] = {
     (0 until moves).foldLeft(start) {
       (field, _) => {
-        val stopped = Seq.unfold(rockStream.next(field.height)) {
-          r => {
-            Option.when(r.exists(_.name == rockMoving)) {
-              val moved = r.blowJet(field)
-              val fallen = moved.fall(field)
-              (fallen, fallen)
+        Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
+          rock => {
+            Option.when(rock.exists(_.name == rockMoving)) {
+              val updated = rock.blowJet(field).fall(field)
+              (updated, updated)
             }
           }
-        }.last
-
-        stopped.foldLeft(field) {
-          (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
         }
+          .last
+          .foldLeft(field) { // Update Y bitmasks
+            (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
+          }
       }
     }
   }
