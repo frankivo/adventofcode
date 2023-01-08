@@ -30,7 +30,7 @@ object day17 {
   }
 
   private def solve(start: Map[Int, Int], moves: Int): Map[Int, Int] = {
-    val end = (0 until 2).foldLeft(start) {
+    val end = (0 until 1).foldLeft(start) {
       (state1, _) => {
         val stopped = Seq.unfold(rockStream.next(state1.height)) {
           r => {
@@ -43,12 +43,13 @@ object day17 {
         }.last
 
         stopped.foldLeft(state1) {
-          (state2, cur) => state2 + (cur.y -> (state2.getOrElse(cur.y, 1) << cur.x))
+          (state2, cur) => state2 + (cur.y -> (state2.getOrElse(cur.y, 0) | 1 << cur.x))
         }
       }
 
     }
-    println(end)
+    end.show()
+
     end
   }
 
@@ -56,15 +57,22 @@ object day17 {
     private def height: Int = field.size
 
     private def show(): Unit = {
-      (0 to height).reverse.foreach(y => {
-        (0 to fieldWidth + 1).foreach(x => {
-          if (y == 0)
-            print(if (x == 0 || x == fieldWidth + 1) "+" else "-")
-          else if (x == 0 || x == fieldWidth + 1)
+      println(field)
+
+      (-1 until height).reverse.foreach(y => {
+        val bitmask = field.getOrElse(y, 1)
+        println(bitmask)
+
+        (-1 to fieldWidth + 1).foreach(x => {
+          if (y == -1)
+            print(if (x == -1 || x == fieldWidth + 1) "+" else "-")
+          else if (x == -1 || x == fieldWidth + 1)
             print("|")
-          else
-            print(air)
-          //            print(coordinates.find(c => c.y == y && c.x == x).map(_.name).getOrElse(air))
+          else {
+            val bit = 1 << x
+            val isOn = (bitmask & bit) == bit
+            print(if (isOn) rockStatic else air)
+          }
         })
         println()
       })
