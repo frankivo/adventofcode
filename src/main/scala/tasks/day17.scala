@@ -32,26 +32,20 @@ object day17 {
   private def solve(start: Map[Int, Int], moves: Int): Map[Int, Int] = {
     val end = (0 until 1).foldLeft(start) {
       (state1, m) => {
-        val rock = rockStream.next(state1.height)
-        println(rock)
-        state1 + (0 -> m)
+        val stopped = Seq.unfold(rockStream.next(state1.height)) {
+          r => {
+            Option.when(r.exists(_.name == rockMoving)) {
+              val moved = r.blowJet
+              val fallen = moved.fall
+              (fallen, fallen)
+            }
+          }
+        }.last
+        println(stopped)
 
+        state1 + (0 -> m)
       }
-      //        Seq.unfold(state1.addRock()) {
-      //          field => {
-      //            val rock = field.getRock
-      //            Option.when(rock.nonEmpty) {
-      //              val movedRock = field.blowJet
-      //              val movedField = field.diff(rock) ++ movedRock
-      //              val fallen = movedField.fall
-      //
-      //              val fallenField = movedField.diff(movedField.getRock) ++ fallen
-      //              (fallenField, fallenField)
-      //            }
-      //          }
-      //        }.last
-      //      }
-      //    }
+
     }
     println(end)
     end
@@ -59,7 +53,6 @@ object day17 {
 
   extension (field: Map[Int, Int]) {
     private def height: Int = field.size
-
 
     private def show(): Unit = {
       (0 to height).reverse.foreach(y => {
@@ -78,14 +71,10 @@ object day17 {
     }
   }
 
-  extension (coordinates: Set[coordinate]) {
-
-
-    private def getRock: Set[coordinate] = coordinates.filter(_.name == rockMoving)
-
-    private def blowJet: Set[coordinate] = {
+  extension (rock: Seq[coordinate]) {
+    private def blowJet: Seq[coordinate] = {
       val jet = jetStream.next
-      getRock
+      rock
         .map(r => {
           val direction = if (jet == '>') 1 else -1
           val blocked = if (isBlockedHorizontal(jet)) 0 else 1
@@ -93,8 +82,8 @@ object day17 {
         })
     }
 
-    private def fall: Set[coordinate] = {
-      getRock
+    private def fall: Seq[coordinate] = {
+      rock
         .map(r => {
           coordinate(
             r.x,
@@ -106,16 +95,20 @@ object day17 {
 
     private def isBlockedHorizontal(jet: Char): Boolean = {
       val move = if (jet == '>') 1 else -1
-      getRock.exists(r => {
-        Seq(0, fieldWidth + 1).contains(r.x + move) ||
-          coordinates.find(c => c.x == r.x + move && c.y == r.y).map(_.name).getOrElse(air) == rockStatic
+      rock.exists(r => {
+        Seq(-1, fieldWidth).contains(r.x + move)
       })
+
+      //      getRock.exists(r => {
+      //        Seq(0, fieldWidth + 1).contains(r.x + move) ||
+      //          coordinates.find(c => c.x == r.x + move && c.y == r.y).map(_.name).getOrElse(air) == rockStatic
+      //      })
     }
 
     private def isBlockedVertical: Boolean = {
-      getRock.exists(r => {
-        r.y - 1 == 0 ||
-          coordinates.find(c => c.x == r.x && c.y == r.y - 1).map(_.name).getOrElse(air) == rockStatic
+      rock.exists(r => {
+        r.y - 1 == -1 //||
+        //          coordinates.find(c => c.x == r.x && c.y == r.y - 1).map(_.name).getOrElse(air) == rockStatic
       })
     }
   }
@@ -137,7 +130,7 @@ object day17 {
       val shape = iterator.next() % 5
       val xys = shape match
         case 0 => // Horizontal line
-          (3 to 6).map(i => (i, top + 4))
+          (2 to 5).map(i => (i, top + 3))
         case 1 => // Cross
           Seq((4, top + 6), (3, top + 5), (4, top + 5), (5, top + 5), (4, top + 4))
         case 2 => // Reverse L
