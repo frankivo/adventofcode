@@ -57,21 +57,17 @@ object day17 {
     private def height: Int = field.size
 
     private def show(): Unit = {
-      println(field)
-
       (-1 until height).reverse.foreach(y => {
-        val bitmask = field.getOrElse(y, 1)
-        println(bitmask)
+        val bitmask = field.getOrElse(y, 0)
 
-        (-1 to fieldWidth + 1).foreach(x => {
+        (-1 to fieldWidth).foreach(x => {
           if (y == -1)
-            print(if (x == -1 || x == fieldWidth + 1) "+" else "-")
-          else if (x == -1 || x == fieldWidth + 1)
+            print(if (x == -1 || x == fieldWidth ) "+" else "-")
+          else if (x == -1 || x == fieldWidth )
             print("|")
           else {
             val bit = 1 << x
-            val isOn = (bitmask & bit) == bit
-            print(if (isOn) rockStatic else air)
+            print(if ((bitmask & bit) == bit) rockStatic else air)
           }
         })
         println()
