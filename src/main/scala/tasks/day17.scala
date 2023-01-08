@@ -26,22 +26,25 @@ object day17 {
   }
 
   private def solve(start: Field, moves: Int): Field = {
-    (0 until moves).foldLeft(start) {
-      (field, _) => {
-        Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
-          rock => {
-            Option.when(rock.exists(_.name == rockMoving)) {
-              val updated = rock.blowJet(field).fall(field)
-              (updated, updated)
+    Seq.unfold(start, 0L) {
+      (field, i) => {
+        Option.when(i < moves) {
+          val updatedField = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
+            rock => {
+              Option.when(rock.exists(_.name == rockMoving)) {
+                val updated = rock.blowJet(field).fall(field)
+                (updated, updated)
+              }
             }
           }
+            .last
+            .foldLeft(field) { // Update Y bitmasks
+              (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
+            }
+          (updatedField, (updatedField, i + 1))
         }
-          .last
-          .foldLeft(field) { // Update Y bitmasks
-            (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
-          }
       }
-    }
+    }.last
   }
 
   extension (field: Field) {
