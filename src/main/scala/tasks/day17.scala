@@ -1,8 +1,6 @@
 package com.github.frankivo
 package tasks
 
-import scala.collection.mutable
-
 object day17 {
   def main(args: Array[String]): Unit = {
     println(s"Tower is ${part1()} units tall")
@@ -26,8 +24,6 @@ object day17 {
   private def part2(): Long = {
     0
   }
-
-  private val cache: mutable.Map[(Int, Int), Int] = scala.collection.mutable.Map.empty[(Int, Int), Int]
 
   private def solve(start: Field, moves: Int): Field = {
     (0 until moves).foldLeft(start) {
