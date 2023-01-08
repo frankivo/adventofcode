@@ -15,25 +15,26 @@ object day17 {
 
   private val moveCount = 2022
   private val fieldWidth = 7
-  private val rockStatic = "#"
-  private val rockMoving = "@"
-  private val air = "."
+  private val rockStatic = '#'
+  private val rockMoving = '@'
+  private val air = '.'
   private val bits = (0 until 7).map(i => (i, 1 << i)).toMap
 
-  private def part1(): Int = solve(Map.empty[Int, Int], moveCount).size
+  private type Field = Map[Long, Int]
+  private type Rock = Seq[rockElement]
+
+  private def part1(): Int = solve(Map.empty[Long, Int], moveCount).size
 
   private def part2(): Long = {
-    //    val p1 = solve(Set.empty[coordinate], 200)
-    //    p1.show()
     0
   }
 
-  private def solve(start: Map[Int, Int], moves: Int): Map[Int, Int] = {
-    (0 until moves).foldLeft(start) {
+  private def solve(start: Field, moves: Long): Field = {
+    (0L until moves).foldLeft(start) {
       (field, _) => {
         Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
           rock => {
-            Option.when(rock.exists(_.name == rockMoving)) {
+            Option.when(rock.exists(_.state == rockMoving)) {
               val updated = rock.blowJet(field).fall(field)
               (updated, updated)
             }
@@ -47,10 +48,10 @@ object day17 {
     }
   }
 
-  extension (field: Map[Int, Int]) {
+  extension (field: Field) {
     private def height: Int = field.size
 
-    private def bitmask(y: Int): Int = field.getOrElse(y, 0)
+    private def bitmask(y: Long): Int = field.getOrElse(y, 0)
 
     private def show(): Unit = {
       (-1 until height).reverse.foreach(y => {
@@ -68,21 +69,23 @@ object day17 {
     }
   }
 
-  extension (rock: Seq[coordinate]) {
-    private def blowJet(field: Map[Int, Int]): Seq[coordinate] = {
+  extension (rock: Rock) {
+    private def bitmask: Int = rock.foldLeft(0) { (b, r) => b | bits(r.x) }
+
+    private def blowJet(field: Field): Rock = {
       val jet = jetStream.next
       rock
         .map(r => {
           val direction = if (jet == '>') 1 else -1
           val blocked = if (isBlockedHorizontal(jet, field)) 0 else 1
-          coordinate(r.x + (direction * blocked), r.y, r.name)
+          rockElement(r.x + (direction * blocked), r.y, r.state)
         })
     }
 
-    private def fall(field: Map[Int, Int]): Seq[coordinate] = {
+    private def fall(field: Field): Rock = {
       rock
         .map(r => {
-          coordinate(
+          rockElement(
             r.x,
             r.y - (if (isBlockedVertical(field)) 0 else 1),
             if (isBlockedVertical(field)) rockStatic else rockMoving
@@ -90,7 +93,7 @@ object day17 {
         })
     }
 
-    private def isBlockedHorizontal(jet: Char, field: Map[Int, Int]): Boolean = {
+    private def isBlockedHorizontal(jet: Char, field: Field): Boolean = {
       val move = if (jet == '>') 1 else -1
       rock.exists(r =>
         Seq(-1, fieldWidth).contains(r.x + move) ||
@@ -98,7 +101,7 @@ object day17 {
       )
     }
 
-    private def isBlockedVertical(field: Map[Int, Int]): Boolean = {
+    private def isBlockedVertical(field: Field): Boolean = {
       rock.exists(r => {
         r.y - 1 == -1 ||
           (field.bitmask(r.y - 1) & bits(r.x)) == bits(r.x)
@@ -109,15 +112,19 @@ object day17 {
   private class JetStream {
     private val jets: String = util.get("day17.txt").head
 
-    private val iterator: Iterator[Int] = LazyList.from(0).iterator
+    private val LongList: LazyList[Long] = 0L #:: 1L #:: LongList.tail.map { n => n + 1 }
 
-    def next: Char = jets(iterator.next() % jets.length)
+    private val iterator: Iterator[Long] = LongList.iterator
+
+    def next: Char = jets((iterator.next() % jets.length.toLong).toInt)
   }
 
   private class RockStream {
-    private val iterator: Iterator[Int] = LazyList.from(0).iterator
+    private val LongList: LazyList[Long] = 0L #:: 1L #:: LongList.tail.map { n => n + 1 }
 
-    def next(top: Int): Seq[coordinate] = {
+    private val iterator: Iterator[Long] = LongList.iterator
+
+    def next(top: Long): Rock = {
       val shape = iterator.next() % 5
       val xys = shape match
         case 0 => // Horizontal line
@@ -131,7 +138,9 @@ object day17 {
         case 4 => // Square
           Seq((2, top + 3), (3, top + 3), (2, top + 4), (3, top + 4))
 
-      xys.map(xy => coordinate(xy._1, xy._2, rockMoving))
+      xys.map(xy => rockElement(xy._1, xy._2, rockMoving))
     }
   }
+
+  private case class rockElement(x: Int, y: Long, state: Char)
 }
