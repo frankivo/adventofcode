@@ -1,11 +1,15 @@
 package com.github.frankivo
 package tasks
 
+import java.time.Instant
+
 
 object day17 {
   def main(args: Array[String]): Unit = {
-//    println(s"Tower is ${part1()} units tall")
-    println(s"Tower is ${part2()} units tall")
+    println(Instant.now())
+    println(s"Tower is ${part1()} units tall")
+    println(Instant.now())
+    //    println(s"Tower is ${part2()} units tall")
   }
 
   private val jetStream = JetStream()
@@ -17,41 +21,45 @@ object day17 {
   private val rockMoving = "@"
   private val air = "."
 
-  private def part1(): Int = solve(Set.empty[coordinate], moveCount).maxBy(_.y).y
+  private def part1(): Int = solve(Map.empty[Int, Int], moveCount).size
 
   private def part2(): Long = {
-    val p1 = solve(Set.empty[coordinate], 200)
-    p1.show()
+    //    val p1 = solve(Set.empty[coordinate], 200)
+    //    p1.show()
     0
   }
 
-  private def solve(start: Set[coordinate], moves: Int): Set[coordinate] = {
-    val end = (0 until moves
-      ).foldLeft(start) {
-      (state1, _) => {
-        Seq.unfold(state1.addRock()) {
-          field => {
-            val rock = field.getRock
-            Option.when(rock.nonEmpty) {
-              val movedRock = field.blowJet
-              val movedField = field.diff(rock) ++ movedRock
-              val fallen = movedField.fall
+  private def solve(start: Map[Int, Int], moves: Int): Map[Int, Int] = {
+    val end = (0 until 1).foldLeft(start) {
+      (state1, m) => {
+        val rock = rockStream.next(state1.height)
+        println(rock)
+        state1 + (0 -> m)
 
-              val fallenField = movedField.diff(movedField.getRock) ++ fallen
-              (fallenField, fallenField)
-            }
-          }
-        }.last
       }
+      //        Seq.unfold(state1.addRock()) {
+      //          field => {
+      //            val rock = field.getRock
+      //            Option.when(rock.nonEmpty) {
+      //              val movedRock = field.blowJet
+      //              val movedField = field.diff(rock) ++ movedRock
+      //              val fallen = movedField.fall
+      //
+      //              val fallenField = movedField.diff(movedField.getRock) ++ fallen
+      //              (fallenField, fallenField)
+      //            }
+      //          }
+      //        }.last
+      //      }
+      //    }
     }
-
+    println(end)
     end
   }
 
-  extension (coordinates: Set[coordinate]) {
-    private def height: Int = coordinates.maxByOption(_.y).map(_.y).getOrElse(0)
+  extension (field: Map[Int, Int]) {
+    private def height: Int = field.size
 
-    private def addRock(): Set[coordinate] = coordinates ++ rockStream.next(height)
 
     private def show(): Unit = {
       (0 to height).reverse.foreach(y => {
@@ -61,12 +69,17 @@ object day17 {
           else if (x == 0 || x == fieldWidth + 1)
             print("|")
           else
-            print(coordinates.find(c => c.y == y && c.x == x).map(_.name).getOrElse(air))
+            print(air)
+          //            print(coordinates.find(c => c.y == y && c.x == x).map(_.name).getOrElse(air))
         })
         println()
       })
       println()
     }
+  }
+
+  extension (coordinates: Set[coordinate]) {
+
 
     private def getRock: Set[coordinate] = coordinates.filter(_.name == rockMoving)
 
