@@ -30,8 +30,8 @@ object day17 {
   }
 
   private def solve(start: Map[Int, Int], moves: Int): Map[Int, Int] = {
-    val end = (0 until 1).foldLeft(start) {
-      (state1, m) => {
+    val end = (0 until 2).foldLeft(start) {
+      (state1, _) => {
         val stopped = Seq.unfold(rockStream.next(state1.height)) {
           r => {
             Option.when(r.exists(_.name == rockMoving)) {
@@ -41,9 +41,10 @@ object day17 {
             }
           }
         }.last
-        println(stopped)
 
-        state1 + (0 -> m)
+        stopped.foldLeft(state1) {
+          (state2, cur) => state2 + (cur.y -> (state2.getOrElse(cur.y, 1) << cur.x))
+        }
       }
 
     }
