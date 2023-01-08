@@ -1,6 +1,8 @@
 package com.github.frankivo
 package tasks
 
+import scala.collection.mutable
+
 object day17 {
   def main(args: Array[String]): Unit = {
     println(s"Tower is ${part1()} units tall")
@@ -23,19 +25,22 @@ object day17 {
 
   private def part2(): Long = solve(Map.empty[Int, Int], 1_000_000_000_000L)
 
+  private val cache = mutable.Map.empty[Int, Int]
+
   private def solve(start: Field, moves: Long): Long = {
     Seq.unfold(start, 0L) {
       (field, i) => {
         Option.when(i < moves) {
-          val updatedField = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
+          val solidRock = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
             rock => {
               Option.when(rock.exists(_.name == rockMoving)) {
                 val updated = rock.blowJet(field).fall(field)
                 (updated, updated)
               }
             }
-          }
-            .last
+          }.last
+          
+          val updatedField = solidRock
             .foldLeft(field) { // Update Y bitmasks
               (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
             }
@@ -67,8 +72,6 @@ object day17 {
   }
 
   extension (rock: Rock) {
-    private def bitmask: Int = rock.foldLeft(0) { (b, r) => b | bits(r.x) }
-
     private def blowJet(field: Field): Rock = {
       val jet = jetStream.next
       rock
@@ -106,7 +109,7 @@ object day17 {
 
     private val iterator: Iterator[Int] = LazyList.from(0).iterator
 
-    def next: Char = jets((iterator.next() % jets.length))
+    def next: Char = jets(iterator.next() % jets.length)
   }
 
   private class RockStream {
