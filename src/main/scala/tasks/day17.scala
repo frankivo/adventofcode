@@ -19,13 +19,11 @@ object day17 {
   private type Field = Map[Int, Int]
   private type Rock = Seq[coordinate]
 
-  private def part1(): Int = solve(Map.empty[Int, Int], 2022).size
+  private def part1(): Long = solve(Map.empty[Int, Int], 2022)
 
-  private def part2(): Long = {
-    0
-  }
+  private def part2(): Long = solve(Map.empty[Int, Int], 1_000_000_000_000L)
 
-  private def solve(start: Field, moves: Int): Field = {
+  private def solve(start: Field, moves: Long): Long = {
     Seq.unfold(start, 0L) {
       (field, i) => {
         Option.when(i < moves) {
@@ -41,7 +39,7 @@ object day17 {
             .foldLeft(field) { // Update Y bitmasks
               (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
             }
-          (updatedField, (updatedField, i + 1))
+          (updatedField.size, (updatedField, i + 1))
         }
       }
     }.last
