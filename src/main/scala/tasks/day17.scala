@@ -6,9 +6,7 @@ import java.time.Instant
 
 object day17 {
   def main(args: Array[String]): Unit = {
-    println(Instant.now())
     println(s"Tower is ${part1()} units tall")
-    println(Instant.now())
     //    println(s"Tower is ${part2()} units tall")
   }
 
@@ -31,7 +29,7 @@ object day17 {
   }
 
   private def solve(start: Map[Int, Int], moves: Int): Map[Int, Int] = {
-    val end = (0 until 2).foldLeft(start) {
+    (0 until moves).foldLeft(start) {
       (field, _) => {
         val stopped = Seq.unfold(rockStream.next(field.height)) {
           r => {
@@ -48,9 +46,6 @@ object day17 {
         }
       }
     }
-    end.show()
-
-    end
   }
 
   extension (field: Map[Int, Int]) {
