@@ -37,7 +37,7 @@ object day17 {
           r => {
             Option.when(r.exists(_.name == rockMoving)) {
               val moved = r.blowJet(field)
-              val fallen = moved.fall
+              val fallen = moved.fall(field)
               (fallen, fallen)
             }
           }
@@ -47,7 +47,6 @@ object day17 {
           (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
         }
       }
-
     }
     end.show()
 
@@ -86,13 +85,13 @@ object day17 {
         })
     }
 
-    private def fall: Seq[coordinate] = {
+    private def fall(field: Map[Int, Int]): Seq[coordinate] = {
       rock
         .map(r => {
           coordinate(
             r.x,
-            r.y - (if (isBlockedVertical) 0 else 1),
-            if (isBlockedVertical) rockStatic else rockMoving
+            r.y - (if (isBlockedVertical(field)) 0 else 1),
+            if (isBlockedVertical(field)) rockStatic else rockMoving
           )
         })
     }
@@ -105,10 +104,10 @@ object day17 {
       )
     }
 
-    private def isBlockedVertical: Boolean = {
+    private def isBlockedVertical(field: Map[Int, Int]): Boolean = {
       rock.exists(r => {
-        r.y - 1 == -1 //||
-        //          coordinates.find(c => c.x == r.x && c.y == r.y - 1).map(_.name).getOrElse(air) == rockStatic
+        r.y - 1 == -1 ||
+          (field.bitmask(r.y - 1) & bits(r.x)) == bits(r.x)
       })
     }
   }
@@ -119,8 +118,6 @@ object day17 {
     private val iterator: Iterator[Int] = LazyList.from(0).iterator
 
     def next: Char = jets(iterator.next() % jets.length)
-
-    val size: Int = jets.length
   }
 
   private class RockStream {
