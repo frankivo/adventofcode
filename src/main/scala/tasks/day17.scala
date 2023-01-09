@@ -26,11 +26,11 @@ object day17 {
 
   private def part2(): Long = solve(Map.empty[Int, Int], 1_000_000_000_000L)
 
-  private val cache = mutable.Map.empty[(Int, Int, Long), (Int, Int)]
+  private val cache = mutable.Map.empty[(Int, Int, Long), (Long, Long)]
 
   private def solve(start: Field, moves: Long): Long = {
-    Seq.unfold(start, 0L) {
-      (field, i) => {
+    val result = Seq.unfold(start, 0L, 0L) {
+      (field, i, addedRows) => {
         Option.when(i < moves) {
           val updatedField = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
             rock => {
@@ -45,26 +45,34 @@ object day17 {
               (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
             }
 
-          val sigSum = updatedField.filter(f => f._1 >= updatedField.size - 30).values.map(_.toLong).sum
+          val lastRows = (0 to 50)
+            .map(i.toInt - _)
+            .map(l => updatedField.getOrElse(l, 0))
+
+          //          val sigSum = (0 until fieldWidth).map(x => lastRows.find(bm => (bm & bits(x)) == bits(x)).getOrElse(1))
+          //          val sigSum = updatedField.filter(f => f._1 >= updatedField.size - 30).values.toSet
+          val sigSum: Long = lastRows.map(_.toLong).sum
           val sig = ((i % 5).toInt, (i % jetStream.size).toInt, sigSum)
 
-          val blocksAdded = if (cache.contains(sig) && i > 2022) {
+          val increase = if (cache.contains(sig) && i >= 2022) {
             val prev = cache(sig)
-            val dy = updatedField.size - prev._2
-            val dt = (i - prev._1).toFloat
-            val amt = ((moves - i) / dt).floor.toLong
-            val added = amt * dy
-            println(updatedField.size + added)
-            moves
-          } else {
-            cache += sig -> (i.toInt, updatedField.size)
-            1
-          }
+            val dy = updatedField.size - prev._2 // Increase in height per cycle
+            val dt = i - prev._1 // Nr of bricks per cycle
+            val amt = ((moves - i) / dt.toFloat).floor.toLong // Cycles to simulate
+            val added = amt * dy // Simulated height
+            (added, amt * dt)
+          } else (0L, 1L)
 
-          (updatedField.size, (updatedField, i + blocksAdded))
+          cache += sig -> (i, updatedField.size)
+
+          if (i > 900_000_000_000L) println(s"Line $i -> $addedRows")
+
+          ((updatedField.size + increase._1, addedRows), (updatedField, i + increase._2, Seq(addedRows, increase._1).max))
         }
       }
     }.last
+
+    result._1 + result._2
   }
 
   extension (field: Field) {
