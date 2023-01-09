@@ -45,9 +45,9 @@ object day17 {
               (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
             }
 
-          val sigSum = updatedField.filter(f => f._1 >= i - 20).values.map(_.toLong).sum
-
+          val sigSum = updatedField.filter(f => f._1 >= updatedField.size - 30).values.map(_.toLong).sum
           val sig = ((i % 5).toInt, (i % jetStream.size).toInt, sigSum)
+
           val blocksAdded = if (cache.contains(sig) && i > 2022) {
             val prev = cache(sig)
             val dy = updatedField.size - prev._2
