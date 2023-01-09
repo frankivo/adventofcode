@@ -10,9 +10,6 @@ object day17 {
     println(s"Tower is ${part2()} units tall")
   }
 
-  private val jetStream = JetStream()
-  private val rockStream = RockStream()
-
   private val fieldWidth = 7
   private val rockStatic = "#"
   private val rockMoving = "@"
@@ -29,13 +26,16 @@ object day17 {
   private val cache = mutable.Map.empty[(Int, Int, Long), (Long, Long)]
 
   private def solve(start: Field, moves: Long): Long = {
+    val jetStream = JetStream()
+    val rockStream = RockStream()
+
     val result = Seq.unfold(start, 0L, 0L) {
       (field, i, addedRows) => {
         Option.when(i < moves) {
           val updatedField = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
             rock => {
               Option.when(rock.exists(_.name == rockMoving)) {
-                val updated = rock.blowJet(field).fall(field)
+                val updated = rock.blowJet(jetStream.next, field).fall(field)
                 (updated, updated)
               }
             }
@@ -97,8 +97,7 @@ object day17 {
   }
 
   extension (rock: Rock) {
-    private def blowJet(field: Field): Rock = {
-      val jet = jetStream.next
+    private def blowJet(jet: Char, field: Field): Rock = {
       rock
         .map(r => {
           val direction = if (jet == '>') 1 else -1
