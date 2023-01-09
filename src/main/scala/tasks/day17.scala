@@ -2,6 +2,7 @@ package com.github.frankivo
 package tasks
 
 import scala.collection.mutable
+import scala.util.Try
 
 object day17 {
   def main(args: Array[String]): Unit = {
@@ -18,33 +19,49 @@ object day17 {
   private val air = "."
   private val bits = (0 until 7).map(i => (i, 1 << i)).toMap
 
-  private type Field = Map[Int, Int]
+  private type Field = Map[Int, Int] // Y, bitmask
   private type Rock = Seq[coordinate]
 
   private def part1(): Long = solve(Map.empty[Int, Int], 2022)
 
   private def part2(): Long = solve(Map.empty[Int, Int], 1_000_000_000_000L)
 
-  private val cache = mutable.Map.empty[Int, Int]
+  private val cache = mutable.Map.empty[(Int, Int, Long), (Int, Int)]
 
   private def solve(start: Field, moves: Long): Long = {
     Seq.unfold(start, 0L) {
       (field, i) => {
         Option.when(i < moves) {
-          val solidRock = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
+          val updatedField = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
             rock => {
               Option.when(rock.exists(_.name == rockMoving)) {
                 val updated = rock.blowJet(field).fall(field)
                 (updated, updated)
               }
             }
-          }.last
-          
-          val updatedField = solidRock
+          }
+            .last
             .foldLeft(field) { // Update Y bitmasks
               (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
             }
-          (updatedField.size, (updatedField, i + 1))
+
+          val sigSum = updatedField.filter(f => f._1 >= i - 20).values.map(_.toLong).sum
+
+          val sig = ((i % 5).toInt, (i % jetStream.size).toInt, sigSum)
+          val blocksAdded = if (cache.contains(sig) && i > 2022) {
+            val prev = cache(sig)
+            val dy = updatedField.size - prev._2
+            val dt = (i - prev._1).toFloat
+            val amt = ((moves - i) / dt).floor.toLong
+            val added = amt * dy
+            println(updatedField.size + added)
+            moves
+          } else {
+            cache += sig -> (i.toInt, updatedField.size)
+            1
+          }
+
+          (updatedField.size, (updatedField, i + blocksAdded))
         }
       }
     }.last
@@ -110,6 +127,8 @@ object day17 {
     private val iterator: Iterator[Int] = LazyList.from(0).iterator
 
     def next: Char = jets(iterator.next() % jets.length)
+
+    def size: Int = jets.length
   }
 
   private class RockStream {
