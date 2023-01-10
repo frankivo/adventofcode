@@ -23,7 +23,7 @@ object day17 {
 
   private def part2(): Long = solve(Map.empty[Int, Int], 1_000_000_000_000L)
 
-  private val cache = mutable.Map.empty[(Int, Int, Long), (Long, Long)]
+  private val cache = mutable.Map.empty[(Int, Int, Set[(Int, Int)]), (Long, Long)]
 
   private def solve(start: Field, moves: Long): Long = {
     val jetStream = JetStream()
@@ -45,27 +45,25 @@ object day17 {
               (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
             }
 
-          val lastRows = (0 to 50)
-            .map(i.toInt - _)
-            .map(l => updatedField.getOrElse(l, 0))
+          val sig = ((i % 5).toInt, (i % jetStream.size).toInt, updatedField.signature)
 
-          //          val sigSum = (0 until fieldWidth).map(x => lastRows.find(bm => (bm & bits(x)) == bits(x)).getOrElse(1))
-          //          val sigSum = updatedField.filter(f => f._1 >= updatedField.size - 30).values.toSet
-          val sigSum: Long = lastRows.map(_.toLong).sum
-          val sig = ((i % 5).toInt, (i % jetStream.size).toInt, sigSum)
-
-          val increase = if (cache.contains(sig) && i >= 2022) {
+          //          val increase = if (cache.contains(sig) && i >= 2022) {
+          val increase = if (cache.contains(sig)) {
             val prev = cache(sig)
             val dy = updatedField.size - prev._2 // Increase in height per cycle
             val dt = i - prev._1 // Nr of bricks per cycle
             val amt = ((moves - i) / dt.toFloat).floor.toLong // Cycles to simulate
-            val added = amt * dy // Simulated height
-            (added, amt * dt)
+            val ah = amt * dy // Simulated height
+            val ar = amt * dt + 1 // Simulated rows
+            val res = (ah, ar)
+            println(res)
+
+            res
           } else (0L, 1L)
 
           cache += sig -> (i, updatedField.size)
 
-          if (i > 900_000_000_000L) println(s"Line $i -> $addedRows")
+          if (addedRows > 0) println(s"Line $i -> $addedRows")
 
           ((updatedField.size + increase._1, addedRows), (updatedField, i + increase._2, Seq(addedRows, increase._1).max))
         }
@@ -93,6 +91,20 @@ object day17 {
         println()
       })
       println()
+    }
+
+    private def signature: Set[(Int, Int)] = {
+      val topRows = field.filter(_._1 > height - 30)
+      topRows.map(y => {
+        (0 until fieldWidth)
+          .flatMap(x => {
+            Option.when((y._2 & bits(x)) == bits(x)) {
+              (x, height - y._1)
+            }
+          })
+      })
+        .flatten
+        .toSet
     }
   }
 
