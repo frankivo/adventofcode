@@ -7,7 +7,7 @@ import scala.util.Try
 object day17 {
   def main(args: Array[String]): Unit = {
     println(s"Tower is ${part1()} units tall")
-//    println(s"Tower is ${part2()} units tall")
+    println(s"Tower is ${part2()} units tall")
   }
 
   private val fieldWidth = 7
@@ -45,6 +45,55 @@ object day17 {
     }.last
   }
 
+  private def part2(): Long = {
+    val jetStream = JetStream()
+    val rockStream = RockStream()
+
+    val cache = mutable.Map.empty[(Long, Set[Int]), (Long, Long)]
+    var field = Map.empty[Int, Int]
+
+    val L = 1_000_000_000_000L
+
+    var t = 0L
+    var added = 0L
+
+    val hgalksdfjglkas = jetStream.size
+
+    while (t < L) {
+      field = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
+        rock => {
+          Option.when(rock.exists(_.name == rockMoving)) {
+            val updated = rock.blowJet(jetStream.next, field).fall(field)
+            (updated, updated)
+          }
+        }
+      }
+        .last
+        .foldLeft(field) { // Update Y bitmasks
+          (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
+        }
+
+      val sig = (t%hgalksdfjglkas,  field.signature)
+      val top = field.height
+
+      if (cache.contains(sig) && added ==0) {
+        val (oldt, oldy) = cache(sig)
+        val dy = top - oldy
+        val dt = t - oldt
+        val amt = ((L - t) / dt)
+        added += amt * dy
+
+        t += (amt * dt)
+      }
+
+      cache += sig -> (t, field.height)
+
+      t += 1
+    }
+    field.height + added
+  }
+
+
   extension (field: Field) {
     private def height: Int = field.size
 
@@ -65,18 +114,20 @@ object day17 {
       println()
     }
 
-    private def signature: Set[(Int, Int)] = {
-      val topRows = field.filter(_._1 > height - 30)
-      topRows.map(y => {
-        (0 until fieldWidth)
-          .flatMap(x => {
-            Option.when((y._2 & bits(x)) == bits(x)) {
-              (x, height - y._1)
-            }
-          })
-      })
-        .flatten
-        .toSet
+    private def signature: Set[Int] = {
+      //      val topRows = field.filter(_._1 > height - 30)
+      //      topRows.map(y => {
+      //        (0 until fieldWidth)
+      //          .flatMap(x => {
+      //            Option.when((y._2 & bits(x)) == bits(x)) {
+      //              (x, height - y._1)
+      //            }
+      //          })
+      //      })
+      //        .flatten
+      //        .toSet
+
+      field.filter(_._1 > height - 30).values.toSet
     }
   }
 
