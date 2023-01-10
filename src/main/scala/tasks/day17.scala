@@ -7,7 +7,7 @@ import scala.util.Try
 object day17 {
   def main(args: Array[String]): Unit = {
     println(s"Tower is ${part1()} units tall")
-    println(s"Tower is ${part2()} units tall")
+//    println(s"Tower is ${part2()} units tall")
   }
 
   private val fieldWidth = 7
@@ -19,19 +19,13 @@ object day17 {
   private type Field = Map[Int, Int] // Y, bitmask
   private type Rock = Seq[coordinate]
 
-  private def part1(): Long = solve(Map.empty[Int, Int], 2022)
-
-  private def part2(): Long = solve(Map.empty[Int, Int], 1_000_000_000_000L)
-
-  private val cache = mutable.Map.empty[(Int, Int, Set[(Int, Int)]), (Long, Long)]
-
-  private def solve(start: Field, moves: Long): Long = {
+  private def part1(): Long = {
     val jetStream = JetStream()
     val rockStream = RockStream()
 
-    val result = Seq.unfold(start, 0L, 0L) {
-      (field, i, addedRows) => {
-        Option.when(i < moves) {
+    Seq.unfold(Map.empty[Int, Int], 0L) {
+      (field, i) => {
+        Option.when(i < 2022) {
           val updatedField = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
             rock => {
               Option.when(rock.exists(_.name == rockMoving)) {
@@ -45,32 +39,10 @@ object day17 {
               (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
             }
 
-          val sig = ((i % 5).toInt, (i % jetStream.size).toInt, updatedField.signature)
-
-          //          val increase = if (cache.contains(sig) && i >= 2022) {
-          val increase = if (cache.contains(sig)) {
-            val prev = cache(sig)
-            val dy = updatedField.size - prev._2 // Increase in height per cycle
-            val dt = i - prev._1 // Nr of bricks per cycle
-            val amt = ((moves - i) / dt.toFloat).floor.toLong // Cycles to simulate
-            val ah = amt * dy // Simulated height
-            val ar = amt * dt + 1 // Simulated rows
-            val res = (ah, ar)
-            println(res)
-
-            res
-          } else (0L, 1L)
-
-          cache += sig -> (i, updatedField.size)
-
-          if (addedRows > 0) println(s"Line $i -> $addedRows")
-
-          ((updatedField.size + increase._1, addedRows), (updatedField, i + increase._2, Seq(addedRows, increase._1).max))
+          (updatedField.size, (updatedField, i + 1))
         }
       }
     }.last
-
-    result._1 + result._2
   }
 
   extension (field: Field) {
