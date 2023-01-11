@@ -19,13 +19,20 @@ object day17 {
   private type Field = Map[Int, Int] // Y, bitmask
   private type Rock = Seq[coordinate]
 
-  private def part1(): Long = {
+  private def part1(): Long = solve(2022)
+
+  private def part2(): Long = solve(1_000_000_000_000L)
+
+  private def solve(moves: Long): Long = {
     val jetStream = JetStream()
     val rockStream = RockStream()
 
+    val cache = mutable.Map.empty[(Long, Set[Int]), (Long, Long)]
+    var added = 0L
+
     Seq.unfold(Map.empty[Int, Int], 0L) {
-      (field, i) => {
-        Option.when(i < 2022) {
+      (field, t) => {
+        Option.when(t < moves) {
           val updatedField = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
             rock => {
               Option.when(rock.exists(_.name == rockMoving)) {
@@ -39,60 +46,25 @@ object day17 {
               (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
             }
 
-          (updatedField.size, (updatedField, i + 1))
+          val sig = (t % jetStream.size, field.signature)
+          val top = field.height
+
+          val increase = if (cache.contains(sig) && added == 0 && t > 2022) {
+            val (oldt, oldy) = cache(sig)
+            val dy = top - oldy
+            val dt = t - oldt
+            val amt = ((moves - t) / dt.toDouble).floor.toLong
+            added += amt * dy -1
+            amt * dt
+          } else 1
+
+          cache += sig -> (t, field.height)
+
+          (updatedField.size, (updatedField, t + increase))
         }
       }
-    }.last
+    }.last + added
   }
-
-  private def part2(): Long = {
-    val jetStream = JetStream()
-    val rockStream = RockStream()
-
-    val cache = mutable.Map.empty[(Long, Set[Int]), (Long, Long)]
-    var field = Map.empty[Int, Int]
-
-    val L = 1_000_000_000_000L
-
-    var t = 0L
-    var added = 0L
-
-    val hgalksdfjglkas = jetStream.size
-
-    while (t < L) {
-      field = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
-        rock => {
-          Option.when(rock.exists(_.name == rockMoving)) {
-            val updated = rock.blowJet(jetStream.next, field).fall(field)
-            (updated, updated)
-          }
-        }
-      }
-        .last
-        .foldLeft(field) { // Update Y bitmasks
-          (fieldState, cur) => fieldState + (cur.y -> (fieldState.getOrElse(cur.y, 0) | bits(cur.x)))
-        }
-
-      val sig = (t%hgalksdfjglkas,  field.signature)
-      val top = field.height
-
-      if (cache.contains(sig) && added ==0) {
-        val (oldt, oldy) = cache(sig)
-        val dy = top - oldy
-        val dt = t - oldt
-        val amt = ((L - t) / dt)
-        added += amt * dy
-
-        t += (amt * dt)
-      }
-
-      cache += sig -> (t, field.height)
-
-      t += 1
-    }
-    field.height + added
-  }
-
 
   extension (field: Field) {
     private def height: Int = field.size
