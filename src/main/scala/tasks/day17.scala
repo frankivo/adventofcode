@@ -95,21 +95,7 @@ object day17 {
       println()
     }
 
-    private def signature: Set[Int] = {
-      //      val topRows = field.filter(_._1 > height - 30)
-      //      topRows.map(y => {
-      //        (0 until fieldWidth)
-      //          .flatMap(x => {
-      //            Option.when((y._2 & bits(x)) == bits(x)) {
-      //              (x, height - y._1)
-      //            }
-      //          })
-      //      })
-      //        .flatten
-      //        .toSet
-
-      field.filter(_._1 > height - 30).values.toSet
-    }
+    private def signature: Set[Int] = field.filter(_._1 > height - 30).values.toSet
   }
 
   extension (rock: Rock) {
@@ -174,5 +160,4 @@ object day17 {
       xys.map(xy => coordinate(xy._1, xy._2, rockMoving))
     }
   }
-
 }
