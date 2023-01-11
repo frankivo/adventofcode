@@ -21,7 +21,7 @@ object day17 {
 
   private def part1(): Long = solve(2022)
 
-  private def part2(): Long = solve(1_000_000_000_000L)
+  private def part2(): Long = solve(1_000_000_000_000L) // Doesn't actually work besides demo input :(
 
   private def solve(moves: Long): Long = {
     val jetStream = JetStream()
@@ -53,7 +53,7 @@ object day17 {
           val sig = (t % jetStream.size, field.signature)
           val top = field.height
 
-          val increase = if (cache.contains(sig) && added == 0 && t > 2022) {
+          val increase = if (cache.contains(sig) && added == 0) {
             val (oldt, oldy) = cache(sig)
             val dy = top - oldy
             val dt = t - oldt
