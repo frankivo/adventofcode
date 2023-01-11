@@ -27,11 +27,15 @@ object day17 {
     val jetStream = JetStream()
     val rockStream = RockStream()
 
-    val cache = mutable.Map.empty[(Long, Set[Int]), (Long, Long)]
-    var added = 0L
+    val start = (
+      Map.empty[Int, Int], // Field
+      0L, // Blocks iterator
+      Map.empty[(Long, Set[Int]), (Long, Long)], // cache
+      0L // addedBlocks
+    )
 
-    Seq.unfold(Map.empty[Int, Int], 0L) {
-      (field, t) => {
+    val res = Seq.unfold(start) {
+      (field, t, cache, added) => {
         Option.when(t < moves) {
           val updatedField = Seq.unfold(rockStream.next(field.height)) { // Simulate rock movement
             rock => {
@@ -54,16 +58,21 @@ object day17 {
             val dy = top - oldy
             val dt = t - oldt
             val amt = ((moves - t) / dt.toDouble).floor.toLong
-            added += amt * dy -1
-            amt * dt
-          } else 1
+            (amt * dt, amt * dy - 1) // Added height, blocks
+          } else (1L, 0L)
 
-          cache += sig -> (t, field.height)
-
-          (updatedField.size, (updatedField, t + increase))
+          ((updatedField.size, added),
+            (
+              updatedField,
+              t + increase._1,
+              cache + (sig -> (t, field.height)),
+              Seq(added, increase._2).max
+            )
+          )
         }
       }
-    }.last + added
+    }.last
+    res._1 + res._2
   }
 
   extension (field: Field) {
