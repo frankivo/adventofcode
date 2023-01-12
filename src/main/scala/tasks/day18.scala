@@ -3,14 +3,19 @@ package tasks
 
 object day18 {
   def main(args: Array[String]): Unit = {
-    val x = input.foldLeft(0) {
+    println(s"Number of sides that aren't connected: ${part1()}")
+  }
+
+  private def part1() : Int = sides - connected
+
+  private def sides : Int = input.size * 6
+
+  private def connected: Int = {
+    input.foldLeft(0) {
       (sum, cur) => {
         sum + cur.adjacent.count(input.contains)
       }
     }
-    println(x)
-    val y = (input.size * 6 ) - x
-    println(y)
   }
 
   extension (c: coordinate) {
@@ -27,9 +32,12 @@ object day18 {
   }
 
   def input: Set[coordinate] = {
-    Set(
-      coordinate(1, 1, 1),
-      coordinate(2, 1, 1),
-    )
+    util.get("day18.txt")
+      .mkString(",")
+      .split(",").toSeq
+      .map(_.toInt)
+      .grouped(3)
+      .map(l => coordinate(l(0), l(1), l(2)))
+      .toSet
   }
 }
