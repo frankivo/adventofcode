@@ -7,5 +7,7 @@ case class coordinate(x: Int, y: Int, z: Int, name: String) {
 object coordinate {
   def apply(x: Int, y: Int, z: Int): coordinate = new coordinate(x, y, z, "?")
 
+  def apply(xyz: Seq[Int]): coordinate = new coordinate(xyz(0), xyz(1), xyz(2), "?")
+
   def apply(x: Int, y: Int, name: String = "?"): coordinate = new coordinate(x, y, 0, name)
 }
