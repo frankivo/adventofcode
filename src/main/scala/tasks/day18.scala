@@ -10,23 +10,19 @@ object day18 {
   private def part1(): Int = sides - connected(input)
 
   private def part2(): Int = {
-    var explorable = Seq[coordinate](box._1)
-    var seen = Set.empty[coordinate]
-    var count = 0
-
-    while (explorable.nonEmpty) {
-      val cur = explorable.head
-      explorable = explorable.drop(1)
-
-      if (input.contains(cur))
-        count += 1
-      else if (!seen.contains(cur)) {
-        seen = seen + cur
-        explorable = explorable ++ cur.adjacent.filter(reachable)
+    Seq.unfold(Seq[coordinate](box._1), Set.empty[coordinate], 0) {
+      (explorable, visited, count) => {
+        Option.when(explorable.nonEmpty) {
+          val cur = explorable.head
+          if (input.contains(cur))
+            (count, (explorable.drop(1), visited, count + 1))
+          else if (!visited.contains(cur))
+            (count, (explorable.drop(1) ++ cur.adjacent.filter(reachable), visited + cur, count))
+          else
+            (count, (explorable.drop(1), visited, count))
+        }
       }
-    }
-
-    count
+    }.last
   }
 
   private def sides: Int = input.size * 6
