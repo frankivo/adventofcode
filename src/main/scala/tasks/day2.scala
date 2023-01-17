@@ -63,7 +63,7 @@ object day2 {
       score
   }
 
-  private val input: Seq[(Char, Char)] = util.get("day2.txt")
+  private val input: Seq[(Char, Char)] = util.get(2)
     .map(_.filter(('A' to 'Z').toSet))
     .map(l => (l(0), l(1)))
 }

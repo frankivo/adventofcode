@@ -53,7 +53,7 @@ object day18 {
   }
 
   def input: Set[coordinate] = {
-    util.get("day18.txt")
+    util.get(18)
       .mkString(",")
       .split(",").toSeq
       .map(_.toInt)

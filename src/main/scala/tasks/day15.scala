@@ -57,7 +57,7 @@ object day15 {
   }
 
   private val input: Set[sensor] = {
-    util.get("day15.txt")
+    util.get(15)
       .flatMap("""([\-0-9]+)""".r.findAllMatchIn)
       .map(_.matched.toInt)
       .grouped(4)

@@ -101,7 +101,7 @@ object day14 {
   }
 
   private val fieldWithoutFloor: Field = {
-    util.get("day14.txt")
+    util.get(14)
       .flatMap(l => {
         l.split("->").map(_.trim).sliding(2).toSeq
           .flatMap(p => {

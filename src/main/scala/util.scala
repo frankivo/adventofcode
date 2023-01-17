@@ -9,11 +9,13 @@ import scala.io.Source
 import scala.util.Using
 
 object util {
-  def get(filename: String): Seq[String] = {
-    val dir = if (sys.env.getOrElse("DEMO", "0").toInt == 1) "demo" else "input"
-    val path = s"$dir/$filename"
-    Source.fromResource(path).getLines().toSeq
+  def get(day: Int): Seq[String] = {
+    if (sys.env.getOrElse("DEMO", "0").toInt == 1)
+      getDemoFile(day)
+    else ???
   }
+
+  private def getDemoFile(day: Int): Seq[String] = Source.fromResource(s"demo/day$day.txt").getLines().toSeq
 
   private def download(filename: String): Unit = {
     val url = s"https://adventofcode.com/2022/day/19/input"
@@ -29,7 +31,6 @@ object util {
     val response = request.send(backend)
 
     if (response.code.isSuccess) {
-
       val file = File(s"banaan.txt")
       val body = response.body.getOrElse("")
       Using.resource(new FileOutputStream(file)) { writer =>

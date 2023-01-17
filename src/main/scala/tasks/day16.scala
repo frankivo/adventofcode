@@ -66,7 +66,7 @@ object day16 {
   }
 
   private val input: Map[String, Valve] = {
-    util.get("day16.txt")
+    util.get(16)
       .map("""([A-Z]{2}|[0-9]+)""".r.findAllIn)
       .map(_.matchData.map(_.matched).toSeq)
       .map(m => (m.head, Valve(m(1).toInt, m.drop(2).toSet)))

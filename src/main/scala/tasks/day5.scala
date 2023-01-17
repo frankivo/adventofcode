@@ -7,7 +7,7 @@ object day5 {
     println(s"Top values with CrateMover9001: ${getTops(rearrange(false))}")
   }
 
-  private val input: Seq[String] = util.get("day5.txt")
+  private val input: Seq[String] = util.get(5)
 
   private val stackPos: Map[Int, Int] = { // Pos, stacknr
     "[0-9]".r
