@@ -1,6 +1,7 @@
 package com.github.frankivo
 
-import sttp.client3.{HttpURLConnectionBackend, basicRequest}
+import sttp.client3
+import sttp.client3.HttpURLConnectionBackend
 import sttp.model.Uri
 
 import java.io.{File, FileOutputStream}
@@ -12,18 +13,29 @@ object util {
   def get(day: Int): Seq[String] = {
     if (sys.env.getOrElse("DEMO", "0").toInt == 1)
       getDemoFile(day)
-    else ???
+    else
+      getInputFile(day)
   }
 
-  private def getDemoFile(day: Int): Seq[String] = Source.fromResource(s"demo/day$day.txt").getLines().toSeq
+  private def getDemoFile(day: Int): Seq[String] =
+    Using(Source.fromResource(s"demo/day$day.txt")) { reader => reader.getLines().toSeq }.get
 
-  private def download(filename: String): Unit = {
-    val url = s"https://adventofcode.com/2022/day/19/input"
-    println(url)
-    val uri = Uri.parse(url)
-      .getOrElse(throw new Exception(s"Cannot parse URL: $url"))
+  private def getInputFile(day: Int): Seq[String] = {
+    File("input").mkdir()
+    val fullPath = File(s"input/$day.txt")
 
-    val request = basicRequest
+    if (!fullPath.exists())
+      download(day, fullPath)
+
+    Using(Source.fromFile(fullPath)) { reader => reader.getLines().toSeq }.get
+  }
+
+  private def download(day: Int, path: File): Unit = {
+    val url = s"https://adventofcode.com/2022/day/$day/input"
+    println(s"Download $url")
+    val uri = Uri.parse(url).getOrElse(throw new Exception(s"Cannot parse URL: $url"))
+
+    val request = client3.basicRequest
       .cookie("session", sys.env.getOrElse("cookie", throw new Exception("No cookie set")))
       .header("User-Agent", "https://github.com/frankivo/adventofcode2022 frank+github@scriptzone.nl")
       .get(uri)
@@ -31,9 +43,8 @@ object util {
     val response = request.send(backend)
 
     if (response.code.isSuccess) {
-      val file = File(s"banaan.txt")
       val body = response.body.getOrElse("")
-      Using.resource(new FileOutputStream(file)) { writer =>
+      Using.resource(new FileOutputStream(path)) { writer =>
         writer.write(body.getBytes(StandardCharsets.UTF_8))
       }
     }
