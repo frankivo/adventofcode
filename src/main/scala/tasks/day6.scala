@@ -7,9 +7,9 @@ object day6 {
     println(s"first start-of-message is at pos: $startOfMessageMarker")
   }
 
-  def startOfPacketMarker: Int = marker(util.get("day6.txt").head, 4)
+  def startOfPacketMarker: Int = marker(util.get(6).head, 4)
 
-  def startOfMessageMarker: Int = marker(util.get("day6.txt").head, 14)
+  def startOfMessageMarker: Int = marker(util.get(6).head, 14)
 
   def marker(msg: String, size: Int): Int = msg
     .sliding(size, 1)

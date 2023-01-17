@@ -23,7 +23,7 @@ object day4 {
     })
   }
 
-  def input: Iterator[(Range, Range)] = util.get("day4.txt")
+  def input: Iterator[(Range, Range)] = util.get(4)
     .mkString(",")
     .split(",")
     .map(_.split("-"))

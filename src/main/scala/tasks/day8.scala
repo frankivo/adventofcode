@@ -8,7 +8,7 @@ object day8 {
   }
   
   private val grid: Seq[(coordinate, Int)] = {
-    util.get("day8.txt")
+    util.get(8)
       .zipWithIndex
       .map(y => (y._2, y._1.zipWithIndex))
       .flatMap(i => i._2.map(j => (coordinate(j._2, i._1), j._1.getNumericValue)))

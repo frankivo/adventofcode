@@ -45,7 +45,7 @@ object day12 {
   }
 
   private val input: Seq[coordinate] = {
-    util.get("day12.txt")
+    util.get(12)
       .zipWithIndex.flatMap(y =>
       y._1.zipWithIndex
         .map(x => coordinate(x = x._2, y = y._2, name = s"${x._1}"))

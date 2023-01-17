@@ -8,7 +8,7 @@ object day7 {
   }
 
   val tree: Map[String, Long] = {
-    util.get("day7.txt")
+    util.get(7)
       .foldLeft(("", Map[String, Long]())) {
         (browser, current) => {
           val path = newPath(browser._1, current)

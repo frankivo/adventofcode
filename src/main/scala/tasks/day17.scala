@@ -131,7 +131,7 @@ object day17 {
   }
 
   private class JetStream {
-    private val jets: String = util.get("day17.txt").head
+    private val jets: String = util.get(17).head
 
     private val iterator: Iterator[Int] = LazyList.from(0).iterator
 

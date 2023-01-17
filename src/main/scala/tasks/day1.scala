@@ -48,5 +48,5 @@ object day1 {
     top3.maxSums.sum
   }
 
-  private val input: Seq[String] = util.get("day1.txt")
+  private val input: Seq[String] = util.get(1)
 }

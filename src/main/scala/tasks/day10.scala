@@ -36,7 +36,7 @@ object day10 {
 
   private case class command(cmd: String, param: Option[Int] = None)
 
-  private val input: Seq[command] = util.get("day10.txt")
+  private val input: Seq[command] = util.get(10)
     .map(_.split("""\s"""))
     .map(c => command(c.head, Try(c.last.toInt).toOption))
     .flatMap(c => {

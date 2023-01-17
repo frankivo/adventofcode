@@ -63,7 +63,7 @@ object day13 {
     }
   }
 
-  private val input: Seq[Pair] = util.get("day13.txt")
+  private val input: Seq[Pair] = util.get(13)
     .filterNot(_.isEmpty)
     .map(JsonParser.parseString)
     .map(_.getAsJsonArray)
@@ -73,6 +73,6 @@ object day13 {
     .map(p => Pair(p._2, p._1.head, p._1.last))
     .toSeq
 
-  private val lines: Seq[String] = util.get("day13.txt")
+  private val lines: Seq[String] = util.get(13)
     .filterNot(_.isEmpty)
 }
