@@ -8,6 +8,7 @@ lazy val root = (project in file("."))
     idePackagePrefix := Some("com.github.frankivo"),
 
     libraryDependencies ++= Seq(
-        "com.google.code.gson" % "gson" % "2.10",
+        "com.google.code.gson" % "gson" % "2.10.1",
+        "com.softwaremill.sttp.client3" %% "core" % "3.8.8",
     )
 )
