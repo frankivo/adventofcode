@@ -37,7 +37,7 @@ object util {
 
     val request = client3.basicRequest
       .cookie("session", sys.env.getOrElse("cookie", throw new Exception("No cookie set")))
-      .header("User-Agent", "https://github.com/frankivo/adventofcode2022 frank+github@scriptzone.nl")
+      .header("User-Agent", "https://github.com/frankivo/adventofcode frank+github@scriptzone.nl")
       .get(uri)
     val backend = HttpURLConnectionBackend()
     val response = request.send(backend)
