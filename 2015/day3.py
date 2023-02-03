@@ -1,28 +1,11 @@
 from helper import getInput
 
-def part1() -> int:
-    visited = {(0, 0)}
-    x = y = 0
-
-    for c in input:
-        if c == '^':
-            x += 1
-        elif c == 'v':
-            x -= 1
-        elif c == '<':
-            y -= 1
-        elif c == '>':
-            y += 1
-        visited.add((x, y))
-
-    return len(visited)
-
-def part2() -> int:
+def solve(robo) -> int:
     visited = {(0, 0)}
     x1 = x2 = y1 = y2 = 0
 
     for i, c in enumerate(input):
-        if i % 2 == 0:
+        if not robo or i % 2 == 0:
             if c == '^':
                 x1 += 1
             elif c == 'v':
@@ -46,5 +29,5 @@ def part2() -> int:
     return len(visited)
 
 input = getInput(3)[0]
-print('Houses with at least one present: {0}'.format(part1()))
-print('Houses with robo-santa: {0}'.format(part2()))
+print('Houses with at least one present: {0}'.format(solve(False)))
+print('Houses with robo-santa: {0}'.format(solve(True)))
