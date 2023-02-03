@@ -1,5 +1,4 @@
-from helper import *
-
+from helper import getInput
 
 def part1() -> int:
     return input.count('(') - input.count(')')
