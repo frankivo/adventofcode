@@ -10,7 +10,8 @@ def getInput(day: int):
     return open(filename).readlines()
 
 def download(day: int, target: str):
-    os.mkdir('input')
+    if not os.path.exists('input'):
+        os.mkdir('input')
 
     url = 'https://adventofcode.com/2015/day/{0}/input'.format(day)
     print("Download: " + url)
