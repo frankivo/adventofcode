@@ -1,6 +1,8 @@
 from helper import *
 
-print("Hello, World!")
-data = getInput(1)
-for i in data:
-    print(data)
+
+def part1() -> int:
+    return input.count('(') - input.count(')')
+    
+input = getInput(1)[0]
+print("Santa floor: {0}".format(part1()))
