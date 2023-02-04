@@ -1,4 +1,3 @@
-import time
 import re
 from helper import getInput
 
@@ -7,10 +6,6 @@ input = getInput(7)
 signals = dict()
 
 while 'a' not in signals:
-    # print(signals)
-    print(len(signals))
-    # time.sleep(2)
-
     for i in input:
         match = re.findall('[A-Z]+', i)
         cmd = match[0] if len(match) else 'PROVIDE'
@@ -20,7 +15,13 @@ while 'a' not in signals:
 
         try:
             if cmd == 'PROVIDE':
-                value = int(values[0])
+                try: value = int(values[0])
+                except: 
+                    try:
+                        if values[0] in signals:
+                            value = signals.get(values[0]) 
+                        else: raise
+                    except: raise
             elif cmd == 'NOT':
                 value = signals.get(values[1]) ^ 65535
             elif cmd == 'AND':
@@ -36,7 +37,6 @@ while 'a' not in signals:
 
             signals.update({target: value})
         except Exception as e: 
-            print(e)
             continue
 
-print(signals)
+print(signals.get('a'))
