@@ -2,7 +2,7 @@ import os
 import requests
 
 def getInput(day: int):
-    filename = 'input/day{0}'.format(day)
+    filename = 'input/day{0}.txt'.format(day)
 
     if (not os.path.exists(filename)):
         download(day, filename)
