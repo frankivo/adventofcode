@@ -25,8 +25,8 @@ while 'a' not in signals:
             elif cmd == 'NOT':
                 value = signals.get(values[1]) ^ 65535
             elif cmd == 'AND':
-                try: left = int(values[0])
-                except: left = signals.get(values[0])
+                source = values[0]
+                left = int(source) if source.isdigit() else signals.get(source)
                 value = left & signals.get(values[2])
             elif cmd == 'OR':
                 value = signals.get(values[0]) | signals.get(values[2])
@@ -36,7 +36,6 @@ while 'a' not in signals:
                 value = signals.get(values[0]) >> int(values[2])
 
             signals.update({target: value})
-        except Exception as e: 
-            continue
+        except: continue
 
 print(signals.get('a'))
