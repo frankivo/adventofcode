@@ -7,7 +7,8 @@ def getInput(day: int):
     if (not os.path.exists(filename)):
         download(day, filename)
     
-    return open(filename).readlines()
+    lines = open(filename).readlines()
+    return [s.strip() for s in lines]
 
 def download(day: int, target: str):
     if not os.path.exists('input'):
