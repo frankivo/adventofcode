@@ -1,9 +1,7 @@
 import re
 from helper import getInput
 
-def part1() -> int:
-    signals = dict()
-
+def solve(signals: dict) -> int:
     while 'a' not in signals:
         for i in input:
             match = re.findall('[A-Z]+', i)
@@ -32,9 +30,12 @@ def part1() -> int:
                     value = signals.get(values[0]) >> int(values[2])
             except: continue
 
-            if value is not None:
+            if value is not None and target not in signals:
                 signals.update({target: value})
     return signals.get('a')
 
 input = getInput(7)
-print(part1())
+part1A = solve(dict())
+print(part1A)
+part2A = solve(dict({'b': part1A}))
+print(part2A)
