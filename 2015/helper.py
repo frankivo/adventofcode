@@ -22,3 +22,9 @@ def download(day: int, target: str):
     if (response.status_code != 200):
         raise Exception("Download failed: " + response.status_code)
     open(target, 'wb').write(response.content)
+
+def slice(data) -> list:
+    return [data[i:i+2] for i in range(0, len(data), 1)]
+
+def grouped(data, size) -> list:
+    return [data[i:i+size] for i in range(0, len(data), size)]

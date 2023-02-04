@@ -1,4 +1,4 @@
-from helper import getInput
+from helper import getInput, grouped
 
 def part1() -> int:
     total = 0
@@ -17,7 +17,7 @@ def input():
     for r in getInput(2):
         data += r.strip().split("x")
     data = list(map(int, data)) # Cast
-    data = [data[i:i+3] for i in range(0, len(data), 3)] # Grouped
+    data = grouped(data, 3)
     data = list(map(sorted, data)) # Sort
     return data
 
