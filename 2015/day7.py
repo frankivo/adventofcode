@@ -1,13 +1,7 @@
 import re
+from helper import getInput
 
-input = '''123 -> x
-456 -> y
-x AND y -> d
-x OR y -> e
-x LSHIFT 2 -> f
-y RSHIFT 2 -> g
-NOT x -> h
-NOT y -> i'''.split("\n")
+input = getInput(7)
 
 signals = dict()
 for i in input:
@@ -16,6 +10,8 @@ for i in input:
     value = -1
     values = i.split()
     target = values[-1]
+
+    print(target)
 
     if cmd == 'PROVIDE':
         value = int(values[0])
@@ -26,9 +22,9 @@ for i in input:
     elif cmd == 'OR':
         value = signals.get(values[0]) | signals.get(values[2])
     elif cmd == 'LSHIFT':
-        value = signals.get(values[0]) << 2
+        value = signals.get(values[0]) << int(values[2])
     elif cmd == 'RSHIFT':
-        value = signals.get(values[0]) >> 2
+        value = signals.get(values[0]) >> int(values[2])
 
     signals.update({target: value})
 
