@@ -26,5 +26,17 @@ def part1() -> int:
         count += 1 if vowelCount3OrMore(i) and charRepeat(i) and notBad(i) else 0
     return count
 
-print('Amount of nice strings: {0}'.format(part1()))
+def charRepeatSplit(s: str) -> bool:
+    for i, c in enumerate(s):
+        if i > 1 and s[i-2] == c:
+            return True
+    return False
 
+def part2() -> int:
+    count = 0
+    for i in input:
+        count += 1 if charRepeatSplit(i) else 0
+    return count
+
+print('Amount of nice strings: {0}'.format(part1()))
+print('Amount of nice strings: {0}'.format(part2()))
