@@ -1,6 +1,6 @@
 
 import re
-from helper import getInput
+from helper import getInput, slice
 
 input = getInput(5)
 badStrs = ['ab', 'cd', 'pq', 'xy']
@@ -26,6 +26,17 @@ def part1() -> int:
         count += 1 if vowelCount3OrMore(i) and charRepeat(i) and notBad(i) else 0
     return count
 
+def repeatPair(s: str) -> bool:
+    slices = slice(s.strip())
+    for i, sa in enumerate(slices):
+        for j, sb in enumerate(slices):
+            if i == j or i == j + 1 or i + 1 == j:
+                continue
+            if sa == sb:
+                return True
+
+    return False
+
 def charRepeatSplit(s: str) -> bool:
     for i, c in enumerate(s):
         if i > 1 and s[i-2] == c:
@@ -35,7 +46,7 @@ def charRepeatSplit(s: str) -> bool:
 def part2() -> int:
     count = 0
     for i in input:
-        count += 1 if charRepeatSplit(i) else 0
+        count += 1 if repeatPair(i) and charRepeatSplit(i) else 0
     return count
 
 print('Amount of nice strings: {0}'.format(part1()))
