@@ -13,7 +13,7 @@ def part1():
                 elif mode == 'off':
                     if p in lights:
                         lights.remove(p)
-                else:
+                elif mode == 'toggle':
                     if p in lights:
                         lights.remove(p)
                     else:
