@@ -13,10 +13,17 @@ signals = dict()
 for i in input:
     match = re.findall('[A-Z]+', i)
     cmd = match[0] if len(match) else 'PROVIDE'
-    target = i.split()[-1]
+    values = i.split()
+    target = values[-1]
 
     if cmd == 'PROVIDE':
-        signals.update({target: i.split()[0]})
+        value = int(values[0])
+    elif cmd == 'NOT':
+        source = values[1]
+        value = signals.get(source) ^ 65535
+    else:
+        value = -1
+
+    signals.update({target: value})
 
 print(signals)
-
