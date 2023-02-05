@@ -1,4 +1,5 @@
 from helper import getInput
+import re
 
 def literalLength() -> int:
     return sum(map(len, input))
@@ -9,17 +10,20 @@ def evalLength() -> int:
 def part1() -> int:
     return literalLength() - evalLength()
 
+def part2() -> int:
+    total = 0
+    for i in input:
+        extra = 4 # start + end
+        short = i[1:-1]
+        extra += short.count('\\')
+        special = len( re.findall('(\\\\x\d{2})', short) )
+        extra += special
+        extra += short.count('\"') - special
+        total += extra
+    return total
+
 input = getInput(8)
-# print(part1())
+print(part1())
+print(part2())
 
-for i in input:
-    extra = 4 # start + end
-    short = i[1:-1]
-    extra += short.count('\\')
-    extra += short.count('\"')
-    extra += short.count('\\x')
-    
-    print(extra)
-
-
-
+# 4110 too high
