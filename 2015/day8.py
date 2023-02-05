@@ -13,17 +13,11 @@ def part1() -> int:
 def part2() -> int:
     total = 0
     for i in input:
-        extra = 4 # start + end
         short = i[1:-1]
-        extra += short.count('\\')
         special = len( re.findall('(\\\\x\d{2})', short) )
-        extra += special
-        extra += short.count('\"') - special
-        total += extra
+        total += 4 + short.count('\\') + special + (short.count('\"') - special)
     return total
 
 input = getInput(8)
 print(part1())
 print(part2())
-
-# 4110 too high
