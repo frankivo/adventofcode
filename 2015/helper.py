@@ -2,12 +2,13 @@ import os
 import requests
 
 def getInput(day: int):
-    filename = 'input/day{0}'.format(day)
+    filename = 'input/day{0}.txt'.format(day)
 
     if (not os.path.exists(filename)):
         download(day, filename)
     
-    return open(filename).readlines()
+    lines = open(filename).readlines()
+    return [s.strip() for s in lines]
 
 def download(day: int, target: str):
     if not os.path.exists('input'):
