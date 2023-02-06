@@ -19,8 +19,11 @@ def bfs(start: str) -> int:
         print(explorable[0])
         explorable.remove(current)
         if current in cities:
-            for adj in cities[current].keys():
+            for adj in cities[current]:
                 if adj not in distances:
+                    dist= cities[current][adj]
+                    distances.append({adj: dist})
                     explorable.append(adj)
+    print(distances)
 
 bfs('London')
