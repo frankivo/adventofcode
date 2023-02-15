@@ -7,12 +7,12 @@ for i in input:
     source, to, dist = split[0], split[2], split[4]
 
     target = cities[source] if source in cities else dict()
-    target.update({to: dist})
+    target.update({to: int(dist)})
     cities.update({source: target})
 
 def bfs(start: str) -> int:
     explorable = [start]
-    distances = []
+    distances = {}
 
     while explorable:
         current = explorable[0]
@@ -20,10 +20,14 @@ def bfs(start: str) -> int:
         explorable.remove(current)
         if current in cities:
             for adj in cities[current]:
-                if adj not in distances:
-                    dist= cities[current][adj]
-                    distances.append({adj: dist})
-                    explorable.append(adj)
-    print(distances)
+                dist = cities[current][adj]
 
-bfs('London')
+                if adj not in distances or distances[adj] > dist:
+                    distances.update({adj: dist})
+                explorable.append(adj)
+    return sum(distances.values())
+
+x = [bfs(c) for c in cities]
+print(x)
+
+print(cities)
