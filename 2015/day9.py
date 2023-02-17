@@ -15,7 +15,7 @@ for i in input:
     addCity(source, to, dist)
     addCity(to, source, dist)
 
-def scan(city: str, visited, dist):
+def scan(city: str, visited: list, dist: int) -> int:
     visited.append(city)
 
     for c, d in cities[city].items():
@@ -23,5 +23,5 @@ def scan(city: str, visited, dist):
             return scan(c, visited.copy(), dist + d)
     return dist
 
-for c in cities:
-    print(scan(c, [], 0))
+print(min([scan(c, [], 0) for c in cities]))
+    
