@@ -15,4 +15,16 @@ for i in input:
     addCity(source, to, dist)
     addCity(to, source, dist)
 
-print(cities["Arbre"])
+print(cities['London'])
+
+def scan(city: str, visited, dist):
+    print(visited)
+    visited.append(city)
+    
+    for c, d in cities[city].items():
+        if c not in visited:
+            return scan(c, visited, dist + d)
+    return dist
+
+for c in cities:
+    print(scan(c, [], 0))
