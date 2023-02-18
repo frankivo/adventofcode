@@ -15,17 +15,17 @@ for i in input:
     addCity(source, to, dist)
     addCity(to, source, dist)
 
-def scan(city: str, visited: list, dist: int) -> int:
+def scan(city: str, visited: list, dist: int, func) -> int:
     visited.append(city)
 
     options = []
     for c, d in cities[city].items():
         if c not in visited:
-            options.append( scan(c, visited.copy(), dist + d))
-    return min(options) if options else dist
+            options.append(scan(c, visited.copy(), dist + d, func))
+    return func(options) if options else dist
 
-def part1() -> int:
-    return min([scan(c, [], 0) for c in cities])
+def solve(func) -> int:
+    return func([scan(c, [], 0, func) for c in cities])
 
-print(part1())
-    
+print(solve(min))
+print(solve(max))
