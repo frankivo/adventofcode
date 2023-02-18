@@ -18,10 +18,14 @@ for i in input:
 def scan(city: str, visited: list, dist: int) -> int:
     visited.append(city)
 
+    options = []
     for c, d in cities[city].items():
         if c not in visited:
-            return scan(c, visited.copy(), dist + d)
-    return dist
+            options.append( scan(c, visited.copy(), dist + d))
+    return min(options) if options else dist
 
-print(min([scan(c, [], 0) for c in cities]))
+def part1() -> int:
+    return min([scan(c, [], 0) for c in cities])
+
+print(part1())
     
