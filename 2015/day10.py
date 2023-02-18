@@ -19,10 +19,11 @@ def lookAndSay(oldStr: str) -> str:
 
     return newStr
 
-def part1() -> int:
+def solve(repeat: int) -> int:
     x = input
-    for _ in range(40):
+    for _ in range(repeat):
         x = lookAndSay(x)
     return len(x)
 
-print(part1())
+print(solve(40))
+print(solve(50))
