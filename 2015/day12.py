@@ -23,4 +23,4 @@ def part2() -> int:
     return count(data)
 
 print(part1())
-print(part2()) # 57225 too low # 93092 too high
+print(part2())
