@@ -9,20 +9,14 @@ def part1() -> int:
     return sum(nums)
 
 def count(obj) -> int:
-    total = 0
-
     if type(obj) == dict and 'red' not in obj.values():
-            for v in obj.values():
-                if type(v) in (dict, list):
-                    total += sum(count(o) for o in v)
-                else:
-                    total += count(v)
+        return sum(count(o) for o in obj.values())
     elif type(obj) == list:
-        total += sum(count(o) for o in obj)
+        return sum(count(o) for o in obj)
     elif type(obj) == int:
-        total += obj
-    
-    return total
+        return obj    
+    else:
+        return 0
 
 def part2() -> int:
     data = loads(input)
