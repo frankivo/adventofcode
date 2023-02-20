@@ -1,35 +1,32 @@
 from helper import getInput
-import json
-import re
+from json import loads
+from re import findall
 
 input = getInput(12)[0]
 
 def part1() -> int:
-    nums = map(int,re.findall('[\d-]+', input))
+    nums = map(int,findall('[\d-]+', input))
     return sum(nums)
 
 def count(obj) -> int:
-    sum = 0
-    
-    if type(obj) == dict and 'red' not in obj.values():
-        for _, v in obj.items():
-            if type(v) in (dict, list):
-                for o in v:
-                    sum += count(o)
-            elif type(v) == int:
-                sum += v
-    if type(obj) == list:
-        for v in obj:
-            if type(v) == int:
-                sum += v
-    elif type(obj) == int:
-        sum += obj
+    total = 0
 
-    return sum
+    if type(obj) == dict and 'red' not in obj.values():
+            for v in obj.values():
+                if type(v) in (dict, list):
+                    total += sum(count(o) for o in v)
+                else:
+                    total += count(v)
+    elif type(obj) == list:
+        total += sum(count(o) for o in obj)
+    elif type(obj) == int:
+        total += obj
+    
+    return total
 
 def part2() -> int:
-    data = json.loads(input)
+    data = loads(input)
     return count(data)
 
 print(part1())
-print(part2())
+print(part2()) # 57225 too low # 93092 too high
