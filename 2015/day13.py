@@ -22,16 +22,11 @@ def getScore(n1: str, n2: str) -> int:
             return d['score'] * (1 if d['state'] == 'gain' else -1)
 
 def totalscore(seating: list) -> int:
-    seating = list(seating)
-    total = 0
-    for i, n1 in enumerate(seating):
-        prev = i -1
-        next = i + 1 if i < (len(names) -1) else 0
-        total += getScore(n1, seating[prev])
-        total += getScore(n1, seating[next])
-    return total
+    return \
+        sum([getScore(n1, seating[i-1]) for i, n1 in enumerate(seating)]) + \
+        sum([getScore(n1, seating[(i + 1) % len(seating)]) for i, n1 in enumerate(seating)])
 
-def bestScore() -> int:
-    return max([totalscore(n) for n in permutations(names,len(names))])
+def part1() -> int:
+    return max([totalscore(list(n)) for n in permutations(names, len(names))])
 
-print(bestScore())
+print(part1())
