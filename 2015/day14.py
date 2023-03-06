@@ -7,8 +7,6 @@ for r in getInput(14):
     nums = list(map(int, findall('\d+', r)))
     reindeer.update({ name: {'speed': nums[0], 'duration': nums[1], 'rest': nums[2] }})
 
-print(reindeer)
-
 def distance(name: str) -> int:
     dist, seconds, modeSeconds, mode = 0, 0, 0, 'move'
     data = reindeer[name]
@@ -27,10 +25,9 @@ def distance(name: str) -> int:
             modeSeconds = 0
             mode = 'move'
         
-        if seconds == 1000:
+        if seconds == 2503:
             break
     return dist
 
-for r in reindeer:
-    d = distance(r)
-    print('{0} -> {1}'.format(r, d))
+top = max([distance(r) for r in reindeer])
+print(top)
