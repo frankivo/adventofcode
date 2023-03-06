@@ -1,27 +1,36 @@
 from helper import getInput
 from re import findall
 
-reindeers = {}
+reindeer = {}
 for r in getInput(14):
     name = r.split()[0]
     nums = list(map(int, findall('\d+', r)))
-    reindeers.update({ name: {'speed': nums[0], 'duration': nums[1], 'rest': nums[2] }})
+    reindeer.update({ name: {'speed': nums[0], 'duration': nums[1], 'rest': nums[2] }})
 
-print(reindeers)
+print(reindeer)
 
 def distance(name: str) -> int:
     dist, seconds, modeSeconds, mode = 0, 0, 0, 'move'
-    data = reindeers[name]
+    data = reindeer[name]
 
     while True:
         if mode == 'move':
             dist += data['speed']
 
-
         seconds += 1
         modeSeconds += 1
+
+        if mode == 'move' and modeSeconds == data['duration']:
+            modeSeconds = 0
+            mode = 'rest'
+        if mode == 'rest' and modeSeconds == data['rest']:
+            modeSeconds = 0
+            mode = 'move'
+        
         if seconds == 1000:
             break
     return dist
 
-print(distance('Comet'))
+for r in reindeer:
+    d = distance(r)
+    print('{0} -> {1}'.format(r, d))
