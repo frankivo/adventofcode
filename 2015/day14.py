@@ -1,6 +1,8 @@
 from helper import getInput
 from re import findall
 
+maxSeconds = 140
+
 reindeer = {}
 for r in getInput(14):
     name = r.split()[0]
@@ -11,7 +13,7 @@ def distance(name: str) -> int:
     dist, seconds, modeSeconds, mode = 0, 0, 0, 'move'
     data = reindeer[name]
 
-    while seconds < 1000:
+    while seconds < maxSeconds:
         if mode == 'move':
             dist += data['speed']
 
@@ -34,7 +36,7 @@ def alldistance():
     status = {}
     seconds = 0
 
-    while seconds < 140:
+    while seconds < maxSeconds:
         seconds += 1
         for r in reindeer:
             data = reindeer[name]
