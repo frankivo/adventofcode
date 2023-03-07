@@ -11,7 +11,7 @@ def distance(name: str) -> int:
     dist, seconds, modeSeconds, mode = 0, 0, 0, 'move'
     data = reindeer[name]
 
-    while True:
+    while seconds < 2503:
         if mode == 'move':
             dist += data['speed']
 
@@ -23,11 +23,9 @@ def distance(name: str) -> int:
             mode = 'rest'
         if mode == 'rest' and modeSeconds == data['rest']:
             modeSeconds = 0
-            mode = 'move'
-        
-        if seconds == 2503:
-            break
+            mode = 'move'        
     return dist
 
-top = max([distance(r) for r in reindeer])
-print(top)
+def part1() -> int:
+    return max([distance(r) for r in reindeer])
+print(part1())
