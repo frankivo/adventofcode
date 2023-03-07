@@ -1,7 +1,8 @@
+from functools import reduce
 from helper import getInput
 from re import findall
 
-maxSeconds = 140
+maxSeconds = 2503
 
 reindeer = {}
 for r in getInput(14):
@@ -31,20 +32,38 @@ def distance(name: str) -> int:
 def part1() -> int:
     return max([distance(r) for r in reindeer])
 
-def alldistance():
-    empty = {'modeSeconds': 0, 'mode': 'move', 'dist': 0}
+def bestScoring(status: dict) -> str:
+    return reduce(lambda x, y: x if status[x]['dist'] > status[y]['dist'] else y, status)
+
+def alldistance() -> dict:
+    empty = {'modeSeconds': 0, 'mode': 'move', 'dist': 0, 'score': 0}
     status = {}
     seconds = 0
 
     while seconds < maxSeconds:
         seconds += 1
         for r in reindeer:
-            data = reindeer[name]
+            data = reindeer[r]
             rs = status[r] if r in status else empty.copy()
+
+            if rs['mode'] == 'move':
+                rs.update({'dist': rs['dist'] + data['speed'] })
+            
+            rs.update({'modeSeconds': rs['modeSeconds'] + 1 })
+
+            if rs['mode'] == 'move' and rs['modeSeconds'] == data['duration']:
+                rs.update({'modeSeconds': 0 })
+                rs.update({'mode': 'rest' })
+            if rs['mode'] == 'rest' and rs['modeSeconds'] == data['rest']:
+                rs.update({'modeSeconds': 0 })
+                rs.update({'mode': 'move' })
+
             status.update({r : rs})
+        rs = status[bestScoring(status)]
+        rs.update({'score': rs['score'] + 1})
 
-    print(status)
-
+    return status
+    
 def part2() -> int:
     alldistance()
     return 0
