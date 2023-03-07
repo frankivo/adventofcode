@@ -14,7 +14,7 @@ def distance(name: str) -> int:
     dist, seconds, modeSeconds, mode = 0, 0, 0, 'move'
     data = reindeer[name]
 
-    while seconds < maxSeconds:
+    while seconds <= maxSeconds:
         if mode == 'move':
             dist += data['speed']
 
@@ -40,17 +40,15 @@ def alldistance() -> dict:
     status = {}
     seconds = 0
 
-    while seconds < maxSeconds:
-        seconds += 1
+    while seconds <= maxSeconds:
+        
         for r in reindeer:
             data = reindeer[r]
             rs = status[r] if r in status else empty.copy()
 
+            rs.update({'modeSeconds': rs['modeSeconds'] + 1 })
             if rs['mode'] == 'move':
                 rs.update({'dist': rs['dist'] + data['speed'] })
-            
-            rs.update({'modeSeconds': rs['modeSeconds'] + 1 })
-
             if rs['mode'] == 'move' and rs['modeSeconds'] == data['duration']:
                 rs.update({'modeSeconds': 0 })
                 rs.update({'mode': 'rest' })
@@ -61,12 +59,17 @@ def alldistance() -> dict:
             status.update({r : rs})
         rs = status[bestScoring(status)]
         rs.update({'score': rs['score'] + 1})
+        seconds += 1
 
     return status
     
+# 1074 too low
+# 1168 too high
 def part2() -> int:
-    alldistance()
+    res = alldistance()
+    print([r['score'] for r in res.values()])
+
     return 0
 
 print(part1())
-print(part2())
+print(part2()) 
