@@ -13,7 +13,21 @@ ints as (
 ),
 
 combinations as (
-  select distinct * from ints as y cross join ints as x
+  select distinct l.data as left, r.data as right
+  from ints as l
+  cross join ints as r
+),
+
+summed as (
+  select
+    left,
+    right,
+    left + right as sum,
+    left * right as product
+  from combinations
 )
 
-select *, (x.data + y.data) from combinations 
+select *
+from summed
+where sum = 2020
+limit 1
