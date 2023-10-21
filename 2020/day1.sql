@@ -24,12 +24,10 @@ with input_data as (
   qualify rank() over (partition by year, day order by loaded desc) = 1
 ),
 
-ints as (select int(data) from input_data),
-
 combinations as (
   select distinct l.data as left, r.data as right
-  from ints as l
-  cross join ints as r
+  from input_data as l
+  cross join input_data as r
 ),
 
 summed as (
@@ -58,13 +56,11 @@ with input_data as (
   qualify rank() over (partition by year, day order by loaded desc) = 1
 ),
 
-ints as (select int(data) from input_data),
-
 combinations as (
   select distinct l.data as left, m.data as mid, r.data as right
-  from ints as l
-  cross join ints as m
-  cross join ints as r
+  from input_data as l
+  cross join input_data as m
+  cross join input_data as r
 ),
 
 summed as (
