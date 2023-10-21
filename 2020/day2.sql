@@ -34,8 +34,11 @@ policies as (
   from extract
 )
 
-select count(*) as valid from policies
-where keycount >= low and keycount <= high
+select count(*) as valid
+from policies
+where
+  keycount >= low
+  and keycount <= high
 
 -- COMMAND ----------
 
@@ -45,7 +48,7 @@ where keycount >= low and keycount <= high
 -- COMMAND ----------
 
 with input_data as (
-  select explode(split(example_data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 2
+  select explode(split(data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 2
   qualify rank() over (partition by year, day order by loaded desc) = 1
 ),
 
@@ -58,15 +61,14 @@ policies as (
     element_at(values, 1) as low,
     element_at(values, 2) as high,
     element_at(values, 3) as key,
-    element_at(values, 4) as password    
+    element_at(values, 4) as password,
+    substring(password, low, 1) as first,
+    substring(password, high, 1) as last
   from extract
-),
- 
-valid as (
-  select
-    *,
-    substring(password, low, 1) = key and not substring(password, high, 1) = key as valid
-  from policies
 )
 
-select * from valid
+select count(*) as valid
+from policies
+where
+  (first = key and last <> key)
+  or (first <> key and last = key)
