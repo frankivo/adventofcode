@@ -3,7 +3,8 @@
 
 -- COMMAND ----------
 
-update frank.adventofcode.inputdata set example_data = '1721
+update frank.adventofcode.inputdata
+set example_data = '1721
 979
 366
 299

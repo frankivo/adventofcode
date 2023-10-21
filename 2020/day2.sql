@@ -3,7 +3,8 @@
 
 -- COMMAND ----------
 
-update frank.adventofcode.inputdata set example_data = '1-3 a: abcde
+update frank.adventofcode.inputdata
+set example_data = '1-3 a: abcde
 1-3 b: cdefg
 2-9 c: ccccccccc'
 where year = 2020 and day = 2
