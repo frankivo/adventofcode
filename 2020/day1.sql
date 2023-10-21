@@ -8,7 +8,8 @@ update frank.adventofcode.inputdata set example_data = '1721
 366
 299
 675
-1456' where year = 2020 and day = 1 
+1456'
+where year = 2020 and day = 1
 
 -- COMMAND ----------
 
