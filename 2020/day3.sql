@@ -41,12 +41,11 @@ with_rn as (
 coordinates as (
   select
     data,
-    coalesce(lag((rn * 3) + 1) over (order by rn), 1) as x
+    len(data) as len,
+    coalesce(lag((rn * 3) + 1) over (order by rn), 1) as x,
+    ((rn - 1) * 3) % length(data) + 1 as relative_x,
+    case when substring(data, relative_x, 1) = '#' then 1 else 0 end as hit
   from with_rn
 )
 
-select *, substring(data, x, 1) as hit from coordinates
-
--- COMMAND ----------
-
-
+select sum(hit) as result from coordinates
