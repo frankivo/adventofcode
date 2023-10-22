@@ -55,9 +55,8 @@ select sum(valid) as result from validator
 
 -- COMMAND ----------
 
-
 with input_data as (
-  select explode(split(example_data, '\n\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 4
+  select explode(split(data, '\n\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 4
   qualify rank() over (partition by year, day order by loaded desc) = 1
 ),
 
@@ -67,10 +66,27 @@ kv as (
     regexp_extract(data, '(byr:(\\d+))', 2) as byr,
     regexp_extract(data, '(iyr:(\\d+))', 2) as iyr,
     regexp_extract(data, '(eyr:(\\d+))', 2) as eyr,
-    regexp_extract_all(data, '(hgt:(\\d+)(in|cm))') as hgt, -- FIXME
+    regexp_extract(data, '(hgt:(\\d+)(in|cm))', 2) as hgt_num,
+    regexp_extract(data, '(hgt:(\\d+)(in|cm))', 3) as hgt_type,
     regexp_extract(data, '(hcl:#([0-9a-f]{6}))', 2) as hcl,
+    regexp_extract(data, '(ecl:([a-z]{3}))', 2) as ecl,
     regexp_extract(data, '(pid:(\\d{9}))', 2) as pid
   from input_data
+),
+
+validator as (
+  select
+  data,
+    case
+      when byr between 1920 and 2002
+      and  iyr between 2010 and 2020
+      and  eyr between 2020 and 2030
+      and  (hgt_type = 'cm' and hgt_num between 150 and 193 or hgt_type = 'in' and hgt_num between 59 and 76)
+      and  hcl is not null
+      and  ecl in ('amb', 'blu', 'brn', 'grn', 'hzl', 'oth')
+      and  pid is not null 
+    then 1 else 0 end as valid
+  from kv
 )
 
-select * from kv
+select sum(valid) as result from validator
