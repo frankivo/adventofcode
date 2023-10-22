@@ -46,3 +46,39 @@ coordinates as (
 )
 
 select sum(hit) as result from coordinates
+
+-- COMMAND ----------
+
+-- MAGIC %md ## Part 2
+-- MAGIC What do you get if you multiply together the number of trees encountered on each of the listed slopes?
+
+-- COMMAND ----------
+
+
+with input_data as (
+  select explode(split(example_data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 3
+  qualify rank() over (partition by year, day order by loaded desc) = 1
+),
+
+with_rn as (
+  select
+    row_number() over (order by 1) as rn,
+    data
+  from input_data
+),
+
+coordinates_1downs as (
+  select
+    case when substring(data, ((rn - 1)) % length(data) + 1, 1) = '#' then 1 else 0 end as r1,
+    case when substring(data, ((rn - 1) * 3) % length(data) + 1, 1) = '#' then 1 else 0 end as r3,
+    case when substring(data, ((rn - 1) * 5) % length(data) + 1, 1) = '#' then 1 else 0 end as r5,
+    case when substring(data, ((rn - 1) * 7) % length(data) + 1, 1) = '#' then 1 else 0 end as r7
+  from with_rn
+)
+
+select
+  sum(r1) as r1,
+  sum(r3) as r3,
+  sum(r5) as r5,
+  sum(r7) as r7
+from coordinates_1downs
