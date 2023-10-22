@@ -41,12 +41,11 @@ with_rn as (
 coordinates as (
   select
     data,
-    coalesce(lag(rn * (3 + 1)) over (order by rn), 1) as x,
-    rn as y
+    coalesce(lag((rn * 3) + 1) over (order by rn), 1) as x
   from with_rn
 )
 
-select *, substring(data, x, y) from coordinates
+select *, substring(data, x, 1) as hit from coordinates
 
 -- COMMAND ----------
 
