@@ -54,7 +54,6 @@ select sum(hit) as result from coordinates
 
 -- COMMAND ----------
 
-
 with input_data as (
   select explode(split(example_data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 3
   qualify rank() over (partition by year, day order by loaded desc) = 1
@@ -67,18 +66,21 @@ with_rn as (
   from input_data
 ),
 
-coordinates_1downs as (
+coordinates as (
   select
-    case when substring(data, ((rn - 1)) % length(data) + 1, 1) = '#' then 1 else 0 end as r1,
-    case when substring(data, ((rn - 1) * 3) % length(data) + 1, 1) = '#' then 1 else 0 end as r3,
-    case when substring(data, ((rn - 1) * 5) % length(data) + 1, 1) = '#' then 1 else 0 end as r5,
-    case when substring(data, ((rn - 1) * 7) % length(data) + 1, 1) = '#' then 1 else 0 end as r7
+    case when substring(data, ((rn - 1)) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r1,
+    case when substring(data, ((rn - 1) * 3) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r3,
+    case when substring(data, ((rn - 1) * 5) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r5,
+    case when substring(data, ((rn - 1) * 7) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r7,
+    case when rn % 2 = 0 and substring(data, ((rn - int(rn / 2))) % length(data) + 1, 1) = '#' then 1 else 0 end as d2r1
   from with_rn
 )
 
 select
-  sum(r1) as r1,
-  sum(r3) as r3,
-  sum(r5) as r5,
-  sum(r7) as r7
-from coordinates_1downs
+  sum(d1r1) as d1r1,
+  sum(d1r3) as d1r3,
+  sum(d1r5) as d1r5,
+  sum(d1r7) as d1r7,
+  sum(d2r1) as d2r1,
+  sum(d1r1) * sum(d1r3) * sum(d1r5) * sum(d1r7) * sum(d2r1) as result
+from coordinates
