@@ -31,18 +31,12 @@ with input_data as (
   qualify rank() over (partition by year, day order by loaded desc) = 1
 ),
 
-with_rn as (
-  select
-    row_number() over (order by 1) as rn,
-    data
-  from input_data
-),
-
 coordinates as (
   select
-    ((rn - 1) * 3) % length(data) + 1 as x,
+    row_number() over (order by 1) as y,
+    ((y - 1) * 3) % length(data) + 1 as x,
     case when substring(data, x, 1) = '#' then 1 else 0 end as hit
-  from with_rn
+  from input_data
 )
 
 select sum(hit) as result from coordinates
@@ -55,32 +49,19 @@ select sum(hit) as result from coordinates
 -- COMMAND ----------
 
 with input_data as (
-  select explode(split(example_data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 3
+  select explode(split(data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 3
   qualify rank() over (partition by year, day order by loaded desc) = 1
-),
-
-with_rn as (
-  select
-    row_number() over (order by 1) as rn,
-    data
-  from input_data
 ),
 
 coordinates as (
   select
-    case when substring(data, ((rn - 1)) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r1,
-    case when substring(data, ((rn - 1) * 3) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r3,
-    case when substring(data, ((rn - 1) * 5) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r5,
-    case when substring(data, ((rn - 1) * 7) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r7,
-    case when rn % 2 = 0 and substring(data, ((rn - int(rn / 2))) % length(data) + 1, 1) = '#' then 1 else 0 end as d2r1
-  from with_rn
+    row_number() over (order by 1) as y,
+    case when substring(data, ((y - 1)) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r1,
+    case when substring(data, ((y - 1) * 3) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r3,
+    case when substring(data, ((y - 1) * 5) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r5,
+    case when substring(data, ((y - 1) * 7) % length(data) + 1, 1) = '#' then 1 else 0 end as d1r7,
+    case when y % 2 = 1 and substring(data, (y -1) /2 % length(data) + 1, 1) = '#' then 1 else 0 end as d2r1
+  from input_data
 )
 
-select
-  sum(d1r1) as d1r1,
-  sum(d1r3) as d1r3,
-  sum(d1r5) as d1r5,
-  sum(d1r7) as d1r7,
-  sum(d2r1) as d2r1,
-  sum(d1r1) * sum(d1r3) * sum(d1r5) * sum(d1r7) * sum(d2r1) as result
-from coordinates
+select sum(d1r1) * sum(d1r3) * sum(d1r5) * sum(d1r7) * sum(d2r1) as result from coordinates
