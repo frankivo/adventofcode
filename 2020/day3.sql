@@ -25,9 +25,29 @@ where year = 2020 and day = 3
 
 -- COMMAND ----------
 
+
 with input_data as (
   select explode(split(example_data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 3
   qualify rank() over (partition by year, day order by loaded desc) = 1
+),
+
+with_rn as (
+  select
+    row_number() over (order by 1) as rn,
+    data
+  from input_data
+),
+
+coordinates as (
+  select
+    data,
+    coalesce(lag(rn * (3 + 1)) over (order by rn), 1) as x,
+    rn as y
+  from with_rn
 )
 
-select *, 1 as x, 1 as y from input_data
+select *, substring(data, x, y) from coordinates
+
+-- COMMAND ----------
+
+
