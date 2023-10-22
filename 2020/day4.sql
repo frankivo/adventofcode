@@ -47,3 +47,30 @@ validator as (
 )
 
 select sum(valid) as result from validator
+
+-- COMMAND ----------
+
+-- MAGIC %md ## Part 2
+-- MAGIC Count the number of valid passports - those that have all required fields and valid values. Continue to treat cid as optional. In your batch file, how many passports are valid?
+
+-- COMMAND ----------
+
+
+with input_data as (
+  select explode(split(example_data, '\n\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 4
+  qualify rank() over (partition by year, day order by loaded desc) = 1
+),
+
+kv as (
+  select
+    data,
+    regexp_extract(data, '(byr:(\\d+))', 2) as byr,
+    regexp_extract(data, '(iyr:(\\d+))', 2) as iyr,
+    regexp_extract(data, '(eyr:(\\d+))', 2) as eyr,
+    regexp_extract_all(data, '(hgt:(\\d+)(in|cm))') as hgt, -- FIXME
+    regexp_extract(data, '(hcl:#([0-9a-f]{6}))', 2) as hcl,
+    regexp_extract(data, '(pid:(\\d{9}))', 2) as pid
+  from input_data
+)
+
+select * from kv
