@@ -27,7 +27,7 @@ where year = 2020 and day = 3
 
 
 with input_data as (
-  select explode(split(example_data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 3
+  select explode(split(data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 3
   qualify rank() over (partition by year, day order by loaded desc) = 1
 ),
 
@@ -40,11 +40,8 @@ with_rn as (
 
 coordinates as (
   select
-    data,
-    len(data) as len,
-    coalesce(lag((rn * 3) + 1) over (order by rn), 1) as x,
-    ((rn - 1) * 3) % length(data) + 1 as relative_x,
-    case when substring(data, relative_x, 1) = '#' then 1 else 0 end as hit
+    ((rn - 1) * 3) % length(data) + 1 as x,
+    case when substring(data, x, 1) = '#' then 1 else 0 end as hit
   from with_rn
 )
 
