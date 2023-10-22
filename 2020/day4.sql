@@ -29,8 +29,21 @@ where year = 2020 and day = 4
 
 
 with input_data as (
-  select explode(split(example_data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 4
+  select explode(split(data, '\n\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 4
   qualify rank() over (partition by year, day order by loaded desc) = 1
+),
+
+validator as (
+  select case
+    when data like '%byr:%'
+    and  data like '%iyr:%'
+    and  data like '%eyr:%'
+    and  data like '%hgt:%'
+    and  data like '%hcl:%'
+    and  data like '%ecl:%'
+    and  data like '%pid:%'
+    then 1 else 0 end as valid
+  from input_data
 )
 
-select * from input_data
+select sum(valid) as result from validator
