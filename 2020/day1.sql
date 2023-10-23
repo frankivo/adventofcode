@@ -1,5 +1,7 @@
 -- Databricks notebook source
--- MAGIC %md # AOC2020 - Day 1
+-- MAGIC %md
+-- MAGIC # AOC2020 - Day 1: Report Repair
+-- MAGIC https://adventofcode.com/2020/day/1
 
 -- COMMAND ----------
 

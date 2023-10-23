@@ -1,5 +1,7 @@
 -- Databricks notebook source
--- MAGIC %md # AOC2020 - Day 2
+-- MAGIC %md
+-- MAGIC # AOC2020 - Day 2: Password Philosophy
+-- MAGIC https://adventofcode.com/2020/day/2
 
 -- COMMAND ----------
 

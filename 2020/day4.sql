@@ -1,5 +1,7 @@
 -- Databricks notebook source
--- MAGIC %md # AOC2020 - Day 4
+-- MAGIC %md
+-- MAGIC # AOC2020 - Day 4: Passport Processing
+-- MAGIC https://adventofcode.com/2020/day/4
 
 -- COMMAND ----------
 
