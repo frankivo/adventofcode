@@ -28,6 +28,21 @@ where year = 2020 and day = 7
 with input_data as (
   select explode(split(example_data, '\n')) as rules from frank.adventofcode.inputdata where year = 2020 and day = 7
   qualify rank() over (partition by year, day order by loaded desc) = 1 
+),
+
+direct as (
+  select rules, concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as container
+  from input_data
+  where regexp_like(rules, '(contain).+(shiny gold bag)')
+),
+
+sub as (
+  select distinct concat(regexp_extract(i.rules, '^(.+)(bags )', 1), 'bag') as container
+  from input_data as i, direct as d
+  where regexp_like(i.rules, format_string('(contain).+(%s)', container))
 )
 
-select * from input_data
+select container from sub
+union
+select container from direct
+
