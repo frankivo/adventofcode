@@ -62,17 +62,13 @@ with input_data as (
 
 kv as (
   select
-    data,
-    row_number() over (order by 1) as rn,
-    replace(data, '\n', ' ') as data_one_line,
-    concat_ws(' ', sort_array(split(data_one_line, ' '))) as sorted_data,
-    regexp_like(data_one_line, 'byr:(19[2-9][0-9]|200[012])') as byr,
-    regexp_like(data_one_line, 'ecl:(amb|blu|brn|gry|grn|hzl|oth)') as ecl,
-    regexp_like(data_one_line, 'eyr:(202[0-9]|2030)') as eyr,
-    regexp_like(data_one_line, 'hcl:#([a-z0-9]{6})') as hcl,
-    regexp_like(data_one_line, 'hgt:(1[5678][0-9]|19[0123])cm|hgt:(59|6[0-9]|7[0-6])in') as hgt,
-    regexp_like(data_one_line, 'iyr:(201[0-9]|2020)') as iyr,
-    regexp_like(data_one_line, 'pid:(\\d{9})') as pid,
+    regexp_like(data, '\\bbyr:(19[2-9][0-9]|200[012])\\b') as byr,
+    regexp_like(data, '\\becl:(amb|blu|brn|gry|grn|hzl|oth)\\b') as ecl,
+    regexp_like(data, '\\beyr:(202[0-9]|2030)\\b') as eyr,
+    regexp_like(data, '\\bhcl:#([a-z0-9]{6})\\b') as hcl,
+    regexp_like(data, '\\bhgt:(1[5678][0-9]|19[0123])cm|hgt:(59|6[0-9]|7[0-6])in\\b') as hgt,
+    regexp_like(data, '\\biyr:(201[0-9]|2020)\\b') as iyr,
+    regexp_like(data, '\\bpid:(\\d{9})\\b') as pid,
     byr and ecl and eyr and hcl and hgt and iyr and pid as valid
   from input_data
 )
