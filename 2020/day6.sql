@@ -58,37 +58,35 @@ answers as (
   select
     groups,
     row_number() over (order by 1) as group_id,
-    split(groups, '\n') as group_answers
+    split(groups, '\n') as persons
   from input_data
 ),
 
-per_group as (
-  select group_id, explode(group_answers) as answers from answers
+per_person as (
+  select group_id, explode(persons) as answers from answers
 ), 
 
-group_answers as (
+person_answers as (
   select
     group_id,
-    row_number() over (partition by group_id order by answers) as answer_id,
-    split(answers, '') as answers
-  from per_group
+    split(answers, '') as answer
+  from per_person
   where answers <> ''
-), 
+),
 
 unique_per_group as (
   select
     group_id,
-    answer_id,
-    answers,
-    lag(answers) over (partition by group_id order by answer_id) as prev,
-    array_intersect(answers, coalesce(prev, answers)) as unique,
-    size(unique) as unique_count
-  from group_answers
+    answer,
+    lag(answer) over (partition by group_id order by 1) as prev,
+    array_intersect(answer, coalesce(prev, answer)) as unique_answers,
+    size(unique_answers) as unique_count
+  from person_answers
 ),
 
 lows as (
-  select * from unique_per_group
+  select unique_count from unique_per_group
   qualify row_number() over (partition by group_id order by unique_count asc) = 1
 )
 
-select sum(unique_count) as result from lows 
+select sum(unique_count) as result from lows
