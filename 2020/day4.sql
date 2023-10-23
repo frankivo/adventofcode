@@ -68,15 +68,9 @@ kv as (
     regexp_extract(data, '(eyr:(\\d+))', 2) as eyr,
     regexp_extract(data, '(hgt:(\\d+)(in|cm))', 2) as hgt_num,
     regexp_extract(data, '(hgt:(\\d+)(in|cm))', 3) as hgt_type,
-    regexp_extract(data, '(hcl:#([0-9a-f]{6}))', 2) as hcl,
+    nullif(regexp_extract(data, '(hcl:#([0-9a-f]{6}))', 2), '') as hcl,
     regexp_extract(data, '(ecl:([a-z]{3}))', 2) as ecl,
-    regexp_extract(data, '(pid:(\\d{9}))', 2) as pid
-  from input_data
-),
-
-validator as (
-  select
-  data,
+    nullif(regexp_extract(data, '(pid:(\\d{9}))', 2), '') as pid,
     case
       when byr between 1920 and 2002
       and  iyr between 2010 and 2020
@@ -86,7 +80,7 @@ validator as (
       and  ecl in ('amb', 'blu', 'brn', 'grn', 'hzl', 'oth')
       and  pid is not null 
     then 1 else 0 end as valid
-  from kv
+  from input_data
 )
 
-select sum(valid) as result from validator
+select sum(valid) as result from kv
