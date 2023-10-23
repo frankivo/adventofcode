@@ -1,5 +1,6 @@
 -- Databricks notebook source
--- MAGIC %md # AOC2020 - Day 6
+-- MAGIC %md
+-- MAGIC # AOC2020 - Day 6: Custom Customs
 -- MAGIC https://adventofcode.com/2020/day/6
 
 -- COMMAND ----------
