@@ -63,25 +63,18 @@ with input_data as (
 kv as (
   select
     data,
-    regexp_extract(data, '(byr:(\\d+))', 2) as byr,
-    regexp_extract(data, '(iyr:(\\d+))', 2) as iyr,
-    regexp_extract(data, '(eyr:(\\d+))', 2) as eyr,
-    regexp_extract(data, '(hgt:(\\d+)(in|cm))', 2) as hgt_num,
-    regexp_extract(data, '(hgt:(\\d+)(in|cm))', 3) as hgt_type,
-    nullif(regexp_extract(data, '(hcl:#([0-9a-f]{6}))', 2), '') as hcl,
-    regexp_extract(data, '(ecl:([a-z]{3}))', 2) as ecl,
-    nullif(regexp_extract(data, '(pid:(\\d{9}))', 2), '') as pid,
-    case
-      when byr between 1920 and 2002
-      and  iyr between 2010 and 2020
-      and  eyr between 2020 and 2030
-      and  ((hgt_type = 'cm' and hgt_num between 150 and 193) or (hgt_type = 'in' and hgt_num between 59 and 76))
-      and  hcl is not null
-      and  ecl in ('amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth')
-      and  pid is not null 
-    then 1 else 0 end as valid
+    row_number() over (order by 1) as rn,
+    replace(data, '\n', ' ') as data_one_line,
+    concat_ws(' ', sort_array(split(data_one_line, ' '))) as sorted_data,
+    regexp_like(data_one_line, 'byr:(19[2-9][0-9]|200[012])') as byr,
+    regexp_like(data_one_line, 'ecl:(amb|blu|brn|gry|grn|hzl|oth)') as ecl,
+    regexp_like(data_one_line, 'eyr:(202[0-9]|2030)') as eyr,
+    regexp_like(data_one_line, 'hcl:#([a-z0-9]{6})') as hcl,
+    regexp_like(data_one_line, 'hgt:(1[5678][0-9]|19[0123])cm|hgt:(59|6[0-9]|7[0-6])in') as hgt,
+    regexp_like(data_one_line, 'iyr:(201[0-9]|2020)') as iyr,
+    regexp_like(data_one_line, 'pid:(\\d{9})') as pid,
+    byr and ecl and eyr and hcl and hgt and iyr and pid as valid
   from input_data
 )
 
-select sum(valid) as result from kv
--- select * from kv where valid = 0
+select count(*) as result from kv where valid
