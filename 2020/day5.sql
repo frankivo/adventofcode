@@ -55,9 +55,22 @@ selector as (
     case when substring(data, 7, 1) = 'F'
       then array_min(rs6)
       else array_max(rs6)
-    end as row
-
+    end as row,
+    sequence(0, 7) as columns,
+    case when substring(data, 8, 1) = 'L'
+      then filter(columns, i -> i < (array_min(columns) + array_max(columns)) / 2 )
+      else filter(columns, i -> i > (array_min(columns) + array_max(columns)) / 2 )
+    end as cs1, -- Step 1
+    case when substring(data, 9, 1) = 'L'
+      then filter(cs1, i -> i < (array_min(cs1) + array_max(cs1)) / 2 )
+      else filter(cs1, i -> i > (array_min(cs1) + array_max(cs1)) / 2 )
+    end as cs2,
+    case when substring(data, 10, 1) = 'L'
+      then array_min(cs2)
+      else array_max(cs2)
+    end as column,
+    (row * 8) + column as seatID
   from input_data
 )
 
-select data, row from selector
+select max(seatID) as result from selector
