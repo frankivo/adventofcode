@@ -75,12 +75,13 @@ kv as (
       when byr between 1920 and 2002
       and  iyr between 2010 and 2020
       and  eyr between 2020 and 2030
-      and  (hgt_type = 'cm' and hgt_num between 150 and 193 or hgt_type = 'in' and hgt_num between 59 and 76)
+      and  ((hgt_type = 'cm' and hgt_num between 150 and 193) or (hgt_type = 'in' and hgt_num between 59 and 76))
       and  hcl is not null
-      and  ecl in ('amb', 'blu', 'brn', 'grn', 'hzl', 'oth')
+      and  ecl in ('amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth')
       and  pid is not null 
     then 1 else 0 end as valid
   from input_data
 )
 
 select sum(valid) as result from kv
+-- select * from kv where valid = 0
