@@ -5,7 +5,8 @@
 
 update frank.adventofcode.inputdata
 set example_data =
-'BFFFBBFRRR
+'FBFBBFFRLR
+BFFFBBFRRR
 FFFBBBFRRR
 BBFFBBFRLL'
 where year = 2020 and day = 5
@@ -21,6 +22,42 @@ where year = 2020 and day = 5
 with input_data as (
   select explode(split(example_data, '\n')) as data from frank.adventofcode.inputdata where year = 2020 and day = 5
   qualify rank() over (partition by year, day order by loaded desc) = 1
+),
+
+selector as (
+  select
+    data,
+    sequence(0, 127) as rows,
+    case when substring(data, 1, 1) = 'F'
+      then filter(rows, i -> i < (array_min(rows) + array_max(rows)) / 2 )
+      else filter(rows, i -> i > (array_min(rows) + array_max(rows)) / 2 )
+    end as rs1, -- Step 1
+    case when substring(data, 2, 1) = 'F'
+      then filter(rs1, i -> i < (array_min(rs1) + array_max(rs1)) / 2 )
+      else filter(rs1, i -> i > (array_min(rs1) + array_max(rs1)) / 2 )
+    end as rs2,
+    case when substring(data, 3, 1) = 'F'
+      then filter(rs2, i -> i < (array_min(rs2) + array_max(rs2)) / 2 )
+      else filter(rs2, i -> i > (array_min(rs2) + array_max(rs2)) / 2 )
+    end as rs3,
+    case when substring(data, 4, 1) = 'F'
+      then filter(rs3, i -> i < (array_min(rs3) + array_max(rs3)) / 2 )
+      else filter(rs3, i -> i > (array_min(rs3) + array_max(rs3)) / 2 )
+    end as rs4,
+    case when substring(data, 5, 1) = 'F'
+      then filter(rs4, i -> i < (array_min(rs4) + array_max(rs4)) / 2 )
+      else filter(rs4, i -> i > (array_min(rs4) + array_max(rs4)) / 2 )
+    end as rs5,
+    case when substring(data, 6, 1) = 'F'
+      then filter(rs5, i -> i < (array_min(rs5) + array_max(rs5)) / 2 )
+      else filter(rs5, i -> i > (array_min(rs5) + array_max(rs5)) / 2 )
+    end as rs6,
+    case when substring(data, 7, 1) = 'F'
+      then array_min(rs6)
+      else array_max(rs6)
+    end as row
+
+  from input_data
 )
 
-select * from input_data
+select data, row from selector
