@@ -30,7 +30,7 @@ where year = 2020 and day = 7
 -- COMMAND ----------
 
 with input_data as (
-  select explode(split(data, '\n')) as rules from frank.adventofcode.inputdata where year = 2020 and day = 7
+  select explode(split(data, '\n')) as rule from frank.adventofcode.inputdata where year = 2020 and day = 7
   qualify rank() over (partition by year, day order by loaded desc) = 1 
 ),
 
@@ -38,82 +38,82 @@ c0 as (select '%contain%shiny gold bag%' as rule),
 
 c1 as ( 
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c1_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c1_container,
     format_string('%%contain%%%s%%', c1_container) as rule
   from input_data as i
-  inner join c0 on i.rules like c0.rule
+  inner join c0 as c on i.rule like c.rule
 ),
 
 c2 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c2_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c2_container,
     format_string('%%contain%%%s%%', c2_container) as rule
   from input_data as i
-  inner join c1 on i.rules like c1.rule
+  inner join c1 as c on i.rule like c.rule
 ),
 
 c3 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c3_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c3_container,
     format_string('%%contain%%%s%%', c3_container) as rule
   from input_data as i
-  inner join c2 on i.rules like c2.rule
+  inner join c2 as c on i.rule like c.rule
 ),
 
 c4 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c4_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c4_container,
     format_string('%%contain%%%s%%', c4_container) as rule
   from input_data as i
-  inner join c3 on i.rules like c3.rule
+  inner join c3 as c on i.rule like c.rule
 ),
 
 c5 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c5_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c5_container,
     format_string('%%contain%%%s%%', c5_container) as rule
   from input_data as i
-  inner join c4 on i.rules like c4.rule
+  inner join c4 as c on i.rule like c.rule
 ),
 
 c6 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c6_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c6_container,
     format_string('%%contain%%%s%%', c6_container) as rule
   from input_data as i
-  inner join c5 on i.rules like c5.rule
+  inner join c5 as c on i.rule like c.rule
 ),
 
 c7 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c7_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c7_container,
     format_string('%%contain%%%s%%', c7_container) as rule
   from input_data as i
-  inner join c6 on i.rules like c6.rule
+  inner join c6 as c on i.rule like c.rule
 ),
 
 c8 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c8_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c8_container,
     format_string('%%contain%%%s%%', c8_container) as rule
   from input_data as i
-  inner join c7 on i.rules like c7.rule
+  inner join c7 as c on i.rule like c.rule
 ),
 
 c9 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c9_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c9_container,
     format_string('%%contain%%%s%%', c9_container) as rule
   from input_data as i
-  inner join c8 on i.rules like c8.rule
+  inner join c8 as c on i.rule like c.rule
 ),
 
 c10 as (  
   select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c10_container,
+    concat(regexp_extract(i.rule, '^(.+)(bags )', 1), 'bag') as c10_container,
     format_string('%%contain%%%s%%', c10_container) as rule
   from input_data as i
-  inner join c9 on i.rules like c9.rule
+  inner join c9 as c on i.rule like c.rule
 ),
 
 containers as (
