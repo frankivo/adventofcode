@@ -139,3 +139,110 @@ containers as (
 )
 
 select count(*) as result from containers
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ## Part 2
+-- MAGIC How many individual bags are required inside your single shiny gold bag?
+
+-- COMMAND ----------
+
+with input_data as (
+  select explode(split(data, '\n')) as rule from frank.adventofcode.inputdata where year = 2020 and day = 7
+  qualify rank() over (partition by year, day order by loaded desc) = 1 
+),
+
+c0 as (select 1 as amount, 'shiny gold' as bag_name),
+
+c1 as (
+  select
+    explode(split(rule, ',')) as c1_bag,
+    regexp_extract(c1_bag, '(\\d+) (.+) bag', 1) * c.amount as amount,
+    regexp_extract(c1_bag, '(\\d+) (.+) bag', 2) as bag_name
+  from input_data as i
+  inner join c0 as c on i.rule like concat_ws(' ', c.bag_name, 'bag%') and i.rule not like '%contain no other bags.'
+),
+
+c2 as (
+  select 
+    explode(split(i.rule, ',')) as c2_bag,
+    regexp_extract(c2_bag, '(\\d+) (.+) bag', 1) * c.amount as amount,
+    regexp_extract(c2_bag, '(\\d+) (.+) bag', 2) as bag_name
+  from input_data as i
+  inner join c1 as c on i.rule like concat_ws(' ', c.bag_name, 'bag%') and i.rule not like '%contain no other bags.'
+),
+
+c3 as (
+  select 
+    explode(split(i.rule, ',')) as c3_bag,
+    regexp_extract(c3_bag, '(\\d+) (.+) bag', 1) * c.amount as amount,
+    regexp_extract(c3_bag, '(\\d+) (.+) bag', 2) as bag_name
+  from input_data as i
+  inner join c2 as c on i.rule like concat_ws(' ', c.bag_name, 'bag%') and i.rule not like '%contain no other bags.'
+),
+
+c4 as (
+  select 
+    explode(split(i.rule, ',')) as c4_bag,
+    regexp_extract(c4_bag, '(\\d+) (.+) bag', 1) * c.amount as amount,
+    regexp_extract(c4_bag, '(\\d+) (.+) bag', 2) as bag_name
+  from input_data as i
+  inner join c3 as c on i.rule like concat_ws(' ', c.bag_name, 'bag%') and i.rule not like '%contain no other bags.'
+),
+
+c5 as (
+  select 
+    explode(split(i.rule, ',')) as c5_bag,
+    regexp_extract(c5_bag, '(\\d+) (.+) bag', 1) * c.amount as amount,
+    regexp_extract(c5_bag, '(\\d+) (.+) bag', 2) as bag_name
+  from input_data as i
+  inner join c4 as c on i.rule like concat_ws(' ', c.bag_name, 'bag%') and i.rule not like '%contain no other bags.'
+),
+
+c6 as (
+  select 
+    explode(split(i.rule, ',')) as c6_bag,
+    regexp_extract(c6_bag, '(\\d+) (.+) bag', 1) * c.amount as amount,
+    regexp_extract(c6_bag, '(\\d+) (.+) bag', 2) as bag_name
+  from input_data as i
+  inner join c5 as c on i.rule like concat_ws(' ', c.bag_name, 'bag%') and i.rule not like '%contain no other bags.'
+),
+
+c7 as (
+  select 
+    explode(split(i.rule, ',')) as c7_bag,
+    regexp_extract(c7_bag, '(\\d+) (.+) bag', 1) * c.amount as amount,
+    regexp_extract(c7_bag, '(\\d+) (.+) bag', 2) as bag_name
+  from input_data as i
+  inner join c6 as c on i.rule like concat_ws(' ', c.bag_name, 'bag%') and i.rule not like '%contain no other bags.'
+),
+
+c8 as (
+  select 
+    explode(split(i.rule, ',')) as c8_bag,
+    regexp_extract(c8_bag, '(\\d+) (.+) bag', 1) * c.amount as amount,
+    regexp_extract(c8_bag, '(\\d+) (.+) bag', 2) as bag_name
+  from input_data as i
+  inner join c7 as c on i.rule like concat_ws(' ', c.bag_name, 'bag%') and i.rule not like '%contain no other bags.'
+),
+
+all_bags as (
+  select amount, bag_name from c1
+  union all
+  select amount, bag_name from c2
+  union all
+  select amount, bag_name from c3
+  union all
+  select amount, bag_name from c4
+  union all
+  select amount, bag_name from c5
+  union all
+  select amount, bag_name from c6
+  union all
+  select amount, bag_name from c7
+  union all
+  select amount, bag_name from c8
+)
+
+select sum(amount) as result from all_bags
