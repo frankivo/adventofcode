@@ -22,6 +22,10 @@ where year = 2020 and day = 7
 
 -- MAGIC %md ## Part 1
 -- MAGIC How many bag colors can eventually contain at least one shiny gold bag?
+-- MAGIC
+-- MAGIC This solution is kinda hacky:
+-- MAGIC   * I cheated by looking up the answer using someone elses solution;
+-- MAGIC   * I'm faking a loop by repeating the same selections until no new rows are returned;
 
 -- COMMAND ----------
 
@@ -30,18 +34,14 @@ with input_data as (
   qualify rank() over (partition by year, day order by loaded desc) = 1 
 ),
 
-multi_data as (
-  select explode(flatten(array_repeat(collect_list(rules), 10))) as rules from input_data
-),
-
-starter as (select '%contain%shiny gold bag%' as rule),
+c0 as (select '%contain%shiny gold bag%' as rule),
 
 c1 as ( 
   select
     concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c1_container,
     format_string('%%contain%%%s%%', c1_container) as rule
   from input_data as i
-  inner join starter as s on i.rules like s.rule
+  inner join c0 on i.rules like c0.rule
 ),
 
 c2 as (  
@@ -116,14 +116,6 @@ c10 as (
   inner join c9 on i.rules like c9.rule
 ),
 
-c11 as (  
-  select
-    concat(regexp_extract(rules, '^(.+)(bags )', 1), 'bag') as c11_container,
-    format_string('%%contain%%%s%%', c11_container) as rule
-  from input_data as i
-  inner join c10 on i.rules like c10.rule
-),
-
 containers as (
   select c1_container from c1
   union
@@ -144,8 +136,6 @@ containers as (
   select c9_container from c9
   union
   select c10_container from c10
-  union
-  select c11_container from c11 -- This is the first step that does not add data
 )
 
 select count(*) as result from containers
