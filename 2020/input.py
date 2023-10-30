@@ -4,9 +4,8 @@ import requests
 
 def createTable() -> None: 
     with duckdb.connect('aoc2020.db') as con:
-        with open('create_table.sql') as f:
-            con.sql(f.read())
-            con.table('input_data').show()
+        con.sql('create table if not exists input_data ( day int, input text, demo text)')
+        con.table('input_data').show()
 
 def downloadDay(day: int) -> str:
     headers = { 'User-Agent': 'https://github.com/frankivo/adventofcode frank+github@scriptzone.nl' }
