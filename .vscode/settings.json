@@ -1,0 +1,12 @@
+{
+    "editor.renderWhitespace": "all",
+    
+    "sqlfluff.linter.run": "onSave",
+    "sqlfluff.executablePath": ".venv/Scripts/sqlfluff.exe",
+    
+    "files.exclude": {
+        "**/.git": true,
+        "**/.venv": true,
+        "**/__pycache__": true
+    }
+}
