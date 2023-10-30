@@ -1,5 +1,5 @@
--- AOC2020 - Day 6: Custom Customs
--- https://adventofcode.com/2020/day/6
+-- AOC2020 - Day 7: Handy Haversacks
+-- https://adventofcode.com/2020/day/7
 
 -- Part 2: How many individual bags are required inside your single shiny gold bag?
 
