@@ -3,17 +3,17 @@
 
 -- Part 1: How many bag colors can eventually contain at least one shiny gold bag?
 
-with recursive selector (rule) as (
+with recursive bags (rule) as (
     select format('%contain%{}bag%', regexp_extract(src, '^(.+)(bags )', 1))
     from src_data
     where src like '%contain%shiny gold bag%'
 
     union
 
-    select format('%contain%{}bag%', regexp_extract(sd.src, '^(.+)(bags )', 1))
+    select format('%contain%{}bag%', regexp_extract(s.src, '^(.+)(bags )', 1))
 
-    from src_data as sd
-    inner join selector as s on sd.src like s.rule
+    from src_data as s
+    inner join bags as b on s.src like b.rule
 ),
 
 src_data as (
@@ -25,4 +25,4 @@ src_data as (
 select
     1           as part,
     count(rule) as result
-from selector
+from bags
