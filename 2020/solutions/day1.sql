@@ -1,20 +1,17 @@
 -- AOC2020 - Day 1: Report Repair
 -- https://adventofcode.com/2020/day/1
 
+with src_data as (
+    select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
+    from input_data
+    where day = 1
+),
+
+ints as (select cast(src as int) as src from src_data),
+
 -- Part 1: Find the two entries that sum to 2020; what do you get if you multiply them together?
-with part1 as (
-    with src_data as (
-        select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
-        from input_data
-        where day = 1
-    ),
-
-    ints as (
-        select cast(src as int) as src
-        from src_data
-    ),
-
-    combinations as (
+part1 as (
+    with combinations as (
         select distinct
             l.src as a,
             r.src as b
@@ -41,18 +38,7 @@ with part1 as (
 
 -- Part 2: In your expense report, what is the product of the three entries that sum to 2020?
 part2 as (
-    with src_data as (
-        select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
-        from input_data
-        where day = 1
-    ),
-
-    ints as (
-        select cast(src as int) as src
-        from src_data
-    ),
-
-    combinations as (
+    with combinations as (
         select distinct
             l.src as a,
             m.src as b,

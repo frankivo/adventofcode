@@ -1,15 +1,15 @@
 -- AOC2020 - Day 3: Toboggan Trajectory
 -- https://adventofcode.com/2020/day/3
 
--- Part 1: Starting at the top-left corner of your map and following a slope of right 3 and down 1, how many trees would you encounter?
-with part1 as (
-    with src_data as (
-        select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
-        from input_data
-        where day = 3
-    ),
+with src_data as (
+    select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
+    from input_data
+    where day = 3
+),
 
-    coordinates as (
+-- Part 1: Starting at the top-left corner of your map and following a slope of right 3 and down 1, how many trees would you encounter?
+part1 as (
+    with coordinates as (
         select
             row_number() over (order by 1)                         as y,
             ((y - 1) * 3) % length(src) + 1                        as x,
@@ -26,13 +26,7 @@ with part1 as (
 
 -- Part 2: In your expense report, what is the product of the three entries that sum to 2020?
 part2 as (
-    with src_data as (
-        select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
-        from input_data
-        where day = 3
-    ),
-
-    coordinates as (
+    with coordinates as (
         select
             row_number() over (order by 1)                                                                                as y,
             case when substring(src, ((y - 1)) % length(src) + 1, 1) = '#' then 1 else 0 end                              as d1r1,

@@ -4,7 +4,7 @@
 dialect = duckdb
 sql_file_exts = .sql
 max_line_length = 150
-exclude_rules = ST06, AM05, L014, L029
+exclude_rules = ST03, ST06, AM05, L014, L029
 
 [sqlfluff:indentation]
 tab_space_size = 4

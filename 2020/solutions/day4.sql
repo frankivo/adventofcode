@@ -1,16 +1,16 @@
 -- AOC2020 - Day 4: Toboggan Trajectory
 -- https://adventofcode.com/2020/day/4
 
+with src_data as (
+    select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n\n')) as src
+    from input_data
+    where day = 4
+),
+
 -- Part 1: Count the number of valid passports - those that have all required fields. Treat cid as optional.
 -- In your batch file, how many passports are valid?
-with part1 as (
-    with src_data as (
-        select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n\n')) as src
-        from input_data
-        where day = 4
-    ),
-
-    validator as (
+part1 as (
+    with validator as (
         select
             case
                 when
@@ -36,13 +36,7 @@ with part1 as (
 -- Part 2: Count the number of valid passports - those that have all required fields and valid values. Continue to treat cid as optional.
 -- In your batch file, how many passports are valid?
 part2 as (
-    with src_data as (
-        select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n\n')) as src
-        from input_data
-        where day = 4
-    ),
-
-    kv as (
+    with kv as (
         select
             regexp_matches(src, '\bbyr:(19[2-9][0-9]|200[012])\b')                            as byr,
             regexp_matches(src, '\becl:(amb|blu|brn|gry|grn|hzl|oth)\b')                      as ecl,

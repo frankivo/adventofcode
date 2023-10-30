@@ -1,20 +1,20 @@
 -- AOC2020 - Day 2: Password Philosophy
 -- https://adventofcode.com/2020/day/2
 
+with src_data as (
+    select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
+    from input_data
+    where day = 2
+),
+
+extract as (
+    select regexp_extract_all(src, '(\d+|[a-z]+)') as extracts
+    from src_data
+),
+
 -- Part 1: How many passwords are valid according to their policies?
-with part1 as (
-    with src_data as (
-        select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
-        from input_data
-        where day = 2
-    ),
-
-    extract as (
-        select regexp_extract_all(src, '(\d+|[a-z]+)') as extracts
-        from src_data
-    ),
-
-    policies as (
+part1 as (
+    with policies as (
         select
             extracts[1]                               as low,
             extracts[2]                               as high,
@@ -34,18 +34,7 @@ with part1 as (
 
 -- Part 2: In your expense report, what is the product of the three entries that sum to 2020?
 part2 as (
-    with src_data as (
-        select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
-        from input_data
-        where day = 2
-    ),
-
-    extract as (
-        select regexp_extract_all(src, '(\d+|[a-z]+)') as extracts
-        from src_data
-    ),
-
-    policies as (
+    with policies as (
         select
             cast(extracts[1] as int)                                       as low,
             cast(extracts[2] as int)                                       as high,
