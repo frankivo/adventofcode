@@ -1,7 +1,36 @@
 -- AOC2020 - Day 5: Toboggan Trajectory
 -- https://adventofcode.com/2020/day/5
 
-with src_data as (
+with recursive selector (src, pos, substr, selected_rows, selected_columns) as (
+    select
+        src,
+        0,
+        '',
+        all_selected_rows,
+        all_selected_columns
+    from seats
+
+    union all
+
+    select
+        src,
+        pos + 1,
+        substring(src, pos + 1, 1) as tmp_substr,
+        case
+            when tmp_substr = 'F' then filter(selected_rows, i -> i < (list_min(selected_rows) + list_max(selected_rows)) / 2)
+            when tmp_substr = 'B' then filter(selected_rows, i -> i > (list_min(selected_rows) + list_max(selected_rows)) / 2)
+            else selected_rows
+        end,
+        case
+            when tmp_substr = 'L' then filter(selected_columns, i -> i < (list_min(selected_columns) + list_max(selected_columns)) / 2)
+            when tmp_substr = 'R' then filter(selected_columns, i -> i > (list_min(selected_columns) + list_max(selected_columns)) / 2)
+            else selected_columns
+        end
+    from selector
+    where tmp_substr != ''
+),
+
+src_data as (
     select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
     from input_data
     where day = 5
@@ -10,114 +39,18 @@ with src_data as (
 seats as (
     select
         src,
-        range(128) as all_rows,
-        range(8)   as all_columns
+        range(128) as all_selected_rows,
+        range(8)   as all_selected_columns
     from src_data
 ),
 
-rs1 as (
-    select
-        *,
-        case
-            when substring(src, 1, 1) = 'F' then list_filter(all_rows, i -> i < list_min(all_rows) + list_max(all_rows) / 2)
-            else list_filter(all_rows, i -> i > (list_min(all_rows) + list_max(all_rows)) / 2)
-        end as rs1
-    from seats
-),
-
-rs2 as (
-    select
-        *,
-        case
-            when substring(src, 2, 1) = 'F' then filter(rs1, i -> i < (list_min(rs1) + list_max(rs1)) / 2)
-            else filter(rs1, i -> i > (list_min(rs1) + list_max(rs1)) / 2)
-        end as rs2
-    from rs1
-),
-
-rs3 as (
-    select
-        *,
-        case
-            when substring(src, 3, 1) = 'F' then filter(rs2, i -> i < (list_min(rs2) + list_max(rs2)) / 2)
-            else filter(rs2, i -> i > (list_min(rs2) + list_max(rs2)) / 2)
-        end as rs3
-    from rs2
-),
-
-rs4 as (
-    select
-        *,
-        case
-            when substring(src, 4, 1) = 'F' then filter(rs3, i -> i < (list_min(rs3) + list_max(rs3)) / 2)
-            else filter(rs3, i -> i > (list_min(rs3) + list_max(rs3)) / 2)
-        end as rs4
-    from rs3
-),
-
-rs5 as (
-    select
-        *,
-        case
-            when substring(src, 5, 1) = 'F' then filter(rs4, i -> i < (list_min(rs4) + list_max(rs4)) / 2)
-            else filter(rs4, i -> i > (list_min(rs4) + list_max(rs4)) / 2)
-        end as rs5
-    from rs4
-),
-
-rs6 as (
-    select
-        *,
-        case
-            when substring(src, 6, 1) = 'F' then filter(rs5, i -> i < (list_min(rs5) + list_max(rs5)) / 2)
-            else filter(rs5, i -> i > (list_min(rs5) + list_max(rs5)) / 2)
-        end as rs6
-    from rs5
-),
-
-rs7 as (
-    select
-        *,
-        case
-            when substring(src, 7, 1) = 'F' then list_min(rs6)
-            else list_max(rs6)
-        end as seat_row
-    from rs6
-),
-
-cs1 as (
-    select
-        *,
-        case
-            when substring(src, 8, 1) = 'L' then filter(all_columns, i -> i < (list_min(all_columns) + list_max(all_columns)) / 2)
-            else filter(all_columns, i -> i > (list_min(all_columns) + list_max(all_columns)) / 2)
-        end as cs1
-    from seats
-),
-
-cs2 as (
-    select
-        *,
-        case
-            when substring(src, 9, 1) = 'L' then filter(cs1, i -> i < (list_min(cs1) + list_max(cs1)) / 2)
-            else filter(cs1, i -> i > (list_min(cs1) + list_max(cs1)) / 2)
-        end as cs2
-    from cs1
-),
-
-cs3 as (
-    select
-        *,
-        case
-            when substring(src, 10, 1) = 'L' then list_min(cs2)
-            else list_max(cs2)
-        end as seat_column
-    from cs2
-),
-
 seat_ids as (
-    select ((rs7.seat_row * 8) + cs3.seat_column) as seatID
-    from rs7 left join cs3 on rs7.src = cs3.src
+    select
+        list_first(selected_rows)    as x,
+        list_first(selected_columns) as y,
+        ((x * 8) + y)                as seatID
+    from selector
+    where pos = 10
 ),
 
 -- Part 1: As a sanity check, look through your list of boarding parses. What is the highest seat ID on a boarding pars?
