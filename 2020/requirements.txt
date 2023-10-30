@@ -1,2 +1,4 @@
 duckdb==0.9.1
 python-dotenv==1.0.0
+sqlfluff==2.3.5
+requests==2.31.0
