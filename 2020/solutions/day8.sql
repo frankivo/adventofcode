@@ -6,7 +6,7 @@
 with recursive instructor (pos, acc, visited, operation, argument, next) as (
     select
         rn,
-        0,
+        case when operation = 'acc' then argument else 0 end,
         [1],
         operation,
         argument,
@@ -45,4 +45,7 @@ instructions as (
     from src_data
 )
 
-select * from instructor
+select
+    1         as part,
+    last(acc) as result
+from instructor
