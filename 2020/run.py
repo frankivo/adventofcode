@@ -21,18 +21,10 @@ def update_demo() -> None:
             con.sql(query)
 
 def run() -> None:
-    files = [
-        path.join('solutions', 'day{d}.sql'.format(d=args.day)),
-        path.join('solutions', 'day{d}_part1.sql'.format(d=args.day)),
-        path.join('solutions', 'day{d}_part2.sql'.format(d=args.day)),
-    ]
-
-    for file in files:
-        if path.exists(file):
-            with open(file) as reader:
-                source_column = 'input' if not args.demo else 'demo'
-                query = reader.read().replace('source_column', source_column)
-                con.sql(query).show()
+    with open(path.join('solutions', 'day{d}.sql'.format(d=args.day))) as reader:
+        source_column = 'input' if not args.demo else 'demo'
+        query = reader.read().replace('source_column', source_column)
+        con.sql(query).show()
 
 update_demo()
 run()
