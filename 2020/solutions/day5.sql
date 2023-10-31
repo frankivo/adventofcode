@@ -1,7 +1,21 @@
 -- AOC2020 - Day 5: Toboggan Trajectory
 -- https://adventofcode.com/2020/day/5
 
-with recursive selector (src, pos, substr, selected_rows, selected_columns) as (
+with recursive src_data as (
+    select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
+    from input_data
+    where day = 5
+),
+
+seats as (
+    select
+        src,
+        range(128) as all_selected_rows,
+        range(8)   as all_selected_columns
+    from src_data
+),
+
+selector (src, pos, substr, selected_rows, selected_columns) as (
     select
         src,
         0,
@@ -28,20 +42,6 @@ with recursive selector (src, pos, substr, selected_rows, selected_columns) as (
         end
     from selector
     where tmp_substr != ''
-),
-
-src_data as (
-    select unnest(string_split_regex(regexp_replace(source_column, '\n$', ''), '\n')) as src
-    from input_data
-    where day = 5
-),
-
-seats as (
-    select
-        src,
-        range(128) as all_selected_rows,
-        range(8)   as all_selected_columns
-    from src_data
 ),
 
 seat_ids as (
