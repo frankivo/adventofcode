@@ -36,31 +36,29 @@ part1 as (
 --   https://gitlab.com/autra/adventofcode/-/tree/master/year_2020/day8
 --   https://github.com/xocolatl/advent-of-code/blob/master/2020/dec08.sql
 part2 as (
-    with recursive all_options (gid, id, operation, argument, inverted_row) as (
+    with recursive all_options (gid, id, operation, argument) as (
         select
             0,
             id,
             operation,
-            argument,
-            0
+            argument
         from instructions
 
         union all
 
         select
-            gid + 1,
-            id,
+            a.gid + 1,
+            i.id,
             case
-                when id = a.inverted_row and operation = 'jmp' then 'nop'
-                when id = a.inverted_row and operation = 'nop' then 'jmp'
-                else operation
+                when a.gid = i.id and i.operation = 'jmp' then 'nop'
+                when a.gid = i.id and i.operation = 'nop' then 'jmp'
+                else i.operation
             end,
-            argument,
-            inverted_row + 1
-        from instructions,
-            lateral(select inverted_row, gid from all_options) as a
-        where inverted_row < (select max(id) from instructions)
+            i.argument
 
+        from instructions as i
+        left join all_options as a on i.id = a.id
+        where a.gid <= (select max(id) from instructions)
     )
 
     select * from all_options
