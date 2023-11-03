@@ -7,47 +7,50 @@ with src_data as (
     where day = 9
 ),
 
-numbers as (
-    select
-        row_number() over (order by 1) as id,
-        cast(src as int)               as num
-    from src_data
-),
-
 -- Part 1: What is the first number that does not have this property?
 part1 as (
-    with recursive lookback (id, num) as (
+    with numbers as (
         select
-            id,
-            num
-        from numbers where id <= 5
-        union
+            row_number() over (order by 1) as id,
+            cast(src as bigint)            as num
+        from src_data
+    ),
+
+    config as (select case when max(id) = 20 then 5 else 25 end as samplesize from numbers),
+
+    validator as (
         select
             w.id,
-            w.num
+            w.num,
+            n.valid
         from numbers as w
-        where w.id = (select max(id) + 1 from lookback)
+        left join lateral
+            (
+                with prev as (
+                    select w.num from numbers as cur
+                    left join numbers as w
+                        on w.id >= (cur.id - (select samplesize from config)) and cur.id > w.id
+                    where cur.id = n.id
+                ),
+
+                sums as (
+                    select distinct a.num + b.num as sum
+                    from prev as a
+                    cross join prev as b
+                )
+
+                select
+                    n.id,
+                    exists(select s.sum from sums as s where s.sum = w.num) as valid
+                from numbers as n
+            ) as n on w.id = n.id
     )
 
-    select * from lookback
-),
-
-prev as (
-    select w.num from numbers as cur
-    left join numbers as w
-        on w.id >= (cur.id - 5) and cur.id > w.id
-    where cur.id = 6
-),
-
-sums as (
-    select distinct a.num + b.num as sum
-    from prev as a
-    cross join prev as b
-    where a.num != b.num -- TODO: remove probably
+    select
+        1   as part,
+        num as result
+    from validator
+    where id > (select samplesize from config) and not valid
 )
 
-select
-    w.*,
-    exists(select s.sum from sums as s where s.sum = w.num) as valid
-from numbers as w
-where w.id = 6
+select * from part1
