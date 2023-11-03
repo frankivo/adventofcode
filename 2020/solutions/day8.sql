@@ -65,4 +65,4 @@ part2 as (
 )
 
 
-select * from part2
+select * from part1
