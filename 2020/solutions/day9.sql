@@ -7,16 +7,16 @@ with src_data as (
     where day = 9
 ),
 
+numbers as (
+    select
+        row_number() over (order by 1) as id,
+        cast(src as bigint)            as num
+    from src_data
+),
+
 -- Part 1: What is the first number that does not have this property?
 part1 as (
-    with numbers as (
-        select
-            row_number() over (order by 1) as id,
-            cast(src as bigint)            as num
-        from src_data
-    ),
-
-    config as (select case when max(id) = 20 then 5 else 25 end as samplesize from numbers),
+    with config as (select case when max(id) = 20 then 5 else 25 end as samplesize from numbers),
 
     validator as (
         select
@@ -51,6 +51,49 @@ part1 as (
         num as result
     from validator
     where id > (select samplesize from config) and not valid
+),
+
+
+-- 127
+part2 as (
+    with recursive config as (select result as target from part1),
+
+    finder (start, current, visited, sum) as (
+        select
+            id as start,
+            id,
+            [num],
+            num
+        from numbers
+
+        union all
+
+        select
+            f.start,
+            n.id,
+            list_append(f.visited, n.num),
+            n.num + f.sum
+        from finder as f
+        inner join numbers as n
+            on f.current + 1 = n.id
+        where n.num + f.sum <= (select target from config)
+    ),
+
+    solution as (
+        select * from finder
+        where
+            sum = (select target from config)
+            and length(visited) > 1
+    )
+
+
+    select
+        2                                     as part,
+        list_min(visited) + list_max(visited) as result
+    from solution
 )
 
 select * from part1
+union
+select * from part2
+order by part
