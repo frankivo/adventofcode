@@ -54,13 +54,12 @@ part1 as (
 ),
 
 
--- 127
+-- Part 2: What is the encryption weakness in your XMAS-encrypted list of numbers?
 part2 as (
     with recursive config as (select result as target from part1),
 
-    finder (start, current, visited, sum) as (
+    finder (current, visited, sum) as (
         select
-            id as start,
             id,
             [num],
             num
@@ -69,7 +68,6 @@ part2 as (
         union all
 
         select
-            f.start,
             n.id,
             list_append(f.visited, n.num),
             n.num + f.sum
