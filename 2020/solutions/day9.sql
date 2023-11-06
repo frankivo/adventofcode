@@ -56,39 +56,40 @@ part1 as (
 
 -- Part 2: What is the encryption weakness in your XMAS-encrypted list of numbers?
 part2 as (
-    with recursive config as (select result as target from part1),
+    with config as (select result as target from part1),
 
-    finder (current, visited, sum) as (
+    ranges as (
         select
-            id,
-            [num],
-            num
-        from numbers
-
-        union all
-
-        select
-            n.id,
-            list_append(f.visited, n.num),
-            n.num + f.sum
-        from finder as f
-        inner join numbers as n
-            on f.current + 1 = n.id
-        where n.num + f.sum <= (select target from config)
+            n1.id as start,
+            n2.id as stop
+        from numbers as n1
+        join numbers as n2 on n1.id < n2.id
     ),
 
-    solution as (
-        select visited from finder
-        where
-            sum = (select target from config)
-            and length(visited) > 1
-        limit 1
+    sums as (
+        select
+            r.start,
+            r.stop,
+            s.sum,
+            s.source
+
+        from ranges as r
+        join lateral (
+            select
+                r.start     as id,
+                sum(n.num)  as sum,
+                list(n.num) as source
+            from numbers as n where n.id between r.start and r.stop
+        ) as s
+            on
+                r.start = s.id
     )
 
     select
-        2                                     as part,
-        list_min(visited) + list_max(visited) as result
-    from solution
+        2                                   as part,
+        list_min(source) + list_max(source) as result
+    from sums
+    where sum = (select target from config)
 )
 
 select * from part1
