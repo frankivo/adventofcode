@@ -58,31 +58,21 @@ part1 as (
 part2 as (
     with config as (select result as target from part1),
 
-    ranges as (
-        select
-            n1.id as start,
-            n2.id as stop
-        from numbers as n1
-        join numbers as n2 on n1.id < n2.id
-    ),
-
     sums as (
         select
-            r.start,
-            r.stop,
             s.sum,
             s.source
+        from numbers as n1
+        join numbers as n2 on n1.id < n2.id
 
-        from ranges as r
         join lateral (
             select
-                r.start     as id,
+                n1.id       as id,
                 sum(n.num)  as sum,
                 list(n.num) as source
-            from numbers as n where n.id between r.start and r.stop
+            from numbers as n where n.id between n1.id and n2.id
         ) as s
-            on
-                r.start = s.id
+            on n1.id = s.id
     )
 
     select
