@@ -78,12 +78,12 @@ part2 as (
     ),
 
     solution as (
-        select * from finder
+        select visited from finder
         where
             sum = (select target from config)
             and length(visited) > 1
+        limit 1
     )
-
 
     select
         2                                     as part,
