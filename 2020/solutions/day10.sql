@@ -7,22 +7,20 @@ with src_data as (
     where day = 10
 ),
 
-jolts as (select cast(src as int) as jolt from src_data),
+jolts as (
+    select cast(src as int) as jolt from src_data
+    union
+    select 0
+),
 
 -- Part 1: What is the number of 1-jolt differences multiplied by the number of 3-jolt differences?
 part1 as (
-    with jolt_with_start as (
-        select jolt from jolts
-        union
-        select 0
-    ),
-
-    distances as (
+    with distances as (
         select
             jolt,
             lead(jolt, 1) over (order by jolt) as next_jolt,
             coalesce(next_jolt - jolt, 3)      as dist
-        from jolt_with_start
+        from jolts
     ),
 
     sums as (
@@ -40,45 +38,52 @@ part1 as (
 
 -- Part 2: What is the total number of distinct ways you can arrange the adapters to connect the charging outlet to your device?
 part2 as (
-    with recursive jolts_with_target as (
-        select jolt
+    with recursive jolts_with_start_and_end as (
+        select
+            jolt,
+            false as is_last
         from jolts
         union
-        select max(jolt) + 3
+        select
+            max(jolt) + 3 as jolt,
+            true          as is_last
         from jolts
-        union
-        select 0
     ),
 
-    edge as (
+    jolts_with_targets as (
         select
-            row_number() over (order by jolt) as id,
             jolt,
-            [jolt - 1, jolt - 2, jolt - 3]    as targets
-        from jolts_with_target
+            [jolt - 1, jolt - 2, jolt - 3] as targets
+        from jolts_with_start_and_end
     ),
 
     paths (jolt, path) as (
         select
             jolt,
             targets
-        from edge
-        where id = 1
+        from jolts_with_targets
+        where jolt = 0
 
         union all
 
         select
-            e.jolt,
-            list_append(p.path, e.jolt)
-        from edge as e
-        join paths as p on list_has(e.targets, p.jolt)
+            j.jolt,
+            list_append(p.path, j.jolt)
+        from jolts_with_targets as j
+        join paths as p on list_has(j.targets, p.jolt)
     )
 
     select
-        2           as part,
-        count(jolt) as result
-    from paths
-    where jolt = (select max(jolt) from jolts_with_target)
+        2             as part,
+        count(p.jolt) as result
+    from paths as p
+    inner join jolts_with_start_and_end as j
+        on
+            p.jolt = j.jolt
+            and j.is_last
 )
 
+select * from part1
+union
 select * from part2
+order by part

@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime
 import duckdb
 from os import path
 
@@ -27,4 +28,8 @@ def run() -> None:
         con.sql(query).show()
 
 update_demo()
+
+start=datetime.now()
 run()
+end=datetime.now()
+print(end-start)
