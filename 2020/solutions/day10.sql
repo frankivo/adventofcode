@@ -50,33 +50,35 @@ part2 as (
         select 0
     ),
 
-    egde as (
+    edge as (
         select
-            jolt                            as node1id,
-            lead(jolt) over (order by jolt) as node2id
+            row_number() over (order by jolt) as id,
+            jolt,
+            [jolt - 1, jolt - 2, jolt - 3]    as targets
         from jolts_with_target
     ),
 
-    paths (startNode, endNode, path) as (
+    paths (jolt, path) as (
         select
-            node1id,
-            node2id,
-            [node1id, node2id]
-        from egde where node1id = 0
+            jolt,
+            targets
+        from edge
+        where id = 1
 
         union all
 
         select
-            paths.startNode,
-            egde.node2id,
-            list_append(paths.path, egde.node2id)
-        from paths
-        join egde on paths.endNode = egde.node1id
-        -- where egde.node2id != all(paths.path)
-
+            e.jolt,
+            list_append(p.path, e.jolt)
+        from edge as e
+        join paths as p on list_has(e.targets, p.jolt)
     )
 
-    select * from paths
+    select
+        2           as part,
+        count(jolt) as result
+    from paths
+    where jolt = (select max(jolt) from jolts_with_target)
 )
 
 select * from part2
