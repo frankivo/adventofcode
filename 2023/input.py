@@ -16,14 +16,23 @@ def downloadDay(day: int) -> str:
         if (response.status_code != 200):
             raise Exception('Download failed: ' + str(response.status_code) + ' ' + url)
         return response.text
+
+def hasDay(day: int) -> bool:
+    with duckdb.connect('aoc2023.db') as con:
+        query = "select 1 from input_data where day = {d}".format(d=day)
+        res = con.sql(query)
+        return not res.fetchone() == None
     
 def storeDay(day: int, data: str) -> None:
     with duckdb.connect('aoc2023.db') as con:
         query = "insert into input_data (day, input) values({d}, '{i}')".format(d=day, i=data)
         con.sql(query)
 
-
 createTable()
 for day in range(1, 25+1):
+    if hasDay(day):
+        print('Skip day {d}'.format(d=day))
+        continue
+
     print('Download day: {d}'.format(d=day))
     storeDay(day, downloadDay(day))
