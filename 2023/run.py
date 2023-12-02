@@ -1,6 +1,7 @@
+from input import hasDay, downloadDay
+from os import path
 import argparse
 import duckdb
-from os import path
 
 parser = argparse.ArgumentParser(description='Run Advent of Code solutions')
 parser.add_argument('-d', '--day', type=int, help='Day to run')
@@ -14,6 +15,10 @@ if args.day is None:
 
 con = duckdb.connect('aoc2023.db')
 
+def prepare() -> None:
+    if not hasDay(args.day):
+        downloadDay(args.day)
+
 def update_demo() -> None:
     if args.demo:
         with open(path.join('demo', 'day{d}.txt'.format(d=args.day))) as f:
@@ -26,5 +31,10 @@ def run() -> None:
         query = reader.read().replace('source_column', source_column)
         con.sql(query).show()
 
-update_demo()
-run()
+def main():
+    prepare()
+    update_demo()
+    run()
+
+if __name__ == '__main__':
+    main()
