@@ -9,9 +9,10 @@ with src_data as (
 
 lead_lag as (
     select
-        lag(src) over (order by 1)  as l1,
-        src                         as l2,
-        lead(src) over (order by 1) as l3
+        row_number() over (order by 1) as id,
+        lag(src) over (order by 1)     as l1,
+        src                            as l2,
+        lead(src) over (order by 1)    as l3
     from src_data
 ),
 
@@ -22,8 +23,7 @@ part1 as (
             regexp_extract_all(l2, '\d+')                                 as numbers,
             cast(unnest(numbers) as int)                                  as number,
             concat('(^|[^0-9])', number, '([^0-9]|$)')                    as search_string,
-            length(list_first(string_split_regex(l2, search_string))) + 2 as pos_left,
-            pos_left - 1                                                  as search_left,
+            length(list_first(string_split_regex(l2, search_string))) + 1 as search_left,
             length(number) + 2                                            as search_length,
             substring(l1, search_left, search_length)                     as prev,
             substring(l2, search_left, search_length)                     as cur,
@@ -43,13 +43,30 @@ part1 as (
 ),
 
 part2 as (
-    select
-        regexp_extract_all(l2, '\*') as stars,
-        range(1, length(stars) + 1)      as count,
-        unnest(count)                as star,
-        length(string_split(l2, '*')[star]) + 1 as pos_left,
-        ''
-    from lead_lag
+    with stars as (
+        select
+            id,
+            regexp_extract_all(l2, '\*')               as stars,
+            range(1, length(stars) + 1)                as star_count,
+            unnest(star_count)                         as star_no,
+            length(string_split(l2, '*')[star_no]) + 1 as star_pos
+
+        from lead_lag
+    ),
+
+    numbers as (
+        select
+            id,
+            l2,
+            regexp_extract_all(l2, '\d+')                                 as numbers,
+            cast(unnest(numbers) as int)                                  as number,
+            concat('(^|[^0-9])', number, '([^0-9]|$)')                    as search_string,
+            length(list_first(string_split_regex(l2, search_string))) + 1 as pos_left,
+            pos_left + length(number)                                     as pos_right
+        from lead_lag
+    )
+
+    select * from stars
 )
 
 select * from part2
