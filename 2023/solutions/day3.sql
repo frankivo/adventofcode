@@ -9,22 +9,22 @@ with src_data as (
 
 parser as (
     select
-        lag(src) over (order by 1)                       as l1,
-        src                                              as l2,
-        lead(src) over (order by 1)                      as l3,
-        regexp_extract_all(src, '\d+')                   as numbers,
-        cast(unnest(numbers) as int)                     as number,
-        strpos(src, number)                              as pos_left,
-        pos_left + length(number) - 1                    as pos_right,
-        pos_left - 1                                     as search_left,
-        length(number) + 2                               as search_length,
-        substring(l1, search_left, search_length)        as prev,
-        substring(l2, search_left, search_length)        as cur,
-        substring(l3, search_left, search_length)        as next,
-        list_has_any(split(prev, ''), split('*+#$', '')) as prev_valid,
-        list_has_any(split(cur, ''), split('*+#$', ''))  as cur_valid,
-        list_has_any(split(next, ''), split('*+#$', '')) as next_valid,
-        prev_valid or cur_valid or next_valid            as valid
+        lag(src) over (order by 1)                as l1,
+        src                                       as l2,
+        lead(src) over (order by 1)               as l3,
+        regexp_extract_all(src, '\d+')            as numbers,
+        cast(unnest(numbers) as int)              as number,
+        strpos(src, number)                       as pos_left,
+        pos_left + length(number) - 1             as pos_right,
+        pos_left - 1                              as search_left,
+        length(number) + 2                        as search_length,
+        substring(l1, search_left, search_length) as prev,
+        substring(l2, search_left, search_length) as cur,
+        substring(l3, search_left, search_length) as next,
+        regexp_matches(prev, '[^0-9.]')           as prev_valid,
+        regexp_matches(cur, '[^0-9.]')            as cur_valid,
+        regexp_matches(next, '[^0-9.]')           as next_valid,
+        prev_valid or cur_valid or next_valid     as valid
     from src_data
 )
 
