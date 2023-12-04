@@ -64,9 +64,31 @@ part2 as (
             length(list_first(string_split_regex(l2, search_string))) + 1 as pos_left,
             pos_left + length(number)                                     as pos_right
         from lead_lag
+    ),
+
+    solution as (
+        select
+            s.id,
+            s.star_pos,
+            cast(product(n.number) as int) as gear_ratio
+        from stars as s
+        join lateral (
+            select n.number from numbers as n
+            where
+                n.id between s.id - 1 and s.id + 1
+                and s.id between n.pos_left - 1 and n.pos_right + 1
+        ) as n on true
+        group by all
+        having count(n.number) = 2
     )
 
-    select * from stars
+    select
+        2               as part,
+        sum(gear_ratio) as result
+    from solution
 )
 
+select * from part1
+union
 select * from part2
+order by part
