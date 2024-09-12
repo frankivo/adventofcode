@@ -28,7 +28,7 @@ if args.day is None:
 #         con.sql(query).show()
 
 def main():
-    data = input(1).get()
+    data = input(1, args.demo).get()
     print(data)
 
 if __name__ == '__main__':

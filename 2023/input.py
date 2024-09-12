@@ -3,15 +3,20 @@ import requests
 import os.path as op
 
 class input:
-    def __init__(self, day: int) -> None:
+    def __init__(self, day: int, demo: bool) -> None:
         self.day = day
+        self.demo = demo
     
-    def get(self) -> str:
+    def get(self) -> list[str]:
         if not self.exists():
+            if self.demo:
+                raise FileNotFoundError("Demo file missing")
             self.download()
+        return self.read()
 
     def filename(self) -> str:
-        return f"input/day{self.day}.txt"
+        dir = "input" if not self.demo else "demo"
+        return f"{dir}/day{self.day}.txt"
 
     def download(self) -> None:
         headers = { "User-Agent": "https://github.com/frankivo/adventofcode frank+github@scriptzone.nl" }
@@ -25,3 +30,7 @@ class input:
 
     def exists(self) -> bool:
         return op.exists(self.filename())
+    
+    def read(self) -> list[str]:
+        with open(self.filename()) as file:
+            return file.readlines()
