@@ -1,30 +1,41 @@
 from dotenv import dotenv_values
-import duckdb
+from os.path import exists as file_exists
 import requests
 
-def createTable() -> None: 
-    with duckdb.connect('aoc2023.db') as con:
-        con.sql('create table if not exists input_data ( day int, input text, demo text)')
-
-def downloadDay(day: int) -> None:
-    headers = { 'User-Agent': 'https://github.com/frankivo/adventofcode frank+github@scriptzone.nl' }
-    cookies = { 'session': dotenv_values('.env')['API_KEY'] }
-
-    url = 'https://adventofcode.com/2023/day/{0}/input'.format(day)
-    with requests.get(url, headers=headers, cookies = cookies) as response:
-        if (response.status_code != 200):
-            raise Exception('Download failed: ' + str(response.status_code) + ' ' + url)
-        storeDay(day, response.text)
-
-def hasDay(day: int) -> bool:
-    createTable()
-
-    with duckdb.connect('aoc2023.db') as con:
-        query = "select 1 from input_data where day = {d}".format(d=day)
-        res = con.sql(query)
-        return not res.fetchone() == None
+class input:
+    def __init__(self, day: int, demo: bool) -> None:
+        self.day = day
+        self.demo = demo
     
-def storeDay(day: int, data: str) -> None:
-    with duckdb.connect('aoc2023.db') as con:
-        query = "insert into input_data (day, input) values({d}, '{i}')".format(d=day, i=data)
-        con.sql(query)
+    def get(self, part: int) -> list[str]:
+        filename = self.filename(part)
+
+        if not file_exists(filename) and not self.demo:
+            self.download()
+        
+        with open(filename) as file:
+            return file.readlines()
+
+    def filename(self, part: int) -> str:
+        dir = "input" if not self.demo else "demo"
+        if self.demo:
+            files = [f"day{self.day}", f"day{self.day}_p{part}"]
+            for f in files:
+                file = f"{dir}/{f}.txt"
+                if file_exists(file):
+                    return file
+            raise FileNotFoundError("Demo file missing")
+
+        return f"{dir}/day{self.day}.txt"
+
+    def download(self) -> None:
+        print("Download")
+
+        headers = { "User-Agent": "https://github.com/frankivo/adventofcode frank+github@scriptzone.nl" }
+        cookies = { "session": dotenv_values(".env")["API_KEY"] }
+
+        url = f"https://adventofcode.com/2023/day/{self.day}/input"
+        with requests.get(url, headers=headers, cookies=cookies) as response:
+            response.raise_for_status()
+            with open(self.filename(), "w+") as file:
+                file.write(response.text)
