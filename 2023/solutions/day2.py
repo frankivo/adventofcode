@@ -4,9 +4,14 @@
 import re
 
 def part1(input: list[str]) -> None:
-    games = [ game(g) for g in input ]
-    valid = [ g.id for g in games if g.valid() ]
+    games = [game(g) for g in input]
+    valid = [g.id for g in games if g.valid()]
     print(sum(valid))
+
+def part2(input: list[str]) -> None:
+    games = [game(g) for g in input]
+    powers = [x.pow() for x in games]
+    print(sum(powers))
 
 class game:
     def __init__(self, raw: str) -> None:
@@ -19,7 +24,7 @@ class game:
 
     @staticmethod
     def game_count(raw: str) -> dict:
-        return [ game.set_count(set) for set in raw.split(";") ]
+        return [game.set_count(set) for set in raw.split(";")]
 
     @staticmethod
     def set_count(raw: str) -> dict:
@@ -32,5 +37,8 @@ class game:
     def valid(self) -> bool:
         return all([s.get("blue", 0) <= 14 and s.get("green", 0) <= 13 and s.get("red", 0) <= 12 for s in self.set_counts])
 
-def part2(input: list[str]) -> None:
-    pass
+    def pow(self) -> int:
+        return self.get_minimal("blue") * self.get_minimal("green") * self.get_minimal("red")
+    
+    def get_minimal(self, colour: str) -> int:
+        return max([s.get(colour, 0) for s in self.set_counts ])
