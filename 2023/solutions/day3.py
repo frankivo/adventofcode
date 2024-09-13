@@ -36,7 +36,7 @@ def part1(input: list[str]) -> None:
                 if has_symbol(next_line[guard_left(pos_left - 1) : guard_right(pos_right + 1, field_width)]):
                     found_symbol = True
 
-            if not found_symbol:
+            if found_symbol:
                 found.append(int(n))
     
     print(sum(found))
