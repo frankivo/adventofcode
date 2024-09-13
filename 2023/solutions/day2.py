@@ -26,17 +26,11 @@ class game:
         result = {}
         for m in re.finditer(r'(\d+)\s*(\w+)', raw):
             colour = m.group(2)
-            count = int(m.group(1))
-
-            old = result.get(colour, 0)
-            result.update ( { colour : count + old } )
+            result.update({colour: int(m.group(1)) + result.get(colour, 0)})
         return result
 
     def valid(self) -> bool:
-        for s in self.set_counts:
-            if not (s.get("blue", 0) <= 14 and s.get("green", 0) <= 13 and s.get("red", 0) <= 12):
-                return False
-        return True
+        return all([s.get("blue", 0) <= 14 and s.get("green", 0) <= 13 and s.get("red", 0) <= 12 for s in self.set_counts])
 
 def part2(input: list[str]) -> None:
     pass
