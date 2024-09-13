@@ -8,12 +8,11 @@ parser.add_argument('--demo', action=argparse.BooleanOptionalAction, help='Use d
 
 args = parser.parse_args()
 
-def run(data: list[str]) -> None:
-    globals()[f"day{args.day}"].run(data)
-
 def main():
-    data = input(1, args.demo).get()
-    run(data)
+    data = input(day=1, demo=args.demo)
+
+    globals()[f"day{args.day}"].part1(data.get(part=1))
+    globals()[f"day{args.day}"].part2(data.get(part=2))
 
 if __name__ == '__main__':
     main()

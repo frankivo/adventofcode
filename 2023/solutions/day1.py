@@ -1,8 +1,5 @@
+import input
 import re
-
-def run(input: list[str]) -> None:
-    part1(input)
-    part2(input)
 
 def part1(input: list[str]) -> None:
     digits = [re.findall("\d", i) for i in input]
