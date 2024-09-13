@@ -1,3 +1,6 @@
+# --- Day 1: Trebuchet?! ---
+# https://adventofcode.com/2023/day/1
+
 import re
 
 def part1(input: list[str]) -> None:
