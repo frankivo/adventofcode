@@ -1,6 +1,6 @@
 from dotenv import dotenv_values
+from os.path import exists as file_exists
 import requests
-import os.path as op
 
 class input:
     def __init__(self, day: int, demo: bool) -> None:
@@ -10,7 +10,7 @@ class input:
     def get(self, part: int) -> list[str]:
         filename = self.filename(part)
 
-        if not op.exists(filename) and not self.demo:
+        if not file_exists(filename) and not self.demo:
             self.download()
         
         with open(filename) as file:
@@ -22,7 +22,7 @@ class input:
             files = [f"day{self.day}", f"day{self.day}_p{part}"]
             for f in files:
                 file = f"{dir}/{f}.txt"
-                if op.exists(file):
+                if file_exists(file):
                     return file
             raise FileNotFoundError("Demo file missing")
 
