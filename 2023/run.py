@@ -9,7 +9,7 @@ parser.add_argument('--demo', action=argparse.BooleanOptionalAction, help='Use d
 args = parser.parse_args()
 
 def main():
-    data = input(day=1, demo=args.demo)
+    data = input(day=args.day, demo=args.demo)
 
     globals()[f"day{args.day}"].part1(data.get(part=1))
     globals()[f"day{args.day}"].part2(data.get(part=2))
