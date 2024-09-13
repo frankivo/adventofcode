@@ -11,7 +11,7 @@ class input:
         filename = self.filename(part)
 
         if not file_exists(filename) and not self.demo:
-            self.download()
+            self.download(filename)
         
         with open(filename) as file:
             return file.readlines()
@@ -28,7 +28,7 @@ class input:
 
         return f"{dir}/day{self.day}.txt"
 
-    def download(self) -> None:
+    def download(self, filename: str) -> None:
         print("Download")
 
         headers = { "User-Agent": "https://github.com/frankivo/adventofcode frank+github@scriptzone.nl" }
@@ -37,5 +37,5 @@ class input:
         url = f"https://adventofcode.com/2023/day/{self.day}/input"
         with requests.get(url, headers=headers, cookies=cookies) as response:
             response.raise_for_status()
-            with open(self.filename(), "w+") as file:
+            with open(filename, "w+") as file:
                 file.write(response.text)
