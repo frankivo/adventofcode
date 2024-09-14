@@ -1,4 +1,4 @@
-from input import input
+from input import data
 from solutions import *
 import argparse
 
@@ -11,12 +11,12 @@ parser.add_argument('--p2', '-2', action=argparse.BooleanOptionalAction, help='R
 args = parser.parse_args()
 
 def main():
-    data = input(day=args.day, demo=args.demo)
+    game_data = data(day=args.day, demo=args.demo)
 
     if not args.p2:
-        globals()[f"day{args.day}"].part1(data.get(part=1))
+        globals()[f"day{args.day}"].part1(game_data.get(part=1))
     if not args.p1:
-        globals()[f"day{args.day}"].part2(data.get(part=2))
+        globals()[f"day{args.day}"].part2(game_data.get(part=2))
 
 if __name__ == '__main__':
     main()

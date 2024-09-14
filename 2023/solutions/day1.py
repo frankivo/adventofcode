@@ -3,11 +3,11 @@
 
 import re
 
-def part1(input: list[str]) -> None:
+def part1(data: list[str]) -> None:
     digits = [re.findall("\d", i) for i in input]
     print(sum([int(d[0] + d[-1]) for d in digits]))
 
-def part2(input: list[str]) -> None:
+def part2(data: list[str]) -> None:
     search = "(?=(\d|" + "|".join(one_to_nine) + "))"
     digits = [re.findall(search, i) for i in input]
     numbers = [[to_number(j) for j in i] for i in digits]
