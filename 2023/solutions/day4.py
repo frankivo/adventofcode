@@ -25,8 +25,7 @@ def part1(data: list[str]) -> None:
     wins = [ len(c.calc_wins()) for c in cards ]
     scores = [ score(w) for w in wins ]
 
-    print (wins)
-    print(scores)
+    print(sum(scores))
 
 def part2(data: list[str]) -> None:
 
