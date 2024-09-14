@@ -15,7 +15,6 @@ def main():
 
     if not args.p2:
         globals()[f"day{args.day}"].part1(data.get(part=1))
-    
     if not args.p1:
         globals()[f"day{args.day}"].part2(data.get(part=2))
 
