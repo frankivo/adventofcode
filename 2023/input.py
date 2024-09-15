@@ -2,17 +2,18 @@ from dotenv import dotenv_values
 from os.path import exists as file_exists
 import requests
 
+
 class data:
     def __init__(self, day: int, demo: bool) -> None:
         self.day = day
         self.demo = demo
-    
+
     def get(self, part: int) -> list[str]:
         filename = self.filename(part)
 
         if not file_exists(filename) and not self.demo:
             self.download(filename)
-        
+
         with open(filename) as file:
             return file.readlines()
 
@@ -31,8 +32,10 @@ class data:
     def download(self, filename: str) -> None:
         print("Download")
 
-        headers = { "User-Agent": "https://github.com/frankivo/adventofcode frank+github@scriptzone.nl" }
-        cookies = { "session": dotenv_values(".env")["API_KEY"] }
+        headers = {
+            "User-Agent": "https://github.com/frankivo/adventofcode frank+github@scriptzone.nl"
+        }
+        cookies = {"session": dotenv_values(".env")["API_KEY"]}
 
         url = f"https://adventofcode.com/2023/day/{self.day}/input"
         with requests.get(url, headers=headers, cookies=cookies) as response:
