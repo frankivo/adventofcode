@@ -2,7 +2,7 @@ from dotenv import dotenv_values
 from os.path import exists as file_exists
 import requests
 
-class input:
+class data:
     def __init__(self, day: int, demo: bool) -> None:
         self.day = day
         self.demo = demo

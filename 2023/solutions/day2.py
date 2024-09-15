@@ -3,12 +3,12 @@
 
 import re
 
-def part1(input: list[str]) -> None:
+def part1(data: list[str]) -> None:
     games = [game(g) for g in input]
     valid = [g.id for g in games if g.valid()]
     print(sum(valid))
 
-def part2(input: list[str]) -> None:
+def part2(data: list[str]) -> None:
     games = [game(g) for g in input]
     powers = [x.pow() for x in games]
     print(sum(powers))
