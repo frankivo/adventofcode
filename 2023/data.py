@@ -17,8 +17,8 @@ class data:
         with open(filename) as file:
             return file.read()
 
-    def getlines(self, part: int, with_empty: bool = True) -> list[str]:
-        return [line for line in self.get(part).split("\n") if line or not with_empty]
+    def getlines(self, part: int, with_empty: bool = False) -> list[str]:
+        return [line for line in self.get(part).split("\n") if line or with_empty]
 
     def filename(self, part: int) -> str:
         dir = "input" if not self.demo else "demo"

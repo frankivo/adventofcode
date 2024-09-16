@@ -7,14 +7,14 @@ import re
 
 
 def part1(data: data) -> None:
-    seed_data = data.getlines(part=1, with_empty=False)
+    seed_data = data.getlines(part=1, with_empty=True)
 
     seeds = get_seeds(seed_data[0])
     print(get_minimum_location(seed_data, seeds))
 
 
 def part2(data: data) -> None:
-    seed_data = data.getlines(part=2, with_empty=False)
+    seed_data = data.getlines(part=2, with_empty=True)
 
     def generate_seeds(ranges: list[(int, int)]) -> iter:
         for start, count in ranges:
