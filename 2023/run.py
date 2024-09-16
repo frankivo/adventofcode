@@ -1,5 +1,5 @@
 from data import data
-from solutions import *
+from solutions import *  # noqa: F403
 import argparse
 
 parser = argparse.ArgumentParser(description="Run Advent of Code solutions")
