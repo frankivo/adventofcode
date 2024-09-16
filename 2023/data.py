@@ -8,14 +8,17 @@ class data:
         self.day = day
         self.demo = demo
 
-    def get(self, part: int) -> list[str]:
+    def get(self, part: int) -> str:
         filename = self.filename(part)
 
         if not file_exists(filename) and not self.demo:
             self.download(filename)
 
         with open(filename) as file:
-            return file.readlines()
+            return file.read()
+
+    def getlines(self, part: int, with_empty: bool = True) -> list[str]:
+        return [line for line in self.get(part).split("\n") if line or not with_empty]
 
     def filename(self, part: int) -> str:
         dir = "input" if not self.demo else "demo"
@@ -32,9 +35,7 @@ class data:
     def download(self, filename: str) -> None:
         print("Download")
 
-        headers = {
-            "User-Agent": "https://github.com/frankivo/adventofcode frank+github@scriptzone.nl"
-        }
+        headers = {"User-Agent": "https://github.com/frankivo/adventofcode frank+github@scriptzone.nl"}
         cookies = {"session": dotenv_values(".env")["API_KEY"]}
 
         url = f"https://adventofcode.com/2023/day/{self.day}/input"
