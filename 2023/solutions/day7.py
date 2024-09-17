@@ -7,42 +7,31 @@ CARDS = {c: i for i, c in enumerate("AKQJT98765432")}
 
 
 def part1(data: data) -> None:
-    hands = [hand(sub.split(" ")[0]) for sub in data.getlines()]
-    for h in hands:
-        print(f"{h} -> {h.rank()}")
-        # h.score()
+    hands = [hand(sub) for sub in data.getlines()]
+    scores = [h.bid * (r + 1) for r, h in enumerate(sorted(hands))]
+    print(sum(scores))
 
 
 def part2(data: data) -> None:
     pass
 
 
-class card:
-    def __init__(self, char: str) -> None:
-        self.char = char
-
-    def __gt__(self, other):
-        return CARDS[self.char] < CARDS[other.char]
-
-    def __str__(self) -> str:
-        return f"Card: {self.char}"
-
-
 class hand:
     def __init__(self, raw: str) -> None:
-        self.raw = raw
-        self.cards = reversed(sorted([card(c) for c in raw]))
+        tmp = raw.split(" ")
+        self.cards = tmp[0]
+        self.bid = int(tmp[1])
 
     def __str__(self) -> str:
-        return "".join([c.char for c in self.cards])
+        return self.cards
 
     def rank(self) -> int:
-        c = sorted([self.raw.count(c) for c in set(self.raw)])
+        c = sorted([self.cards.count(c) for c in set(self.cards)])
 
         if 5 in c:  # Five of a kind
-            return 0
-        if 4 in c:  # Four of a kind
             return 1
+        if 4 in c:  # Four of a kind
+            return 2
         if 2 in c and 3 in c:  # Full house
             return 3
         if 3 in c:  # Three of a kind
@@ -52,3 +41,12 @@ class hand:
         if c[-1] == 2:  # One pair
             return 6
         return 7
+
+    def score(self) -> int:
+        return int("".join([str(CARDS[c]) for c in self.cards]))
+
+    def __gt__(self, other):
+        r1, r2 = self.rank(), other.rank()
+        if r1 != r2:
+            return r1 < r2
+        return self.score() < other.score()
