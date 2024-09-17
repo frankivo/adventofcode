@@ -29,18 +29,18 @@ def part2(data: data) -> None:
 
 def get_minimum_location(data: list[str], seeds: iter) -> int:
     maps = [
-        list(get_data(data, "seed-to-soil")),
-        list(get_data(data, "soil-to-fertilizer")),
-        list(get_data(data, "fertilizer-to-water")),
-        list(get_data(data, "water-to-light")),
-        list(get_data(data, "light-to-temperature")),
-        list(get_data(data, "temperature-to-humidity")),
-        list(get_data(data, "humidity-to-location")),
+        "seed-to-soil",
+        "soil-to-fertilizer",
+        "fertilizer-to-water",
+        "water-to-light",
+        "light-to-temperature",
+        "temperature-to-humidity",
+        "humidity-to-location",
     ]
 
     location = None
     for nr in seeds:
-        for m in maps:
+        for m in [list(get_data(data, m)) for m in maps]:
             nr = get(m, nr)
         if not location or nr < location:
             location = nr
