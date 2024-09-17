@@ -2,8 +2,8 @@
 # https://adventofcode.com/2023/day/6
 
 from data import data
-import re
 from functools import reduce
+import re
 
 
 def part1(data: data) -> None:
@@ -19,8 +19,7 @@ def part1(data: data) -> None:
     t = list(map(int, re.findall(r"\d+", game_data[0])))
     d = list(map(int, re.findall(r"\d+", game_data[1])))
 
-    records = [{"time": t[i], "record": d[i]} for i, _ in enumerate(t)]
-    wins = [ get_wins(r["time"], r["record"]) for r in records ]
+    wins = [ get_wins(t[i], d[i]) for i in range(len(t)) ]
     print(reduce((lambda x, y: x *y), wins))
 
 
