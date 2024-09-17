@@ -1,21 +1,22 @@
 # --- Day 4: Scratchcards ---
 # https://adventofcode.com/2023/day/4
 
-import re
+from data import data
 from math import pow
+import re
 
 
-def part1(data: list[str]) -> None:
+def part1(data: data) -> None:
     def score(w: int) -> int:
         return 0 if w == 0 else int(pow(2, w - 1))
 
-    cards = [card(c) for c in data]
+    cards = [card(c) for c in data.getlines(part=1)]
     wins = [len(c.calc_wins()) for c in cards]
     print(sum([score(w) for w in wins]))
 
 
-def part2(data: list[str]) -> None:
-    cards = {c.id: c for c in [card(c) for c in data]}
+def part2(data: data) -> None:
+    cards = {c.id: c for c in [card(c) for c in data.getlines(part=2)]}
     last = max(cards.keys())
     scores = {c: 1 for c in cards}
 

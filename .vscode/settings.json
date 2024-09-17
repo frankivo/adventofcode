@@ -3,10 +3,17 @@
     
     "sqlfluff.linter.run": "onSave",
     "sqlfluff.executablePath": ".venv/Scripts/sqlfluff.exe",
-    
+
     "files.exclude": {
         "**/.git": true,
         "**/.venv": true,
         "**/__pycache__": true
-    }
+    },
+
+    "[python]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "charliermarsh.ruff",
+    },
+
+    "ruff.lineLength": 120,
 }
