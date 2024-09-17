@@ -8,7 +8,7 @@ CARDS = {c: i for i, c in enumerate("AKQJT98765432")}
 
 def part1(data: data) -> None:
     hands = [hand(sub) for sub in data.getlines()]
-    scores = [h.bid * (r + 1) for r, h in enumerate(sorted(hands))]
+    scores = [h.bid * (r) for r, h in enumerate(sorted(hands), 1)]
     print(sum(scores))
 
 
@@ -42,11 +42,12 @@ class hand:
             return 6
         return 7
 
-    def score(self) -> int:
-        return int("".join([str(CARDS[c]) for c in self.cards]))
-
     def __gt__(self, other):
         r1, r2 = self.rank(), other.rank()
         if r1 != r2:
             return r1 < r2
-        return self.score() < other.score()
+
+        for i in range(5):
+            r1, r2 = CARDS[self.cards[i]], CARDS[other.cards[i]]
+            if r1 != r2:
+                return r1 < r2
