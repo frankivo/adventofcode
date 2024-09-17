@@ -3,6 +3,7 @@
 
 from data import data
 import re
+from functools import reduce
 
 
 def part1(data: data) -> None:
@@ -10,19 +11,17 @@ def part1(data: data) -> None:
 
     def get_distances(limit: int) -> iter:
         for speed in range(limit + 1):
-            yield limit, (limit - speed) * speed
+            yield (limit - speed) * speed
 
-    def count_wins(limit, dist) -> int:
-        return len([d for t, d in dists if d > dist and t <= limit])
+    def get_wins(limit: int, dist: int) -> int:
+        return len([d for d in get_distances(limit) if d > dist])
 
     t = list(map(int, re.findall(r"\d+", game_data[0])))
     d = list(map(int, re.findall(r"\d+", game_data[1])))
 
     records = [{"time": t[i], "record": d[i]} for i, _ in enumerate(t)]
-    dists = list(get_distances(max(t)))
-
-    w = [count_wins(r["time"], r["record"]) for r in records]
-    print(w)
+    wins = [ get_wins(r["time"], r["record"]) for r in records ]
+    print(reduce((lambda x, y: x *y), wins))
 
 
 def part2(data: data) -> None:
