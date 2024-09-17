@@ -17,7 +17,7 @@ class data:
         with open(filename) as file:
             return file.read()
 
-    def getlines(self, part: int, with_empty: bool = False) -> list[str]:
+    def getlines(self, part: int = 1, with_empty: bool = False) -> list[str]:
         return [line for line in self.get(part).split("\n") if line or with_empty]
 
     def filename(self, part: int) -> str:
