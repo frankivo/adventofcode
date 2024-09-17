@@ -3,7 +3,7 @@
 
 from data import data
 
-CARDS = {c: i for i, c in enumerate("AKQJT98765432")}
+CARDS = {c: i for i, c in enumerate(reversed("AKQJT98765432"))}
 
 
 def part1(data: data) -> None:
@@ -29,25 +29,26 @@ class hand:
         c = sorted([self.cards.count(c) for c in set(self.cards)])
 
         if 5 in c:  # Five of a kind
-            return 1
+            return 7
         if 4 in c:  # Four of a kind
-            return 2
+            return 6
         if 2 in c and 3 in c:  # Full house
-            return 3
+            return 5
         if 3 in c:  # Three of a kind
             return 4
         if c[0] == 1 and c[1] == 2 and c[2] == 2:  # Two pair
-            return 5
+            return 3
         if c[-1] == 2:  # One pair
-            return 6
-        return 7
+            return 2
+        return 1
+
+    def card_score(self, pos: int) -> int:
+        return CARDS[self.cards[pos]]
 
     def __gt__(self, other):
-        r1, r2 = self.rank(), other.rank()
-        if r1 != r2:
-            return r1 < r2
+        if self.rank() != other.rank():
+            return self.rank() > other.rank()
 
         for i in range(5):
-            r1, r2 = CARDS[self.cards[i]], CARDS[other.cards[i]]
-            if r1 != r2:
-                return r1 < r2
+            if not self.card_score(i) == other.card_score(i):
+                return self.card_score(i) > other.card_score(i)
