@@ -3,30 +3,36 @@
 
 from data import data
 
-CARDS = {c: i for i, c in enumerate(reversed("AKQJT98765432"))}
+
+DECK = "23456789TJQKA"
+DECK_J = "J" + DECK.replace("J", "")
+CARDS = {c: i for i, c in enumerate(DECK)}
+CARDS_J = {c: i for i, c in enumerate(DECK_J)}
 
 
 def part1(data: data) -> None:
-    hands = [hand(sub) for sub in data.getlines()]
+    hands = [hand(sub, False) for sub in data.getlines()]
     scores = [h.bid * (r) for r, h in enumerate(sorted(hands), 1)]
     print(sum(scores))
 
 
 def part2(data: data) -> None:
-    pass
+    hands = [hand(sub, True) for sub in data.getlines()]
+    scores = [h.bid * (r) for r, h in enumerate(sorted(hands), 1)]
+    print(sum(scores))
 
 
 class hand:
-    def __init__(self, raw: str) -> None:
+    def __init__(self, raw: str, jokers: bool) -> None:
+        self.jokers = jokers
         tmp = raw.split(" ")
+
         self.cards = tmp[0]
         self.bid = int(tmp[1])
 
-    def __str__(self) -> str:
-        return self.cards
-
     def rank(self) -> int:
-        c = sorted([self.cards.count(c) for c in set(self.cards)])
+        cards = hand.joker(self.cards) if self.jokers else self.cards
+        c = sorted([cards.count(c) for c in set(cards)])
 
         if 5 in c:  # Five of a kind
             return 7
@@ -43,7 +49,8 @@ class hand:
         return 1
 
     def card_score(self, pos: int) -> int:
-        return CARDS[self.cards[pos]]
+        cards = CARDS_J if self.jokers else CARDS
+        return cards[self.cards[pos]]
 
     def __gt__(self, other):
         if self.rank() != other.rank():
@@ -52,3 +59,12 @@ class hand:
         for i in range(5):
             if not self.card_score(i) == other.card_score(i):
                 return self.card_score(i) > other.card_score(i)
+
+    @staticmethod
+    def joker(cards: str) -> str:
+        if "J" not in cards:
+            return cards
+        c = {c: cards.count(c) for c in set(cards)}
+        best = max(c, key=c.get)
+        print(best)
+        return cards.replace("J", best)
