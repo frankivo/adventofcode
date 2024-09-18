@@ -26,11 +26,10 @@ def solve(data: data, jokers: bool) -> None:
 
 class hand:
     def __init__(self, raw: str, jokers: bool) -> None:
-        self.jokers = jokers
         tmp = raw.split(" ")
-
         self.cards = tmp[0]
         self.bid = int(tmp[1])
+        self.jokers = jokers
 
     def rank(self) -> int:
         jokers = self.cards.count("J") if self.jokers else 0
@@ -61,12 +60,3 @@ class hand:
         for i in range(5):
             if not self.card_score(i) == other.card_score(i):
                 return self.card_score(i) > other.card_score(i)
-
-    @staticmethod
-    def joker(cards: str) -> str:
-        if "J" not in cards:
-            return cards
-        c = {c: cards.count(c) for c in set(cards)}
-        best = max(c, key=c.get)
-        print(best)
-        return cards.replace("J", best)
