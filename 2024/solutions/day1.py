@@ -11,10 +11,10 @@ def part1(data: data) -> None:
     for i, n in enumerate(nums):
         lst = left if i % 2 == 0 else right
         lst.append(int(n))
-    
+
     loc = list(zip(sorted(left), sorted(right)))
     dist = 0
     for row in loc:
         dist += abs(row[1] - row[0])
-    
+
     print(dist)
