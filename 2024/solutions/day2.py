@@ -13,6 +13,16 @@ def part1(data: data) -> None:
             safeCount += 1
     print(safeCount)
 
+def part2(data: data) -> None:
+    safeCount = 0
+    for l in data.getlines():
+        report = list(map(int, re.findall(r"\d+", l)))
+        for rep in report_variations(report):
+            if is_safe(rep):
+                safeCount += 1
+                break
+    print(safeCount)
+
 
 def is_safe(report: list) -> bool:
     safe = True
@@ -33,3 +43,8 @@ def is_safe(report: list) -> bool:
         if not 1 <= abs(slice[0] - slice[1]) <= 3:  # Check steps
             safe = False
     return safe
+
+def report_variations(report: list) -> iter:
+    yield report
+    for i, _ in enumerate(report):
+        yield report[0 : i] + report[i+1:]
