@@ -41,7 +41,6 @@ class data:
         cookies = {"session": dotenv_values(".env")["API_KEY"]}
 
         url = f"https://adventofcode.com/2024/day/{self.day}/input"
-        print(cookies)
         with requests.get(url, headers=headers, cookies=cookies) as response:
             response.raise_for_status()
             with open(filename, "w+") as file:
