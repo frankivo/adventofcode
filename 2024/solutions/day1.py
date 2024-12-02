@@ -6,15 +6,16 @@ import re
 
 
 def part1(data: data) -> None:
+    dist = 0
+    for row in get_locations(data):
+        dist += abs(row[1] - row[0])
+    print(dist)
+
+
+def get_locations(data: data) -> list:
     nums = re.findall(r"\d+", data.get())
     left, right = [], []
     for i, n in enumerate(nums):
         lst = left if i % 2 == 0 else right
         lst.append(int(n))
-
-    loc = list(zip(sorted(left), sorted(right)))
-    dist = 0
-    for row in loc:
-        dist += abs(row[1] - row[0])
-
-    print(dist)
+    return list(zip(sorted(left), sorted(right)))
