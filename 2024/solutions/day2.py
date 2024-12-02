@@ -8,20 +8,23 @@ import re
 def part1(data: data) -> None:
     safeCount = 0
     for l in data.getlines():
-        report = re.findall(r"\d+", l)
-        if is_safe(report):
+        if is_safe(report(l)):
             safeCount += 1
     print(safeCount)
+
 
 def part2(data: data) -> None:
     safeCount = 0
     for l in data.getlines():
-        report = list(map(int, re.findall(r"\d+", l)))
-        for rep in report_variations(report):
+        for rep in report_variations(report(l)):
             if is_safe(rep):
                 safeCount += 1
                 break
     print(safeCount)
+
+
+def report(raw: str) -> list:
+    return list(map(int, re.findall(r"\d+", raw)))
 
 
 def is_safe(report: list) -> bool:
@@ -44,7 +47,8 @@ def is_safe(report: list) -> bool:
             safe = False
     return safe
 
+
 def report_variations(report: list) -> iter:
     yield report
     for i, _ in enumerate(report):
-        yield report[0 : i] + report[i+1:]
+        yield report[0:i] + report[i + 1 :]
