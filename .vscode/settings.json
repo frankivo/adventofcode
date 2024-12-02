@@ -1,14 +1,18 @@
 {
     "editor.renderWhitespace": "all",
-    
+
     "sqlfluff.linter.run": "onSave",
     "sqlfluff.executablePath": ".venv/Scripts/sqlfluff.exe",
 
     "files.exclude": {
         "**/.git": true,
         "**/.venv": true,
+        "**/.ruff_cache": true,
         "**/__pycache__": true
     },
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
 
     "[python]": {
       "editor.formatOnSave": true,
