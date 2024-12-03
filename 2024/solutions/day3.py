@@ -12,5 +12,16 @@ def part1(data: data) -> None:
 
 
 def part2(data: data) -> None:
-    matches = re.match(r"(mul\((\d+),(\d+)\))", data.get(part=2))
-    print(matches)
+    instructions = list(re.findall(r"(do\(\)|don't\(\)|(mul\((\d+),(\d+)\)))", data.get(part=2)))
+    mul_enabled = True
+    muls = 0
+
+    for inst in instructions:
+        if inst[0] == "don't()":
+            mul_enabled = False
+        elif inst[0] == "do()":
+            mul_enabled = True
+        elif mul_enabled:
+            muls += int(inst[2]) * int(inst[3])
+
+    print(muls)
