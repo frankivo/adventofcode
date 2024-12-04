@@ -20,16 +20,7 @@ def part1(data: data) -> None:
         except KeyError:
             return "."
 
-    directions = [
-        (1, 0),  # Right
-        (-1, 0),  # Left
-        (0, -1),  # Up
-        (0, 1),  # Down
-        (1, 1),  # Downright
-        (1, -1),  # Upright
-        (-1, -1),  # Upleft
-        (-1, 1),  # Downleft
-    ]
+    directions = [(x, y) for x in range(-1, 2) for y in range(-1, 2)]
 
     xmas_count = 0
     for sp in starting_points:
