@@ -20,33 +20,23 @@ def part1(data: data) -> None:
         except KeyError:
             return "."
 
+    directions = [
+        (1, 0),  # Right
+        (-1, 0),  # Left
+        (0, -1),  # Up
+        (0, 1),  # Down
+        (1, 1),  # Downright
+        (1, -1),  # Upright
+        (-1, -1),  # Upleft
+        (-1, 1),  # Downleft
+    ]
+
     xmas_count = 0
     for sp in starting_points:
         x, y = sp
-        if get(x + 1, y) == "M" and get(x + 2, y) == "A" and get(x + 3, y) == "S":  # Right
-            print(sp, "right")
-            xmas_count += 1
-        if get(x - 1, y) == "M" and get(x - 2, y) == "A" and get(x - 3, y) == "S":  # Left
-            print(sp, "left")
-            xmas_count += 1
-        if get(x, y - 1) == "M" and get(x, y - 2) == "A" and get(x, y - 3) == "S":  # Up
-            print(sp, "up")
-            xmas_count += 1
-        if get(x, y + 1) == "M" and get(x, y + 2) == "A" and get(x, y + 3) == "S":  # Down
-            print(sp, "down")
-            xmas_count += 1
-        if get(x + 1, y + 1) == "M" and get(x + 2, y + 2) == "A" and get(x + 3, y + 3) == "S":  # Downright
-            print(sp, "downright")
-            xmas_count += 1
-        if get(x + 1, y - 1) == "M" and get(x + 2, y - 2) == "A" and get(x + 3, y - 3) == "S":  # Upright
-            print(sp, "upright")
-            xmas_count += 1
-        if get(x - 1, y - 1) == "M" and get(x - 2, y - 2) == "A" and get(x - 3, y - 3) == "S":  # Upleft
-            print(sp, "upleft")
-            xmas_count += 1
-        if get(x - 1, y + 1) == "M" and get(x - 2, y + 2) == "A" and get(x - 3, y + 3) == "S":  # Downleft
-            print(sp, "downleft")
-            xmas_count += 1
+        for dx, dy in directions:
+            if get(x + dx, y + dy) == "M" and get(x + 2 * dx, y + 2 * dy) == "A" and get(x + 3 * dx, y + 3 * dy) == "S":
+                xmas_count += 1
 
     print(xmas_count)
 
