@@ -5,15 +5,8 @@ from data import data
 
 
 def part1(data: data) -> None:
-    starting_points = []  # Starting points (X,Y)
-    grid = {}  # (X,Y) -> Char
+    grid, starting_points = parse(data, "X")
     directions = [(x, y) for x in range(-1, 2) for y in range(-1, 2)]
-
-    for row, line in enumerate(data.getlines()):
-        for col, char in enumerate(line):
-            grid.update({(col, row): char})
-            if char == "X":
-                starting_points.append((col, row))
 
     xmas_count = 0
     for sp in starting_points:
@@ -29,14 +22,7 @@ def part1(data: data) -> None:
 
 
 def part2(data: data) -> None:
-    starting_points = []  # Starting points (X,Y)
-    grid = {}  # (X,Y) -> Char
-
-    for row, line in enumerate(data.getlines()):
-        for col, char in enumerate(line):
-            grid.update({(col, row): char})
-            if char == "A":
-                starting_points.append((col, row))
+    grid, starting_points = parse(data, "A")
 
     def g(x, y):
         return get(grid, x, y)
@@ -56,8 +42,20 @@ def part2(data: data) -> None:
         # Both M on right
         if g(x + 1, y - 1) == "M" == g(x + 1, y + 1) and g(x - 1, y - 1) == "S" == g(x - 1, y + 1):
             xmas_count += 1
-
     print(xmas_count)
+
+
+def parse(data: data, start_char: str):
+    starting_points = []  # Starting points (X,Y)
+    grid = {}  # (X,Y) -> Char
+
+    for row, line in enumerate(data.getlines()):
+        for col, char in enumerate(line):
+            grid.update({(col, row): char})
+            if char == start_char:
+                starting_points.append((col, row))
+
+    return grid, starting_points
 
 
 def get(grid, x, y):
