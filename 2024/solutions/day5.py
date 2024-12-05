@@ -2,22 +2,25 @@
 # https://adventofcode.com/2024/day/5
 
 from data import data
+import functools
 
 
 def part1(data: data) -> None:
     page_order, updates = parse(data)
-
     valid_updates = [u for u in updates if is_valid(u, page_order)]
-    middle_pages = [u[int(len(u) / 2)] for u in valid_updates]
-
-    print(sum(middle_pages))
+    print(sum_middles(valid_updates))
 
 
 def part2(data: data) -> None:
     page_order, updates = parse(data)
 
     invalid_updates = [u for u in updates if not is_valid(u, page_order)]
-    print(invalid_updates)
+
+    def compare(x, y):
+        return -1 if y in page_order.get(x, []) else 1
+
+    fixed_updates = [sorted(u, key=functools.cmp_to_key(compare)) for u in invalid_updates]
+    print(sum_middles(fixed_updates))
 
 
 def parse(data: data):
@@ -39,3 +42,7 @@ def is_valid(update: list[int], page_order: dict) -> bool:
         if len(set(update[0:i]) & set(page_order.get(p, []))):
             return False
     return True
+
+
+def sum_middles(updates: list[list[int]]) -> int:
+    return sum([u[int(len(u) / 2)] for u in updates])
