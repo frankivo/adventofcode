@@ -14,11 +14,10 @@ def part1(data: data) -> None:
 def part2(data: data) -> None:
     page_order, updates = parse(data)
 
-    invalid_updates = [u for u in updates if not is_valid(u, page_order)]
-
     def compare(x, y):
         return -1 if y in page_order.get(x, []) else 1
 
+    invalid_updates = [u for u in updates if not is_valid(u, page_order)]
     fixed_updates = [sorted(u, key=functools.cmp_to_key(compare)) for u in invalid_updates]
     print(sum_middles(fixed_updates))
 
