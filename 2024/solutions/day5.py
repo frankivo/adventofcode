@@ -5,9 +5,17 @@ from data import data
 
 
 def part1(data: data) -> None:
-    x, y = parse(data)
-    print(x)
-    print(y)
+    page_order, updates = parse(data)
+    middle_sum = 0
+
+    for u in updates:
+        ok = True
+        for i, p in enumerate(u):
+            if len(set(u[0:i]) & set(page_order.get(p, []))):
+                ok = False
+        if ok:
+            middle_sum += u[int(len(u) / 2)]
+    print(middle_sum)
 
 
 def part2(data: data) -> None:
