@@ -11,7 +11,7 @@ def part1(data: data) -> None:
     for u in updates:
         ok = True
         for i, p in enumerate(u):
-            if len(set(u[0:i]) & set(page_order.get(p, []))):
+            if set(u[0:i]) & set(page_order.get(p, [])):
                 ok = False
         if ok:
             middle_sum += u[int(len(u) / 2)]
