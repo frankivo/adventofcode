@@ -12,9 +12,10 @@ def part1(data: data) -> None:
     position, blocks, width, height = parse(data)
     direction = directions[0]
     in_grid = True
-    visited = [position]
+    visited = set()
 
     while in_grid:
+        visited.add(position)
         next = None
         while not next:
             tmp = next_pos(position, direction)
@@ -23,11 +24,9 @@ def part1(data: data) -> None:
             else:
                 next = tmp
         position = next
-        if 0 <= position[0] <= width - 1 and 0 <= position[1] <= height - 1:
-            visited.append(position)
-        else:
-            in_grid = False
-    print(len(set(visited)))
+        in_grid = 0 <= position[0] <= width - 1 and 0 <= position[1] <= height - 1
+
+    print(len(visited))
 
 
 def parse(data: data):
