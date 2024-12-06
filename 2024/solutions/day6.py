@@ -17,9 +17,7 @@ def part2(data: data) -> None:
 
     original_path, _ = walk(input)
     walks = [walk(input, pos)[1] for pos in original_path]
-    loops = len([w for w in walks if w])
-
-    print(loops)
+    print(sum(walks))
 
 
 def parse(input: list[str]):
@@ -54,6 +52,8 @@ def next_direction(direction: str) -> str:
 
 def walk(input: list[str], extra_block=None):
     position, blocks, width, height = parse(input)
+    blocks = [*blocks, extra_block]
+
     direction = directions[0]
     in_grid, is_loop = True, False
     visited = set()
@@ -63,12 +63,13 @@ def walk(input: list[str], extra_block=None):
 
         if node in visited:
             is_loop = True
+            continue
 
         visited.add(node)
         next = None
         while not next:
             tmp = next_pos(position, direction)
-            if tmp in blocks + [extra_block]:
+            if tmp in blocks:
                 direction = next_direction(direction)
             else:
                 next = tmp
