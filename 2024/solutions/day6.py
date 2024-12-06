@@ -9,28 +9,20 @@ directions = ["up", "right", "down", "left"]
 
 
 def part1(data: data) -> None:
-    position, blocks, width, height = parse(data)
-    direction = directions[0]
-    in_grid = True
-    visited = set()
-
-    while in_grid:
-        visited.add(position)
-        next = None
-        while not next:
-            tmp = next_pos(position, direction)
-            if tmp in blocks:
-                direction = next_direction(direction)
-            else:
-                next = tmp
-        position = next
-        in_grid = 0 <= position[0] <= width - 1 and 0 <= position[1] <= height - 1
-
-    print(len(visited))
+    print(len(walk(data.getlines())[0]))
 
 
-def parse(data: data):
+def part2(data: data) -> None:
     input = data.getlines()
+
+    original_path, _ = walk(input)
+    walks = [walk(input, pos)[1] for pos in original_path]
+    loops = len([w for w in walks if w])
+
+    print(loops)
+
+
+def parse(input: list[str]):
     start, blocks, width, height = None, [], len(input[0]), len(input)
 
     for y, line in enumerate(input):
@@ -58,3 +50,30 @@ def next_pos(pos, direction):
 def next_direction(direction: str) -> str:
     next_index = (directions.index(direction) + 1) % len(directions)
     return directions[next_index]
+
+
+def walk(input: list[str], extra_block=None):
+    position, blocks, width, height = parse(input)
+    direction = directions[0]
+    in_grid, is_loop = True, False
+    visited = set()
+
+    while in_grid and not is_loop:
+        node = (position, direction)
+
+        if node in visited:
+            is_loop = True
+
+        visited.add(node)
+        next = None
+        while not next:
+            tmp = next_pos(position, direction)
+            if tmp in blocks + [extra_block]:
+                direction = next_direction(direction)
+            else:
+                next = tmp
+        position = next
+        in_grid = 0 <= position[0] <= width - 1 and 0 <= position[1] <= height - 1
+
+    visited_pos = set([v[0] for v in visited])
+    return visited_pos, is_loop
