@@ -30,7 +30,7 @@ def parse(input: list[str]) -> iter:
 
 
 def solve(numbers: list[int], target: int, res: int = 0, depth: int = 0, concat=False) -> bool:
-    if res >= target or depth == len(numbers):
+    if depth == len(numbers):
         return res == target
 
     if depth == 0:
