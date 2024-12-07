@@ -25,8 +25,8 @@ def part2(data: data) -> None:
 
 def parse(input: list[str]) -> iter:
     for line in input:
-        test_value, operators_raw = line.split(":")
-        yield int(test_value), list(map(int, operators_raw.strip().split(" ")))
+        nums = list(map(int, re.findall(r"\d+", line)))
+        yield nums[0], nums[1:]
 
 
 def solve(numbers: list[int], target: int, res: int = 0, depth: int = 0, results=None, concat=False) -> bool:
