@@ -20,6 +20,11 @@ def part2(data: data) -> None:
     print(2)
 
 
+def concat(nums: list[int]):
+    for i in range(len(nums) - 1):
+        yield nums[0:i] + [nums[i] + nums[i + 1]] + nums[i + 2 :]
+
+
 def parse(input: list[str]) -> iter:
     for line in input:
         test_value, operators_raw = line.split(":")
