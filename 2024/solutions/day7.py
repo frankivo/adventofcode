@@ -8,11 +8,9 @@ import re
 def part1(data: data) -> None:
     cali_res = 0
     for test_value, operators in parse(data.getlines()):
-        for op in options(operators):
-            res = left_to_right_solver(op, target=test_value)
-            if res == test_value:
-                cali_res += test_value
-                break
+        res = solve(operators, target=test_value)
+        if res:
+            cali_res += test_value
     print(cali_res)
 
 
@@ -32,47 +30,18 @@ def parse(input: list[str]) -> iter:
 
 
 def solve(numbers: list[int], target: int, res: int = 0, depth: int = 0, results=None) -> bool:
+    # print(target, depth, res)
     if results is None:
         results = []
-    if res > target or depth > len(numbers):
+    calc = True
+    if res > target or depth >= len(numbers):
         results.append(res == target)
-    print(results)
+        calc = False
+
+    if calc and depth == 0:
+        solve(numbers, target, numbers[depth], depth + 1, results)
+    elif calc and depth < len(numbers):
+        solve(numbers, target, res + numbers[depth], depth + 1, results)
+        solve(numbers, target, res * numbers[depth], depth + 1, results)
+
     return sum(results)
-
-
-def options(operators: list[int], depth=0, cur="", result=None, concat=False) -> list[str]:
-    if result is None:
-        result = []
-
-    if depth == len(operators):
-        result.append(cur)
-        return result
-
-    if depth == 0:
-        options(operators, depth + 1, str(operators[depth]), result, concat)
-    else:
-        nd = depth + 1
-        options(operators, nd, f"{cur}*{operators[depth]}", result, concat)
-        options(operators, nd, f"{cur}+{operators[depth]}", result, concat)
-        if concat:
-            options(operators, nd, f"{cur}{operators[depth]}", result, concat)
-    return result
-
-
-def left_to_right_solver(expr: str, target: int) -> int:
-    sum = 0
-    add = True
-    for m in re.findall(r"(\d+|[\+\*])", expr):
-        if m == "+":
-            add = True
-        elif m == "*":
-            add = False
-        elif not add:
-            sum = sum * int(m)
-        else:
-            sum += int(m)
-
-        if sum > target:
-            return -1
-
-    return sum
