@@ -17,21 +17,30 @@ def part1(data: data) -> None:
 
 
 def part2(data: data) -> None:
-    print(2)
-
-
-def concat(nums: list[int]):
-    for i in range(len(nums) - 1):
-        yield nums[0:i] + [nums[i] + nums[i + 1]] + nums[i + 2 :]
+    cali_res = 0
+    for test_value, operators in parse(data.getlines()):
+        res = solve(operators, target=test_value)
+        if res:
+            cali_res += test_value
+    print(cali_res)
 
 
 def parse(input: list[str]) -> iter:
     for line in input:
         test_value, operators_raw = line.split(":")
-        yield int(test_value), list(operators_raw.strip().split(" "))
+        yield int(test_value), list(map(int, operators_raw.strip().split(" ")))
 
 
-def options(operators: list[int], depth=0, cur="", result=None) -> list[str]:
+def solve(numbers: list[int], target: int, res: int = 0, depth: int = 0, results=None) -> bool:
+    if results is None:
+        results = []
+    if res > target or depth > len(numbers):
+        results.append(res == target)
+    print(results)
+    return sum(results)
+
+
+def options(operators: list[int], depth=0, cur="", result=None, concat=False) -> list[str]:
     if result is None:
         result = []
 
@@ -40,11 +49,13 @@ def options(operators: list[int], depth=0, cur="", result=None) -> list[str]:
         return result
 
     if depth == 0:
-        options(operators, depth + 1, str(operators[depth]), result)
+        options(operators, depth + 1, str(operators[depth]), result, concat)
     else:
-        options(operators, depth + 1, f"{cur}*{operators[depth]}", result)
-        options(operators, depth + 1, f"{cur}+{operators[depth]}", result)
-
+        nd = depth + 1
+        options(operators, nd, f"{cur}*{operators[depth]}", result, concat)
+        options(operators, nd, f"{cur}+{operators[depth]}", result, concat)
+        if concat:
+            options(operators, nd, f"{cur}{operators[depth]}", result, concat)
     return result
 
 
