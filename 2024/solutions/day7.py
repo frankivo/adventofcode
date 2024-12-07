@@ -34,11 +34,11 @@ def solve(numbers: list[int], target: int, res: int = 0, depth: int = 0, concat=
         return res == target
 
     if depth == 0:
-        tmp = solve(numbers, target, numbers[depth], depth + 1, concat)
+        return solve(numbers, target, numbers[depth], depth + 1, concat)
     elif depth < len(numbers):
         tmp = solve(numbers, target, res + numbers[depth], depth + 1, concat)
         if not tmp:
             tmp = solve(numbers, target, res * numbers[depth], depth + 1, concat)
         if concat and not tmp:
             tmp = solve(numbers, target, int(f"{res}{numbers[depth]}"), depth + 1, concat)
-    return tmp
+        return tmp
