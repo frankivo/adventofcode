@@ -29,20 +29,16 @@ def parse(input: list[str]) -> iter:
         yield nums[0], nums[1:]
 
 
-def solve(numbers: list[int], target: int, res: int = 0, depth: int = 0, results=None, concat=False) -> bool:
-    if results is None:
-        results = []
-    calc = True
-    if res >= target or depth >= len(numbers):
-        results.append(res == target)
-        calc = False
+def solve(numbers: list[int], target: int, res: int = 0, depth: int = 0, concat=False) -> bool:
+    if res >= target or depth == len(numbers):
+        return res == target
 
-    if calc and depth == 0:
-        solve(numbers, target, numbers[depth], depth + 1, results, concat)
-    elif calc and depth < len(numbers):
-        solve(numbers, target, res + numbers[depth], depth + 1, results, concat)
-        solve(numbers, target, res * numbers[depth], depth + 1, results, concat)
-        if concat:
-            solve(numbers, target, int(f"{res}{numbers[depth]}"), depth + 1, results, concat)
-
-    return sum(results)
+    if depth == 0:
+        tmp = solve(numbers, target, numbers[depth], depth + 1, concat)
+    elif depth < len(numbers):
+        tmp = solve(numbers, target, res + numbers[depth], depth + 1, concat)
+        if not tmp:
+            tmp = solve(numbers, target, res * numbers[depth], depth + 1, concat)
+        if concat and not tmp:
+            tmp = solve(numbers, target, int(f"{res}{numbers[depth]}"), depth + 1, concat)
+    return tmp
