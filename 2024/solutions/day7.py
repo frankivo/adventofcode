@@ -26,18 +26,21 @@ def parse(input: list[str]) -> iter:
         yield int(test_value), list(operators_raw.strip().split(" "))
 
 
-def options(operators: list[int], depth=0, data: list[str] = [], cur="") -> list[str]:
+def options(operators: list[int], depth=0, cur="", result=None) -> list[str]:
+    if result is None:
+        result = []
+
     if depth == len(operators):
-        return [*data, cur]
+        result.append(cur)
+        return result
 
     if depth == 0:
-        return options(operators, depth + 1, data, operators[depth])
+        options(operators, depth + 1, str(operators[depth]), result)
+    else:
+        options(operators, depth + 1, f"{cur}*{operators[depth]}", result)
+        options(operators, depth + 1, f"{cur}+{operators[depth]}", result)
 
-    return (
-        data
-        + options(operators, depth + 1, data, cur + "*" + operators[depth])
-        + options(operators, depth + 1, data, cur + "+" + operators[depth])
-    )
+    return result
 
 
 def left_to_right_solver(expr: str, target: int) -> int:
