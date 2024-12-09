@@ -7,49 +7,40 @@ import re
 
 
 def part1(data: data) -> None:
-    antennas, width, height = parse(data.getlines())
-
-    def antinode(a, b):
-        dx = a[0] - b[0]
-        dy = a[1] - b[1]
-        return (b[0] - dx, b[1] - dy)
-
-    def valid(an):
-        return 0 <= an[0] <= width and 0 <= an[1] <= height
-
-    anti_nodes = []
-    for _, antennas in antennas.items():
-        for a, b in list(itertools.combinations(antennas, 2)):
-            anti_nodes = anti_nodes + [an for an in [antinode(a, b), antinode(b, a)] if valid(an)]
-
-    print(len(set(anti_nodes)))
+    print(solve(data, t_freq=False))
 
 
 def part2(data: data) -> None:
+    print(solve(data, t_freq=True))
+
+
+def solve(data: data, t_freq: bool = False) -> int:
     antennas, width, height = parse(data.getlines())
 
     def is_valid(an):
         return 0 <= an[0] <= width and 0 <= an[1] <= height
 
-    def antinodes(a, b):
+    def calc_antinodes(a, b):
         dx = a[0] - b[0]
         dy = a[1] - b[1]
 
         valid = True
-        i = 0
+        i = 0 if t_freq else 1
         while valid:
             an = (b[0] - (dx * i), b[1] - (dy * i))
             i += 1
             valid = is_valid(an)
             if valid:
                 yield an
+            if not t_freq:
+                break
 
-    anti_nodes = []
+    anti_nodes = set()
     for _, antennas in antennas.items():
         for a, b in list(itertools.combinations(antennas, 2)):
-            anti_nodes = anti_nodes + list(antinodes(a, b)) + list(antinodes(b, a))
+            anti_nodes |= set(calc_antinodes(a, b)) | set(calc_antinodes(b, a))
 
-    print(len(set(anti_nodes)))
+    return len(anti_nodes)
 
 
 def parse(input: list[str]) -> dict:
