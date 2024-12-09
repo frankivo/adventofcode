@@ -43,7 +43,7 @@ def solve(data: data, t_freq: bool = False) -> int:
     return len(anti_nodes)
 
 
-def parse(input: list[str]) -> dict:
+def parse(input: list[str]):
     antennas = {}
     width = len(input[0]) - 1
     height = len(input) - 1
