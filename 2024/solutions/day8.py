@@ -26,7 +26,30 @@ def part1(data: data) -> None:
 
 
 def part2(data: data) -> None:
-    print(2)
+    antennas, width, height = parse(data.getlines())
+
+    def is_valid(an):
+        return 0 <= an[0] <= width and 0 <= an[1] <= height
+
+    def antinodes(a, b):
+        dx = a[0] - b[0]
+        dy = a[1] - b[1]
+
+        valid = True
+        i = 0
+        while valid:
+            an = (b[0] - (dx * i), b[1] - (dy * i))
+            i += 1
+            valid = is_valid(an)
+            if valid:
+                yield an
+
+    anti_nodes = []
+    for _, antennas in antennas.items():
+        for a, b in list(itertools.combinations(antennas, 2)):
+            anti_nodes = anti_nodes + list(antinodes(a, b)) + list(antinodes(b, a))
+
+    print(len(set(anti_nodes)))
 
 
 def parse(input: list[str]) -> dict:
