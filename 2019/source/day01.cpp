@@ -8,7 +8,7 @@ class day01 {
 		int run() {
 			std::string line;
 			int fuel_req = 0;
-			std::ifstream infile("input/day1.txt");
+			std::ifstream infile("input/day01.txt");
 
 			while (getline(infile, line)) {
 				auto num = std::stoi(line);
