@@ -1,5 +1,6 @@
 build:
-	g++ aoc.cpp -o aoc
+	mkdir -p ./target/
+	g++ source/aoc.cpp -o target/aoc
 clean:
-	rm aoc
+	rm -R ./target/
 

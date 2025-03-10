@@ -1,0 +1,3 @@
+class day {
+	int run();
+};
