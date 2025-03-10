@@ -1,6 +1,17 @@
+
 build:
 	mkdir -p ./target/
 	g++ source/*.cpp -o target/aoc
 clean:
-	rm -R ./target/
+	rm -R ./target/ ./input/
 
+input:
+	mkdir -p ./input/
+
+	@for i in $(shell seq 1 25); do \
+		url="https://adventofcode.com/2019/day/$$i/input"; \
+		out="input/day$${i}.txt"; \
+		cmd="wget --header="Cookie:$${AOC_COOKIE}" $${url} -O $${out}"; \
+		echo $$cmd; \
+		$$cmd; \
+	done
