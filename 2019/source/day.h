@@ -1,3 +1,4 @@
 class day {
-	int run();
+	public:
+		int run();
 };
