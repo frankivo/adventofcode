@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 	auto days = Days();
 	auto day = days.by_number(day_no);
 
-	if (day == NULL)
+	if (!day)
 		return 1;
 
 	std::cout << "Result part 1: " << day->part1() << std::endl;

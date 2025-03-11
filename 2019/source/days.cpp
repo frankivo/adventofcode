@@ -10,7 +10,7 @@ std::unique_ptr<Day> Days::by_number(int day_no) {
 	auto d = days.find(day_no);
         if (d == days.end()) {
         	std::cerr << "Not found!" << std::endl;
-        	return NULL;
+        	return nullptr;
 	}
 	return std::move(d->second);
 };
