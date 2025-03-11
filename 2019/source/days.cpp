@@ -1,4 +1,5 @@
 #include "days.h"
+#include <iostream>
 
 #include "day01.cpp"
 
