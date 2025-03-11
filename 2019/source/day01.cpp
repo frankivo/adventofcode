@@ -14,7 +14,7 @@ class day01 : public day {
 
 			while (getline(infile, line)) {
 				auto num = std::stoi(line);
-				fuel_req += std::floor(num / 3) - 2;
+				fuel_req += fuel(num);
 			}
 			infile.close();
 
@@ -22,6 +22,10 @@ class day01 : public day {
 		}
 
 		int part2() {
-			return 0;
+			return fuel(14);
+		}
+	private:
+		int fuel(int mass) {
+			return std::floor(mass / 3) - 2;
 		}
 };
