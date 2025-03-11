@@ -1,4 +1,5 @@
 class day {
 	public:
-		int run();
+		virtual int run() = 0;
+		virtual ~day() {};
 };
