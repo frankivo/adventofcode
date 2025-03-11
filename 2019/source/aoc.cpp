@@ -9,8 +9,14 @@ int main(int argc, char *argv[]) {
 
 	auto day_no = std::stoi(argv[1]);
 	std::cout << "Running day " << day_no << std::endl;
-	auto& d = days[day_no];
 
-	std::cout << "Result part 1: " << d->part1() << std::endl;
-	std::cout << "Result part 2: " << d->part2() << std::endl;
+	auto d = days.find(day_no);
+        if (d == days.end()) {
+                std::cout << "Not found!" << std::endl;
+		return 1;
+	}
+
+	std::cout << "Result part 1: " << d->second->part1() << std::endl;
+	std::cout << "Result part 2: " << d->second->part2() << std::endl;
+	return 0;
 }
