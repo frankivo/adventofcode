@@ -5,7 +5,7 @@
 
 #include "day.h"
 
-class day01 : public day {
+class Day01 : public Day {
 	public:
 		int part1() {
 			std::string line;
