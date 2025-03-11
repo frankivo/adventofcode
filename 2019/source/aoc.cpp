@@ -8,8 +8,10 @@ int main(int argc, char *argv[]) {
 	auto days = Days();
 	auto day = days.by_number(day_no);
 
-	if (!day)
+	if (!day) {
+		std::cerr << "No solution found!" << std::endl;
 		return 1;
+	}
 
 	std::cout << "Result part 1: " << day->part1() << std::endl;
 	std::cout << "Result part 2: " << day->part2() << std::endl;
