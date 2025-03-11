@@ -7,7 +7,7 @@
 
 class day01 : public day {
 	public:
-		int run() {
+		int part1() {
 			std::string line;
 			int fuel_req = 0;
 			std::ifstream infile("input/day01.txt");
@@ -19,5 +19,9 @@ class day01 : public day {
 			infile.close();
 
 			return fuel_req;
+		}
+
+		int part2() {
+			return 0;
 		}
 };
