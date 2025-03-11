@@ -4,7 +4,7 @@ build: input
 	g++ source/*.cpp -o target/aoc
 
 clean:
-	rm -R ./target/ ./input/
+	rm -R ./target/
 
 input:
 	mkdir -p ./input/
