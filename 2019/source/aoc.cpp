@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 
 	auto d = days.find(day_no);
         if (d == days.end()) {
-                std::cout << "Not found!" << std::endl;
+                std::cerr << "Not found!" << std::endl;
 		return 1;
 	}
 
