@@ -1,7 +1,7 @@
 
 build: input
 	mkdir -p ./target/
-	g++ source/*.cpp -o target/aoc
+	g++ -std=c++23 source/*.cpp -o target/aoc
 
 clean:
 	rm -R ./target/
