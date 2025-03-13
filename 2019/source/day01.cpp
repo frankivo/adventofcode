@@ -1,18 +1,18 @@
+#include "day.h"
+
 #include <algorithm>
 #include <cmath>
-#include <fstream>
-#include <vector>
-
-#include "day.h"
 
 class Day01 : public Day {
 	public:
+		Day01() : Day(1) {};
+
 		int part1() {
 			int fuel_req = 0;
 
 			auto lines = data();
-			std::for_each(lines.begin(), lines.end(), [&fuel_req,this](int mass) {
-				fuel_req += fuel(mass);
+			std::for_each(lines.begin(), lines.end(), [&fuel_req,this](std::string mass) {
+				fuel_req += fuel(std::stoi(mass));
 			});
 
 			return fuel_req;
@@ -22,31 +22,19 @@ class Day01 : public Day {
                         int fuel_req = 0;
 
                         auto lines = data();
-			std::for_each(lines.begin(), lines.end(), [&fuel_req,this](int mass) {
-				while (mass >= 0) {
-					mass = fuel(mass);
-					if (mass > 0)
-						fuel_req += mass;
+			std::for_each(lines.begin(), lines.end(), [&fuel_req,this](std::string mass) {
+				int imass = std::stoi(mass);
+				while (imass >= 0) {
+					imass = fuel(imass);
+					if (imass > 0)
+						fuel_req += imass;
 				}
                         });
 
 			return fuel_req;
 		};
 
-	private:
-		std::vector<int> data() {
-			std::vector<int> data;
-			std::string line;
-
-			std::ifstream infile("input/day01.txt");
-			while (getline(infile, line))
-                                data.push_back(std::stoi(line));
-			infile.close();
-
-			return data;
-		};
-
-		int fuel(int mass) const {
+		const int fuel(int mass) const {
 			return std::floor(mass / 3) - 2;
 		};
 };
