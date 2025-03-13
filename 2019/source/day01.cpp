@@ -1,6 +1,5 @@
 #include "day.h"
 
-#include <algorithm>
 #include <cmath>
 
 class Day01 : public Day {
@@ -10,10 +9,7 @@ class Day01 : public Day {
 		int part1() {
 			int fuel_req = 0;
 
-			auto lines = data();
-			std::for_each(lines.begin(), lines.end(), [&fuel_req,this](std::string mass) {
-				fuel_req += fuel(std::stoi(mass));
-			});
+			for (auto& mass : data()) fuel_req += fuel(std::stoi(mass));
 
 			return fuel_req;
 		};
@@ -22,14 +18,14 @@ class Day01 : public Day {
                         int fuel_req = 0;
 
                         auto lines = data();
-			std::for_each(lines.begin(), lines.end(), [&fuel_req,this](std::string mass) {
+			for (auto& mass: data()) {
 				int imass = std::stoi(mass);
 				while (imass >= 0) {
 					imass = fuel(imass);
 					if (imass > 0)
 						fuel_req += imass;
 				}
-                        });
+			}
 
 			return fuel_req;
 		};
