@@ -13,7 +13,9 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	std::cout << "Result part 1: " << day->part1() << std::endl;
-	std::cout << "Result part 2: " << day->part2() << std::endl;
+	auto rp1 = day->part1();
+	std::cout << "Result part 1: " << rp1 << std::endl;
+	auto rp2 = day->part2();
+	std::cout << "Result part 2: " << rp2 << std::endl;
 	return 0;
 }
