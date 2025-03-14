@@ -1,6 +1,5 @@
 #include "day.h"
 
-#include <iostream>
 #include <boost/algorithm/string.hpp>
 
 class Day02 : public Day {
@@ -45,11 +44,5 @@ class Day02 : public Day {
 			boost::split(values, line, boost::is_any_of(","));
 			for (auto& i : values) nums.push_back(std::stoi(i));
 			return nums;
-		};
-
-		void print(std::vector<int> data) {
-			for (auto i = 0; i < data.size(); i++)
-				std::cout << data[i] << ",";
-			std::cout << std::endl;
 		};
 };
