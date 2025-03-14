@@ -1,11 +1,11 @@
 
-all: clang
+all: clang++
 
 g++: input
 	mkdir -p ./target/
 	g++ -Wall -Wextra -std=c++23 source/*.cpp -o target/aoc
 
-clang: input
+clang++: input
 	mkdir -p ./target/
 	clang++ -Wall -Wextra -std=c++23 source/*.cpp -o target/aoc
 
