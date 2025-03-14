@@ -7,10 +7,23 @@ class Day02 : public Day {
 	public:
 		Day02() : Day(2) {};
 
-		int part1() {
+		const int part1() {
+			return solve(12, 2);
+		};
+
+		const int part2() {
+			auto res = -1;
+			for (auto n = 0; n < 100 && res == -1; n++)
+				for (auto v = 0; v < 100 && res == -1; v++)
+					if (solve(n, v) == 19690720)
+						res = 100 * n + v;
+			return res;
+		};
+
+		const int solve(int noun, int verb) {
 			auto data = numbers();
-			data[1] = 12;
-			data[2] = 2;
+			data[1] = noun;
+			data[2] = verb;
 
 			for(auto i = 0; i < data.size(); i += 4) {
 				if (data[i] == 1)
@@ -21,14 +34,10 @@ class Day02 : public Day {
 					break;
 			}
 			return data[0];
+
 		};
 
-		int part2() {
-			return -1;
-		};
-
-
-		std::vector<int> numbers() {
+		const std::vector<int> numbers() {
 			auto line = data()[0];
 			std::vector<std::string> values;
 			std::vector<int> nums;
