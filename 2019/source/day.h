@@ -12,7 +12,7 @@ class Day {
 		virtual ~Day() {};
 	protected:
 		const std::vector<std::string> data() const;
-		int number;
+		const int number;
 };
 
 #endif
