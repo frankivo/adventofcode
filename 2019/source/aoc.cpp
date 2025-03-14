@@ -1,7 +1,7 @@
 #include <iostream>
 #include "days.h"
 
-int main(int argc, char *argv[]) {
+int main(int, char *argv[]) {
 	auto day_no = std::stoi(argv[1]);
 	std::cout << "Running day " << day_no << std::endl;
 

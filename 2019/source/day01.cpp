@@ -6,7 +6,7 @@ class Day01 : public Day {
 	public:
 		Day01() : Day(1) {};
 
-		const int part1() {
+		int part1() {
 			int fuel_req = 0;
 
 			for (auto& mass : data()) fuel_req += fuel(std::stoi(mass));
@@ -14,7 +14,7 @@ class Day01 : public Day {
 			return fuel_req;
 		};
 
-		const int part2() {
+		int part2() {
                         int fuel_req = 0;
 
                         auto lines = data();
@@ -30,7 +30,7 @@ class Day01 : public Day {
 			return fuel_req;
 		};
 
-		const int fuel(int mass) const {
+		int fuel(int mass) const {
 			return std::floor(mass / 3) - 2;
 		};
 };
