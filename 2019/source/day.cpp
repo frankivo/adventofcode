@@ -3,11 +3,9 @@
 #include <format>
 #include <fstream>
 
-Day::Day(int number) {
-	this->number = number;
-}
+Day::Day(int number) : number(number) {};
 
-const std::vector<std::string> Day::data() {
+const std::vector<std::string> Day::data() const {
 	auto filename = std::format("input/day{:0{}}.txt", number, 2);
 
 	std::vector<std::string> data;

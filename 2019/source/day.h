@@ -7,12 +7,12 @@
 class Day {
 	public:
 		Day(int);
-		virtual const int part1() = 0;
-		virtual const int part2() = 0;
+		virtual int part1() const = 0;
+		virtual int part2() const = 0;
 		virtual ~Day() {};
 	protected:
-		const std::vector<std::string> data();
-		int number;
+		const std::vector<std::string> data() const;
+		const int number;
 };
 
 #endif

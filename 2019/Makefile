@@ -1,7 +1,13 @@
 
-build: input
+all: clang++
+
+g++: input
 	mkdir -p ./target/
-	g++ -std=c++23 source/*.cpp -o target/aoc
+	g++ -Wall -Wextra -std=c++23 source/*.cpp -o target/aoc
+
+clang++: input
+	mkdir -p ./target/
+	clang++ -Wall -Wextra -std=c++23 source/*.cpp -o target/aoc
 
 clean:
 	rm -R ./target/
