@@ -9,22 +9,21 @@ class Day03 : public Day {
         Day03() : Day(3) {};
 
         int part1() const {
-            auto x = 0;
-            auto y = 0;
+            std::vector<std::pair<int,int>> positions;
+            wire(positions, 0);
+            wire(positions, 1);
 
-            auto z = cmds();
+            std::set<std::pair<int,int>> duplicates;
+            for (auto& pos : positions)
+                if (count(positions.begin(), positions.end(), pos) > 1)
+                    duplicates.insert(pos);
 
-            for (auto cmd : cmds()) {
-                std::cout<<cmd.first<<std::endl;
-            }
-            //     std::cout << cmd << std::endl;
-            //     if (cmd == "RES")
-            //         x = y = 0;
-            //     else if (cmd[0] == 'R')
+            auto nearest = -1;
+            for (auto& pos : duplicates)
+                if (pos.first + pos.second < nearest || nearest == -1)
+                    nearest = pos.first + pos.second;
 
-
-            // }
-            return -1;
+            return nearest;
         };
 
         int part2() const {
@@ -32,8 +31,8 @@ class Day03 : public Day {
         };
 
     private:
-        std::vector<std::pair<std::string, int>> cmds() const {
-            auto line = data()[0] + ",RES," + data()[1];
+        std::vector<std::pair<std::string, int>> cmds(const int wire) const {
+            auto line = data()[wire];
             std::vector<std::pair<std::string, int>> data;
             boost::regex pattern("([A-Z])([0-9]+)");
 
@@ -49,5 +48,26 @@ class Day03 : public Day {
             }
 
             return data;
-        }
+        };
+
+        void wire(std::vector<std::pair<int,int>> &positions, const int wire) const {
+            auto x = 0;
+            auto y = 0;
+
+            for (auto cmd : cmds(wire)) {
+                for (auto i = 0; i < cmd.second; i++) {
+                    if (cmd.first == "R")
+                        x += 1;
+                    if (cmd.first == "L")
+                        x -= 1;
+                    if (cmd.first == "U")
+                        y += 1;
+                    if (cmd.first == "D")
+                        y -= 1;
+
+                    std::pair<int,int> tuple(x, y);
+                    positions.push_back(tuple);
+                }
+            }
+        };
 };
