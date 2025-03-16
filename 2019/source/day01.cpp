@@ -3,34 +3,34 @@
 #include <cmath>
 
 class Day01 : public Day {
-	public:
-		Day01() : Day(1) {};
+    public:
+        Day01() : Day(1) {};
 
-		int part1() const {
-			int fuel_req = 0;
+        int part1() const {
+            int fuel_req = 0;
 
-			for (auto& mass : data()) fuel_req += fuel(std::stoi(mass));
+            for (auto& mass : data()) fuel_req += fuel(std::stoi(mass));
 
-			return fuel_req;
-		};
+            return fuel_req;
+        };
 
-		int part2() const {
+        int part2() const {
                         int fuel_req = 0;
 
                         auto lines = data();
-			for (auto& mass: data()) {
-				int imass = std::stoi(mass);
-				while (imass >= 0) {
-					imass = fuel(imass);
-					if (imass > 0)
-						fuel_req += imass;
-				}
-			}
+            for (auto& mass: data()) {
+                int imass = std::stoi(mass);
+                while (imass >= 0) {
+                    imass = fuel(imass);
+                    if (imass > 0)
+                        fuel_req += imass;
+                }
+            }
 
-			return fuel_req;
-		};
+            return fuel_req;
+        };
 
-		int fuel(int mass) const {
-			return std::floor(mass / 3) - 2;
-		};
+        int fuel(int mass) const {
+            return std::floor(mass / 3) - 2;
+        };
 };
