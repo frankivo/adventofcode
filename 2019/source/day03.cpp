@@ -5,10 +5,11 @@
 
 class Day03 : public Day {
     public:
-        Day03() : Day(3) {};
+        Day03() : Day(3) { };
+
         int part1() const {
             auto nearest = std::numeric_limits<int>::max();
-            for (auto& pos : intersections(wire(0).first, wire(1).first)) {
+            for (auto& pos : intersections(wire1.first, wire2.first)) {
                 auto dist = std::abs(pos.first) + std::abs(pos.second);
                 if (dist < nearest)
                     nearest = dist;
@@ -17,12 +18,9 @@ class Day03 : public Day {
         };
 
         int part2() const {
-            auto wire1 = wire(0);
-            auto wire2 = wire(1);
-
             auto nearest = std::numeric_limits<int>::max();
             for (auto& pos : intersections(wire1.first, wire2.first)) {
-                auto dist = wire1.second[pos] + wire2.second[pos];
+                auto dist = wire1.second.at(pos) + wire2.second.at(pos);
                 if (dist < nearest)
                     nearest = dist;
             }
@@ -39,6 +37,9 @@ class Day03 : public Day {
                 return std::hash<T1>{}(pair.first) ^ std::hash<T2>{}(pair.second);
             }
         };
+
+        const std::pair<std::set<coordinate>, std::unordered_map<coordinate, int, pair_hash>> wire1 = wire(0);
+        const std::pair<std::set<coordinate>, std::unordered_map<coordinate, int, pair_hash>> wire2 = wire(1);
 
         std::vector<command> cmds(const int wire) const {
             auto line = data()[wire];
