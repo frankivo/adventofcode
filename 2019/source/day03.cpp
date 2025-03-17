@@ -1,9 +1,6 @@
 #include "day.hpp"
 
-#include <boost/algorithm/string.hpp>
-#include <iostream>
 #include <boost/regex.hpp>
-#include <cmath>
 
 class Day03 : public Day {
     public:
@@ -25,8 +22,8 @@ class Day03 : public Day {
             for (auto& pos : duplicates) {
                 auto x = std::abs(pos.first);
                 auto y = std::abs(pos.second);
-                if (x +y < nearest)
-                    nearest =x +y;
+                if (x + y < nearest)
+                    nearest = x + y;
             }
 
             return nearest;
@@ -60,7 +57,7 @@ class Day03 : public Day {
             auto y = 0;
             std::set<coordinate> positions;
 
-            for (auto cmd : cmds(wire)) {
+            for (auto& cmd : cmds(wire)) {
                 for (auto i = 0; i < cmd.second; i++) {
                     if (cmd.first == "R")
                         x += 1;
