@@ -1,7 +1,7 @@
 #include <iostream>
-#include "days.h"
+#include "days.hpp"
 
-int main(int, char *argv[]) {
+int main(const int, const char *argv[]) {
     auto day_no = std::stoi(argv[1]);
     std::cout << "Running day " << day_no << std::endl;
 
@@ -13,9 +13,15 @@ int main(int, char *argv[]) {
         return 1;
     }
 
-    auto rp1 = day->part1();
-    std::cout << "Result part 1: " << rp1 << std::endl;
-    auto rp2 = day->part2();
-    std::cout << "Result part 2: " << rp2 << std::endl;
-    return 0;
+    try {
+        auto rp1 = day->part1();
+        std::cout << "Result part 1: " << rp1 << std::endl;
+        auto rp2 = day->part2();
+        std::cout << "Result part 2: " << rp2 << std::endl;
+        return 0;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "Error occured: " << ex.what() << std::endl;
+        return -1;
+    }
 }

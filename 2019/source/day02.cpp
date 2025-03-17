@@ -1,4 +1,4 @@
-#include "day.h"
+#include "day.hpp"
 
 #include <boost/algorithm/string.hpp>
 
@@ -18,6 +18,7 @@ class Day02 : public Day {
             return -1;
         };
 
+    private:
         int solve(int noun, int verb) const {
             auto data = numbers();
             data[1] = noun;

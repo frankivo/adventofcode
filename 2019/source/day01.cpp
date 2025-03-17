@@ -1,4 +1,4 @@
-#include "day.h"
+#include "day.hpp"
 
 #include <cmath>
 
@@ -30,6 +30,7 @@ class Day01 : public Day {
             return fuel_req;
         };
 
+    private:
         int fuel(int mass) const {
             return std::floor(mass / 3) - 2;
         };
