@@ -1,7 +1,6 @@
 #include "day.hpp"
 
-#include <algorithm>
-#include <iostream>
+#include <boost/bind.hpp>
 #include <boost/range/irange.hpp>
 
 class Day04 : public Day
@@ -13,9 +12,7 @@ public:
     int part1() const
     {
         auto range = boost::irange(256310, 732736);
-        auto res = std::count_if(range.begin(), range.end(), [this](int pw) {
-            return valid(pw);
-        });
+        auto res = std::count_if(range.begin(), range.end(), boost::bind(&Day04::valid, this, _1));
         return res;
     };
 
@@ -35,6 +32,7 @@ private:
         bool result_same = std::any_of(slices.begin(), slices.end(), [](std::string pair) {
             return pair[0] == pair[1];
         });
+
         bool result_inc = std::all_of(slices.begin(), slices.end(), [](std::string pair) {
             return static_cast<int>(pair[1]) >= static_cast<int>(pair[0]);
         });
