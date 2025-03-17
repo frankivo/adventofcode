@@ -1,5 +1,5 @@
 #include <iostream>
-#include "days.h"
+#include "days.hpp"
 
 int main(const int, const char *argv[]) {
     auto day_no = std::stoi(argv[1]);

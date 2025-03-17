@@ -1,4 +1,4 @@
-#include "day.h"
+#include "day.hpp"
 
 #include <cmath>
 
