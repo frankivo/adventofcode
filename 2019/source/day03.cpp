@@ -49,8 +49,7 @@ class Day03 : public Day {
                 auto match = *i;
                 auto cmd = match[1].str();
                 auto val = std::stoi(match[2].str());
-                command tuple(cmd, val);
-                data.push_back(tuple);
+                data.push_back(command(cmd, val));
             }
 
             return data;
@@ -71,9 +70,7 @@ class Day03 : public Day {
                         y += 1;
                     if (cmd.first == "D")
                         y -= 1;
-
-                    coordinate tuple(x, y);
-                    positions.insert(tuple);
+                    positions.insert(coordinate(x, y));
                 }
             }
 
