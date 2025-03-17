@@ -39,8 +39,13 @@ class Day03 : public Day {
     typedef std::pair<int, int> coordinate;
     typedef std::unordered_map<coordinate, int, pair_hash> coordinate_dist;
 
-    const std::pair<std::set<coordinate>, coordinate_dist> wire1 = wire(0);
-    const std::pair<std::set<coordinate>, coordinate_dist> wire2 = wire(1);
+        const std::pair<std::set<coordinate>, std::unordered_map<coordinate, int, pair_hash>> wire1 = wire(0);
+        const std::pair<std::set<coordinate>, std::unordered_map<coordinate, int, pair_hash>> wire2 = wire(1);
+
+        std::vector<command> cmds(const int wire) const {
+            auto line = data()[wire];
+            std::vector<command> data;
+            boost::regex pattern("([A-Z])([0-9]+)");
 
     std::vector<command> cmds(const int wire) const {
         auto line = data()[wire];
