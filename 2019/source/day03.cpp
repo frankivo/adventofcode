@@ -3,25 +3,31 @@
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <boost/regex.hpp>
+#include <cmath>
 
 class Day03 : public Day {
     public:
         Day03() : Day(3) {};
 
+        typedef std::pair<std::string, int> command;
+        typedef std::pair<int, int> coordinate;
+
         int part1() const {
-            std::vector<std::pair<int,int>> positions;
-            wire(positions, 0);
-            wire(positions, 1);
+            auto wire1 = wire(0);
+            auto wire2 = wire(1);
 
-            std::set<std::pair<int,int>> duplicates;
-            for (auto& pos : positions)
-                if (count(positions.begin(), positions.end(), pos) > 1)
-                    duplicates.insert(pos);
+            std::vector<coordinate> duplicates;
+            std::set_intersection(
+                wire1.begin(), wire1.end(), wire2.begin(), wire2.end(), std::back_inserter(duplicates)
+            );
 
-            auto nearest = -1;
-            for (auto& pos : duplicates)
-                if (pos.first + pos.second < nearest || nearest == -1)
-                    nearest = pos.first + pos.second;
+            auto nearest = std::numeric_limits<int>::max();
+            for (auto& pos : duplicates) {
+                auto x = std::abs(pos.first);
+                auto y = std::abs(pos.second);
+                if (x +y < nearest)
+                    nearest =x +y;
+            }
 
             return nearest;
         };
@@ -31,9 +37,9 @@ class Day03 : public Day {
         };
 
     private:
-        std::vector<std::pair<std::string, int>> cmds(const int wire) const {
+        std::vector<command> cmds(const int wire) const {
             auto line = data()[wire];
-            std::vector<std::pair<std::string, int>> data;
+            std::vector<command> data;
             boost::regex pattern("([A-Z])([0-9]+)");
 
             boost::sregex_iterator begin(line.begin(), line.end(), pattern);
@@ -43,16 +49,17 @@ class Day03 : public Day {
                 auto match = *i;
                 auto cmd = match[1].str();
                 auto val = std::stoi(match[2].str());
-                std::pair<std::string, int> tuple(cmd, val);
+                command tuple(cmd, val);
                 data.push_back(tuple);
             }
 
             return data;
         };
 
-        void wire(std::vector<std::pair<int,int>> &positions, const int wire) const {
+        std::set<coordinate> wire(const int wire) const {
             auto x = 0;
             auto y = 0;
+            std::set<coordinate> positions;
 
             for (auto cmd : cmds(wire)) {
                 for (auto i = 0; i < cmd.second; i++) {
@@ -65,9 +72,11 @@ class Day03 : public Day {
                     if (cmd.first == "D")
                         y -= 1;
 
-                    std::pair<int,int> tuple(x, y);
-                    positions.push_back(tuple);
+                    coordinate tuple(x, y);
+                    positions.insert(tuple);
                 }
             }
+
+            return positions;
         };
 };
