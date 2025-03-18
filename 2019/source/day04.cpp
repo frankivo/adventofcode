@@ -49,13 +49,13 @@ private:
     {
         auto pw = std::to_string(password);
 
-        for (auto i = boost::sregex_iterator(pw.begin(), pw.end(), boost::regex(R"((.)\1{2,})")); i != boost::sregex_iterator(); i++) {
-            auto match = *i;
-            auto match_str = match.str();
-            auto position = match.position();
+        std::vector<int> big_group_positions;
+        auto begin = boost::sregex_iterator(pw.begin(), pw.end(), boost::regex(R"((.)\1{2,})"));
+        for (auto i = begin; i != boost::sregex_iterator(); i++)
+            big_group_positions.push_back(i->position());
 
-            std::cout << "Gevonden match: " << match_str << " op positie: " << position << std::endl;
-        }
+        for (auto i : big_group_positions)
+            std::cout << i << std::endl;
 
         return false;
     };
