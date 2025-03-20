@@ -32,13 +32,6 @@ private:
         for (auto i = 0; i <= 6 - 2; i++)
             slices.push_back(std::pair(i, pw.substr(i, 2)));
 
-        std::vector<std::pair<int,int>> group; // Repeating digit groups (larger than 2)
-        for (
-            auto i = boost::sregex_iterator(pw.begin(), pw.end(), boost::regex(R"((.)\1{2,})"));
-            i != boost::sregex_iterator();
-            i++
-        ) group.push_back(std::pair(i->position(), i->str().length()));
-
         // Test "Going from left to right, the digits never decrease"
         bool result_inc = std::all_of(slices.begin(), slices.end(), [](auto& slice)
             { return static_cast<int>(slice.second[1]) >= static_cast<int>(slice.second[0]); }
@@ -53,6 +46,13 @@ private:
                 { return slice.second[0] == slice.second[1]; }
             );
         }
+
+        std::vector<std::pair<int,int>> group; // Repeating digit groups (larger than 2)
+        for (
+            auto i = boost::sregex_iterator(pw.begin(), pw.end(), boost::regex(R"((.)\1{2,})"));
+            i != boost::sregex_iterator();
+            i++
+        ) group.push_back(std::pair(i->position(), i->str().length()));
 
         // Test "the two adjacent matching digits are not part of a larger group of matching digits"
         return std::any_of(slices.begin(), slices.end(), [group](auto& slice) {
