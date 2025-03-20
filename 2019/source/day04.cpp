@@ -24,7 +24,7 @@ public:
 private:
     const boost::integer_range<int> range;
 
-    bool valid(int password, int part) const
+    bool valid(const int password, const int part) const
     {
         auto pw = std::to_string(password);
 
