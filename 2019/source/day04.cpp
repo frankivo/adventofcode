@@ -33,18 +33,12 @@ private:
             slices.push_back(std::pair(i, pw.substr(i, 2)));
 
         // Test "Going from left to right, the digits never decrease"
-        bool result_inc = std::all_of(slices.begin(), slices.end(), [](auto& slice)
-            { return static_cast<int>(slice.second[1]) >= static_cast<int>(slice.second[0]); }
-        );
-
-        if (result_inc == false)
+        if (std::adjacent_find(pw.begin(), pw.end(), std::greater<char>()) != pw.end())
             return false;
 
         if (part == 1) {
             // Test "Two adjacent digits are the same"
-            return std::any_of(slices.begin(), slices.end(), [](auto& slice)
-                { return slice.second[0] == slice.second[1]; }
-            );
+            return std::adjacent_find(pw.begin(), pw.end()) != pw.end();
         }
 
         std::vector<std::pair<int,int>> group; // Repeating digit groups (larger than 2)
