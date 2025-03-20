@@ -36,10 +36,9 @@ private:
         if (std::adjacent_find(pw.begin(), pw.end(), std::greater<char>()) != pw.end())
             return false;
 
-        if (part == 1) {
-            // Test "Two adjacent digits are the same"
+        // Test "Two adjacent digits are the same" (part 1)
+        if (part == 1)
             return std::adjacent_find(pw.begin(), pw.end()) != pw.end();
-        }
 
         std::vector<std::pair<int,int>> group; // Repeating digit groups (larger than 2)
         for (
@@ -48,7 +47,7 @@ private:
             i++
         ) group.push_back(std::pair(i->position(), i->str().length()));
 
-        // Test "the two adjacent matching digits are not part of a larger group of matching digits"
+        // Test "the two adjacent matching digits are not part of a larger group of matching digits" (part 2)
         return std::any_of(slices.begin(), slices.end(), [group](auto& slice) {
             if (slice.second[0] != slice.second[1])
                 return false;
