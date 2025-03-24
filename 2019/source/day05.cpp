@@ -28,15 +28,10 @@ public:
             std::cout << paramC << std::endl;
             std::cout << paramB << std::endl;
 
-            int param1, param2, x;
-
             switch (opcode)
             {
             case Multiply:
-                param1 = (paramC == Position) ? clone[clone[i+1]] : clone[i+1];
-                param2 = (paramB == Position) ? clone[clone[i+2]] : clone[i+2];
-                x = param1 * param2;
-                clone[i+4] = x;
+                clone[i+4] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) * ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
                 i+=4;
 
                 break;
