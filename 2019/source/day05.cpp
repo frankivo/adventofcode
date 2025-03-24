@@ -2,6 +2,8 @@
 
 #include <boost/algorithm/string.hpp>
 
+// Heavily inspired on https://github.com/boriskurikhin/AdventOfCode2019/blob/master/Day5.java
+
 class Day05 : public Day
 {
 
