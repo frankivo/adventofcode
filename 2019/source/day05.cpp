@@ -16,6 +16,7 @@ public:
 
     int part2() const
     {
+        std::cout << "part2" << std::endl;
         return solve(5);
     };
 
@@ -33,7 +34,7 @@ private:
     const std::vector<int> parse_data() const {
         auto line = data()[0];
         // line = "1002,4,3,4,33";
-        // line = "1101,100,-1,4,0";
+        line = "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99";
         std::vector<std::string> values;
         std::vector<int> nums;
 
@@ -50,6 +51,7 @@ private:
         int output;
 
         while (opcode != Exit) {
+            std::cout << "part22: " << opcode << std::endl;
             auto cur = clone[i];
 
             opcode = opcodes(cur % 100);
@@ -68,6 +70,7 @@ private:
                     break;
                 case Output:
                     output = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]);
+                    std::cout << "out: " << output << std::endl;
                     break;
                 case JumpIfTrue:
                     if ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] != 0) {
@@ -81,6 +84,18 @@ private:
                         continue;
                     }
                     break;
+                case LessThan:
+                    if ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] < (paramB == Position) ? clone[clone[i+2]] : clone[i+2])
+                        clone[i+3] = 1;
+                    else
+                        clone[i+3] = 0;
+                    break;
+                case Equals:
+                    if ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] == (paramB == Position) ? clone[clone[i+2]] : clone[i+2])
+                        clone[i+3] = 1;
+                    else
+                        clone[i+3] = 0;
+                    break;
                 default:
                     break;
                 }
@@ -88,14 +103,20 @@ private:
             switch (opcode) {
                 case Add:
                 case Multiply:
+                case LessThan:
+                case Equals:
                     i+=4;
                     break;
                 case JumpIfTrue:
                 case JumpIfFalse:
-                    i+=3;
+                        i+=3;
+                        break;
+                case Input:
+                case Output:
+                    i+=2;
                     break;
                 default:
-                    i+=2;
+                    std::cout << "Unexpected: " << opcode << std::endl;
                     break;
             }
         }
