@@ -75,6 +75,12 @@ private:
                         continue;
                     }
                     break;
+                case JumpIfFalse:
+                    if ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] == 0) {
+                        i = (paramB == Position) ? clone[clone[i+2]] : clone[i+2];
+                        continue;
+                    }
+                    break;
                 default:
                     break;
                 }
@@ -85,6 +91,7 @@ private:
                     i+=4;
                     break;
                 case JumpIfTrue:
+                case JumpIfFalse:
                     i+=3;
                     break;
                 default:
