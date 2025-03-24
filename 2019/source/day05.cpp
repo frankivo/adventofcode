@@ -12,28 +12,30 @@ public:
     int part1() const
     {
         std::vector<int> clone(input.begin(), input.end());
+
         auto i = 0;
+        auto opcode = Start;
+        int output;
 
-        auto opcode = 0;
-
-        while (opcode != 99) {
+        while (opcode != Exit) {
             auto cur = clone[i];
-            std::cout<< i << " :: " << cur << std::endl;
 
             opcode = opcodes(cur % 100);
             auto paramC = modi(cur / 100 % 10);
             auto paramB = modi(cur / 1000 % 10);
 
-            std::cout << opcode << std::endl;
-            std::cout << paramC << std::endl;
-            std::cout << paramB << std::endl;
-
             switch (opcode) {
                 case Add:
-                    clone[i+4] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) + ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    clone[clone[i+3]] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) + ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
                     break;
                 case Multiply:
-                    clone[i+4] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) * ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    clone[clone[i+3]] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) * ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    break;
+                case Input:
+                    ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) = 1;
+                    break;
+                case Output:
+                    output = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]);
                     break;
                 default:
                     break;
@@ -45,17 +47,12 @@ public:
                     i+=4;
                     break;
                 default:
-                    i+=1;
+                    i+=2;
                     break;
             }
         }
 
-        for (auto&n: clone) {
-            std::cout << n << ", ";
-        }
-        std::cout << std::endl;
-
-        return -1;
+        return output;
     };
 
     int part2() const
@@ -65,21 +62,19 @@ public:
 
 private:
     enum opcodes {
-        Add = 1,
-        Multiply = 2,
-        Exit = 99,
+        Start, Add, Multiply, Input, Output, Exit = 99,
     };
 
     enum modi {
-        Position, Immediate
+        Position, Immediate,
     };
 
     const std::vector<int> input;
 
     const std::vector<int> parse_data() const {
         auto line = data()[0];
-        line = "1002,4,3,4,33";
-        line = "1101,100,-1,4,0";
+        // line = "1002,4,3,4,33";
+        // line = "1101,100,-1,4,0";
         std::vector<std::string> values;
         std::vector<int> nums;
 
