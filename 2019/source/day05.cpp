@@ -34,7 +34,7 @@ private:
     const std::vector<int> parse_data() const {
         auto line = data()[0];
         // line = "1002,4,3,4,33";
-        line = "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99";
+        // line = "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99";
         std::vector<std::string> values;
         std::vector<int> nums;
 
@@ -51,44 +51,43 @@ private:
         int output;
 
         while (opcode != Exit) {
-            std::cout << "part22: " << opcode << std::endl;
+            // std::cout << "part22: " << opcode << std::endl;
             auto cur = clone[i];
 
             opcode = opcodes(cur % 100);
             auto paramC = modi(cur / 100 % 10);
             auto paramB = modi(cur / 1000 % 10);
+            auto& param1 = (paramC == Position) ? clone[clone[i+1]] : clone[i+1];
+            auto& param2 = (paramB == Position) ? clone[clone[i+2]] : clone[i+2];
 
             switch (opcode) {
                 case Add:
-                    clone[clone[i+3]] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) + ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    clone[clone[i+3]] = param1 + param2;
                     break;
                 case Multiply:
-                    clone[clone[i+3]] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) * ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    clone[clone[i+3]] = param1 * param2;
                     break;
                 case Input:
-                    ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) = systemid;
+                    param1 = systemid;
                     break;
                 case Output:
-                    output = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]);
-                    std::cout << "out: " << output << std::endl;
+                    output = param1;
                     break;
                 case JumpIfTrue:
-                    if ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] != 0) {
-                        i = (paramB == Position) ? clone[clone[i+2]] : clone[i+2];
-                        continue;
-                    }
+                    if (param1 != 0)
+                        i = param2;
+                    else i+=3;
                     break;
                 case JumpIfFalse:
-                    if ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] == 0) {
-                        i = (paramB == Position) ? clone[clone[i+2]] : clone[i+2];
-                        continue;
-                    }
+                    if (param1 == 0)
+                        i = param2;
+                    else i+=3;
                     break;
                 case LessThan:
-                    clone[i+3] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] < (paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    clone[clone[i+3]] = param1 < param2;
                     break;
                 case Equals:
-                    clone[i+3] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] == (paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    clone[clone[i+3]] = param1 == param2;
                     break;
                 default:
                     break;
@@ -103,14 +102,13 @@ private:
                     break;
                 case JumpIfTrue:
                 case JumpIfFalse:
-                        i+=3;
+                        // i+=3;
                         break;
                 case Input:
                 case Output:
                     i+=2;
                     break;
                 default:
-                    std::cout << "Unexpected: " << opcode << std::endl;
                     break;
             }
         }
