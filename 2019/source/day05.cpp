@@ -51,40 +51,40 @@ private:
             auto cur = clone[i];
 
             opcode = opcodes(cur % 100);
-            auto& param1 = (modi(cur / 100 % 10) == Position) ? clone[clone[i+1]] : clone[i+1];
-            auto& param2 = ( modi(cur / 1000 % 10) == Position) ? clone[clone[i+2]] : clone[i+2];
+            auto& param1 = (modi(cur / 100 % 10) == modi::Position) ? clone[clone[i+1]] : clone[i+1];
+            auto& param2 = ( modi(cur / 1000 % 10) == modi::Position) ? clone[clone[i+2]] : clone[i+2];
             auto& param3 = clone[clone[i+3]];
 
             switch (opcode) {
-                case Add:
+                case opcodes::Add:
                     clone[clone[i+3]] = param1 + param2;
                     break;
-                case Multiply:
+                case opcodes::Multiply:
                     clone[clone[i+3]] = param1 * param2;
                     break;
-                case Input:
+                case opcodes::Input:
                     param1 = systemid;
                     break;
-                case Output:
+                case opcodes::Output:
                     if (param1 != 0)
                         return param1;
                     break;
-                case JumpIfTrue:
+                case opcodes::JumpIfTrue:
                     if (param1 != 0) {
                         i = param2;
                         continue;
                     }
                     break;
-                case JumpIfFalse:
+                case opcodes::JumpIfFalse:
                     if (param1 == 0) {
                         i = param2;
                         continue;
                     }
                     break;
-                case LessThan:
+                case opcodes::LessThan:
                     param3 = param1 < param2;
                     break;
-                case Equals:
+                case opcodes::Equals:
                     param3 = param1 == param2;
                     break;
                 default:
