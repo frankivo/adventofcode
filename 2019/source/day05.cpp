@@ -7,7 +7,7 @@ class Day05 : public Day
 {
 
 public:
-    Day05() : Day(5) { input = parse_data(); }
+    Day05() : Day(5), input(parse_data()) {};
 
     int part1() const
     {
@@ -28,15 +28,25 @@ public:
             std::cout << paramC << std::endl;
             std::cout << paramB << std::endl;
 
-            switch (opcode)
-            {
-            case Multiply:
-                clone[i+4] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) * ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
-                i+=4;
+            switch (opcode) {
+                case Add:
+                    clone[i+4] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) + ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    break;
+                case Multiply:
+                    clone[i+4] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1]) * ((paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
+                    break;
+                default:
+                    break;
+                }
 
-                break;
-            default:
-                break;
+            switch (opcode) {
+                case Add:
+                case Multiply:
+                    i+=4;
+                    break;
+                default:
+                    i+=1;
+                    break;
             }
         }
 
@@ -64,12 +74,12 @@ private:
         Position, Immediate
     };
 
-    std::vector<int> input;
-
+    const std::vector<int> input;
 
     const std::vector<int> parse_data() const {
         auto line = data()[0];
         line = "1002,4,3,4,33";
+        line = "1101,100,-1,4,0";
         std::vector<std::string> values;
         std::vector<int> nums;
 
