@@ -85,16 +85,10 @@ private:
                     }
                     break;
                 case LessThan:
-                    if ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] < (paramB == Position) ? clone[clone[i+2]] : clone[i+2])
-                        clone[i+3] = 1;
-                    else
-                        clone[i+3] = 0;
+                    clone[i+3] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] < (paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
                     break;
                 case Equals:
-                    if ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] == (paramB == Position) ? clone[clone[i+2]] : clone[i+2])
-                        clone[i+3] = 1;
-                    else
-                        clone[i+3] = 0;
+                    clone[i+3] = ((paramC == Position) ? clone[clone[i+1]] : clone[i+1] == (paramB == Position) ? clone[clone[i+2]] : clone[i+2]);
                     break;
                 default:
                     break;
