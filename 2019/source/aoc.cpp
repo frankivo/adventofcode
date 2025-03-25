@@ -8,7 +8,7 @@ void run(const int day_no) {
     auto day = days.by_number(day_no);
 
     if (!day)
-        throw std::exception("Solution not found!");
+        throw std::invalid_argument("Solution not found!");
 
     auto rp1 = day->part1();
     std::cout << "Result part 1: " << rp1 << std::endl;
