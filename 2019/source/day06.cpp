@@ -31,7 +31,7 @@ private:
     const orbit_map parse_data() const {
         orbit_map orbs;
 
-        for (auto& line: data()) {
+        for (const auto& line: data()) {
             std::vector<std::string> values;
             boost::split(values, line, boost::is_any_of(")"));
             orbs[values[1]] = values[0];
