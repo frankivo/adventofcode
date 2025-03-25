@@ -20,12 +20,24 @@ public:
 
     int part2() const
     {
+        auto you = path("YOU");
+        auto san = path("SAN");
+
+        auto dist = 0;
+        for (auto& y : you) {
+            std::cout<< y << "::" << y <<std::endl;
+            auto it = std::find(san.begin(), san.end(), y);
+            if (it != san.end())
+                return dist + std::distance(san.begin(), it);
+            dist++;
+        }
+
         return -1;
     };
 
 private:
     typedef std::unordered_map<std::string, std::string> orbit_map;
-    typedef std::vector<std::pair<std::string, int>> orbit_distance;
+    typedef std::vector<std::string> orbit_distance;
 
     const orbit_map orbits;
 
@@ -55,6 +67,13 @@ private:
 
     orbit_distance path(const std::string& orbit) const {
         orbit_distance distances;
+        auto cur = orbit;
+
+        while (cur != "COM") {
+            cur = orbits.at(cur);
+            distances.push_back(cur);
+        }
+
         return distances;
     };
 };
