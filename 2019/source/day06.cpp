@@ -25,6 +25,7 @@ public:
 
 private:
     typedef std::unordered_map<std::string, std::string> orbit_map;
+    typedef std::vector<std::pair<std::string, int>> orbit_distance;
 
     const orbit_map orbits;
 
@@ -50,5 +51,10 @@ private:
         }
 
         return dist;
-    }
+    };
+
+    orbit_distance path(const std::string& orbit) const {
+        orbit_distance distances;
+        return distances;
+    };
 };
