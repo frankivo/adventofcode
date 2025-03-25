@@ -33,7 +33,6 @@ public:
 
 private:
     typedef std::unordered_map<std::string, std::string> orbit_map;
-    typedef std::vector<std::string> orbit_distance;
 
     const orbit_map orbits;
 
@@ -47,8 +46,8 @@ private:
         return orbs;
     };
 
-    orbit_distance path(const std::string& orbit) const {
-        orbit_distance distances;
+    std::vector<std::string> path(const std::string& orbit) const {
+        std::vector<std::string> distances;
         auto cur = orbit;
         while (cur != "COM") {
             cur = orbits.at(cur);
