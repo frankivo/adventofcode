@@ -13,6 +13,7 @@ Days::Days() {
     days[2] = std::make_unique<Day02>();
     days[3] = std::make_unique<Day03>();
     days[4] = std::make_unique<Day04>();
+    days[5] = std::make_unique<Day05>();
     days[6] = std::make_unique<Day06>();
     days[7] = std::make_unique<Day07>();
 };
