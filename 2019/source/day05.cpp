@@ -12,12 +12,12 @@ public:
 
     int part1() const
     {
-        return solve(1);
+        return solve(input, 1);
     }
 
     int part2() const
     {
-        return solve(5);
+        return solve(input, 5);
     };
 
 private:
@@ -41,8 +41,8 @@ private:
             return nums;
     };
 
-    int solve(const int systemid) const {
-        std::vector<int> clone(input.begin(), input.end());
+    int solve(const std::vector<int> inst, const int systemid) const {
+        std::vector<int> clone(inst.begin(), inst.end());
 
         auto i = 0;
         auto opcode = Start;
