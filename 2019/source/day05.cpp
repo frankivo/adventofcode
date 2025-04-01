@@ -20,27 +20,6 @@ public:
         return solve(input, 5);
     };
 
-private:
-    enum opcodes {
-        Start, Add, Multiply, Input, Output, JumpIfTrue, JumpIfFalse, LessThan, Equals, Exit = 99,
-    };
-
-    enum modi {
-        Position, Immediate,
-    };
-
-    const std::vector<int> input;
-
-    const std::vector<int> parse_data() const {
-        auto line = data()[0];
-        std::vector<std::string> values;
-        std::vector<int> nums;
-
-        boost::split(values, line, boost::is_any_of(","));
-        for (auto& i : values) nums.push_back(std::stoi(i));
-            return nums;
-    };
-
     int solve(const std::vector<int> inst, const int systemid) const {
         std::vector<int> clone(inst.begin(), inst.end());
 
@@ -111,5 +90,26 @@ private:
             }
         }
         return -1;
+    };
+
+private:
+    enum opcodes {
+        Start, Add, Multiply, Input, Output, JumpIfTrue, JumpIfFalse, LessThan, Equals, Exit = 99,
+    };
+
+    enum modi {
+        Position, Immediate,
+    };
+
+    const std::vector<int> input;
+
+    const std::vector<int> parse_data() const {
+        auto line = data()[0];
+        std::vector<std::string> values;
+        std::vector<int> nums;
+
+        boost::split(values, line, boost::is_any_of(","));
+        for (auto& i : values) nums.push_back(std::stoi(i));
+            return nums;
     };
 };
