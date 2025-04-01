@@ -1,5 +1,4 @@
-#ifndef H_DAY
-#define H_DAY
+#pragma once
 
 #include <string>
 #include <vector>
@@ -14,5 +13,3 @@ class Day {
         const std::vector<std::string> data() const;
         const int number;
 };
-
-#endif
