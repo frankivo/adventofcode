@@ -17,31 +17,17 @@ public:
     {
         auto instructor = Day05();
         auto best = -1;
+        auto range = std::vector<int>{0,1,2,3,4};
 
-        for (auto i1 : boost::irange(0, 5)) {
-            auto a1 = instructor.solve(input, i1, 0);
-            for (auto i2 : boost::irange(0, 5)) {
-                auto a2 = instructor.solve(input, i2, a1);
-                for (auto i3 : boost::irange(0, 5)) {
-                    auto a3 = instructor.solve(input, i3, a2);
-                    for (auto i4 : boost::irange(0, 5)) {
-                        auto a4 = instructor.solve(input, i4, a3);
-                        for (auto i5 : boost::irange(0, 5)) {
-                            auto a5 = instructor.solve(input, i5, a4);
-                            best = std::max(best, a5);
-                        }
-                    }
-                }
-            }
+        do {
+            auto res = 0;
+            for (auto i = 0; i < 5; i++)
+                res = instructor.solve(input, range[i], res);
+            best = std::max(best, res);
         }
+        while (std::next_permutation(range.begin(), range.end()));
 
-        return
-        instructor.solve(input, 0,
-        instructor.solve(input, 1,
-        instructor.solve(input, 2,
-        instructor.solve(input, 3,
-            instructor.solve(input, 4, 0)
-        ))));
+        return best;
     }
 
     int part2() const
