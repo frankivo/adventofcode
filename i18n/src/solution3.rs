@@ -2,35 +2,20 @@ mod file;
 
 use regex::Regex;
 
-fn valid_length(pw: &str) -> bool {
-    let valid = 4..=12;
-    return valid.contains(&pw.chars().count());
-}
-
-fn has_digit(pw: &str) -> bool {
-    let rx = Regex::new(r"[\d]").unwrap();
-    return rx.is_match(pw);
-}
-
-fn valid_casing(pw: &str) -> bool {
-    return pw != pw.to_uppercase() && pw != pw.to_lowercase();
-}
-
-fn has_non_ascii(pw: &str) -> bool {
-    let rx = Regex::new(r"^[\x20-\x7E]+$").unwrap();
-    return !rx.is_match(pw);
-}
-
 fn valid(pw: &str) -> bool {
-    return valid_length(pw)
-        && has_digit(pw)
-        && valid_casing(pw)
-        && has_non_ascii(pw);
+    // a length of at least 4 and at most 12
+    (4..=12).contains(&pw.chars().count())
+    // at least one digit
+    && Regex::new(r"[\d]").unwrap().is_match(pw)
+    // at least one uppercase letter (with or without accents, examples: A or Ż)
+    && pw.chars().any(|c| c.is_uppercase())
+    // at least one lowercase letter (with or without accents, examples: a or ŷ)
+    && pw.chars().any(|c| c.is_lowercase())
+    // at least one character that is outside the standard 7-bit ASCII character set (examples: Ű, ù or ř)
+    && pw.chars().any(|c| !c.is_ascii())
 }
 
 fn main() {
-    let input = file::input(3);
-
-    let valid = input.lines().filter(|pw| valid(pw)).count();
+    let valid = file::input(3).lines().filter(|pw| valid(pw)).count();
     println!("valid: {}", valid);
 }
