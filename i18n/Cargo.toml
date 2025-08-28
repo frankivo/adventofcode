@@ -1,0 +1,16 @@
+[package]
+name = "i18n"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = "0.4"
+itertools = "0.14"
+
+[[bin]]
+name = "s1"
+path = "src/solution1.rs"
+
+[[bin]]
+name = "s2"
+path = "src/solution2.rs"

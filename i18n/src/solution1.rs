@@ -1,5 +1,4 @@
-use std::env;
-use std::fs;
+mod file;
 
 fn valid_sms(msg: &str) -> bool {
     return msg.len() <= 160;
@@ -17,11 +16,9 @@ fn cost(msg: &str) -> i32 {
 }
 
 fn main() {
-    let demo = env::args().any(|a| a == "test");
-    let input = if demo { "test-input/1.txt" } else { "input/1.txt" } ;
-
-    let lines = fs::read_to_string(input).expect("Read failed!");
-
-    let costs = lines.split("\n").map(|l| cost(l)).sum::<i32>();
+    let costs = file::input(1)
+        .lines()
+        .map(|l| cost(l))
+        .sum::<i32>();
     println!("Total costs: {}", costs);
 }
