@@ -1,8 +1,7 @@
 [package]
 name = "i18n"
 version = "0.1.0"
-edition = "2024"
-autobins = true
+edition = "2025"
 
 [dependencies]
 chrono = "0.4"
