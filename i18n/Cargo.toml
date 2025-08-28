@@ -1,10 +1,11 @@
 [package]
 name = "i18n"
-version = "0.1.0"
-edition = "2025"
+version = "0.1.4"
+edition = "2024"
 
 [dependencies]
 chrono = "0.4"
+chrono-tz = "0.10.4"
 itertools = "0.14"
 regex = "1.11"
 
@@ -19,3 +20,7 @@ path = "src/solution2.rs"
 [[bin]]
 name = "s3"
 path = "src/solution3.rs"
+
+[[bin]]
+name = "s4"
+path = "src/solution4.rs"
