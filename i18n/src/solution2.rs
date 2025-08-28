@@ -1,16 +1,12 @@
 use chrono::{DateTime, Utc};
 use itertools::Itertools;
-use std::env;
-use std::fs;
+
+mod file;
 
 fn main() {
-    let demo = env::args().any(|a| a == "test");
-    let input = if demo { "test-input/2.txt" } else { "input/2.txt" };
+    let input = file::input(2);
 
-    let data = fs::read_to_string(input)
-        .expect("Read failed!");
-
-    let converted = data
+    let converted = input
         .lines()
         .map(|line| DateTime::parse_from_rfc3339(line).unwrap())
         .map(|dt| dt.with_timezone(&Utc));
