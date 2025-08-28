@@ -5,11 +5,7 @@ use std::fs;
 
 fn main() {
     let demo = env::args().any(|a| a == "test");
-    let input = if demo {
-        "test-input/2.txt"
-    } else {
-        "input/2.txt"
-    };
+    let input = if demo { "test-input/2.txt" } else { "input/2.txt" };
 
     let data = fs::read_to_string(input)
         .expect("Read failed!");
@@ -21,5 +17,6 @@ fn main() {
 
     let counts = converted.into_iter().counts();
     let max = counts.iter().max_by_key(|e| e.1).unwrap();
-    dbg!(max);
+
+    println!("{}", max.0.to_rfc3339());
 }
