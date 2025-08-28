@@ -19,8 +19,11 @@ fn cost(msg: &str) -> i32 {
 fn main() {
     let demo = env::args().any(|a| a == "test");
     let input = if demo { "test-input/1.txt" } else { "input/1.txt" } ;
-    let lines = fs::read_to_string(input).expect("Read failed!");
 
-    let costs = lines.split("\n").map(|l| cost(l)).sum::<i32>();
+    let costs = fs::read_to_string(input)
+        .expect("Read failed!")
+        .lines()
+        .map(|l| cost(l))
+        .sum::<i32>();
     println!("Total costs: {}", costs);
 }
