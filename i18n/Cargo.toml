@@ -2,10 +2,12 @@
 name = "i18n"
 version = "0.1.0"
 edition = "2024"
+autobins = true
 
 [dependencies]
 chrono = "0.4"
 itertools = "0.14"
+regex = "1.11"
 
 [[bin]]
 name = "s1"
@@ -14,3 +16,7 @@ path = "src/solution1.rs"
 [[bin]]
 name = "s2"
 path = "src/solution2.rs"
+
+[[bin]]
+name = "s3"
+path = "src/solution3.rs"
