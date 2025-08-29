@@ -2,6 +2,7 @@ mod file;
 
 use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 use chrono_tz::Tz;
+use itertools::Itertools;
 use substring::Substring;
 
 fn parse_dt(dt_str: &str, tz: &str) -> DateTime<Utc> {
@@ -14,9 +15,7 @@ fn parse_dt(dt_str: &str, tz: &str) -> DateTime<Utc> {
 }
 
 fn main() {
-    let input = file::input(4);
-
-    let data: Vec<DateTime<Utc>> = input
+    let mins = file::input(4)
         .lines()
         .filter(|l| !l.is_empty())
         .map(|l| {
@@ -24,14 +23,8 @@ fn main() {
             let dt = l.substring(42, 62).trim();
             return parse_dt(dt, tz);
         })
-        .collect();
-
-    let mins = data
-        .chunks(2)
-        .map(|pair| {
-            let delta = pair[1] - pair[0];
-            return delta.num_minutes();
-        })
+        .tuples::<(DateTime<Utc>, DateTime<Utc>)>()
+        .map(|(dep, arr)| (arr - dep).num_minutes())
         .sum::<i64>();
 
     println!("Amount of minutes: {}", mins);
