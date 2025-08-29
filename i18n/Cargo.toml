@@ -8,6 +8,7 @@ chrono = "0.4"
 chrono-tz = "0.10.4"
 itertools = "0.14"
 regex = "1.11"
+substring = "1.4.5"
 
 [[bin]]
 name = "s1"

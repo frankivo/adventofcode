@@ -1,8 +1,8 @@
-use chrono::DateTime;
-use chrono::NaiveDateTime;
-use chrono::TimeZone;
-use chrono::Utc;
+mod file;
+
+use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 use chrono_tz::Tz;
+use substring::Substring;
 
 fn parse_dt(dt_str: &str, tz: &str) -> DateTime<Utc> {
     let dt = NaiveDateTime::parse_from_str(dt_str, "%b %d, %Y, %H:%M").unwrap();
@@ -14,11 +14,25 @@ fn parse_dt(dt_str: &str, tz: &str) -> DateTime<Utc> {
 }
 
 fn main() {
-    let l = parse_dt("Mar 04, 2020, 10:00", "Europe/London");
-    let p = parse_dt("Mar 04, 2020, 11:59", "Europe/Paris");
-    dbg!(l);
-    dbg!(p);
+    let input = file::input(4);
 
-    let d = p -l;
-    dbg!(d.num_minutes());
+    let data: Vec<DateTime<Utc>> = input
+        .lines()
+        .filter(|l| !l.is_empty())
+        .map(|l| {
+            let tz = l.substring(11, 41).trim();
+            let dt = l.substring(42, 62).trim();
+            return parse_dt(dt, tz);
+        })
+        .collect();
+
+    let mins = data
+        .chunks(2)
+        .map(|pair| {
+            let delta = pair[1] - pair[0];
+            return delta.num_minutes();
+        })
+        .sum::<i64>();
+
+    println!("Amount of minutes: {}", mins);
 }
