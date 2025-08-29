@@ -1,5 +1,4 @@
-mod file;
-
+use i18n::util::file;
 use regex::Regex;
 
 fn valid(pw: &str) -> bool {

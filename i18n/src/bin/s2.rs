@@ -1,7 +1,6 @@
 use chrono::{DateTime, Utc};
+use i18n::util::file;
 use itertools::Itertools;
-
-mod file;
 
 fn main() {
     let input = file::input(2);
