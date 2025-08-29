@@ -1,18 +1,14 @@
 use i18n::util::file;
 
 fn main() {
-    let data = file::input(5);
-    let lines: Vec<&str> = data.lines().collect();
-    let width = lines[0].chars().count();
+    let counts = file::input(5)
+        .lines()
+        .enumerate()
+        .map(|(ln, line)| {
+            let idx = (ln * 2) % line.chars().count();
+            return (line.chars().nth(idx).unwrap() == '💩') as i8;
+        })
+        .sum::<i8>();
 
-    let mut cnt = 0;
-
-    for (line_num, line) in lines.iter().enumerate() {
-        let idx = (line_num * 2) % width; // position based on line n
-        if line.chars().nth(idx).unwrap() == '💩' {
-            cnt += 1;
-        }
-    }
-
-    print!("Stepped {} times in 💩", cnt);
+    print!("Stepped {} times in 💩", counts);
 }
