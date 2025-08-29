@@ -1,4 +1,4 @@
-mod file;
+use i18n::util::file;
 
 fn valid_sms(msg: &str) -> bool {
     return msg.len() <= 160;

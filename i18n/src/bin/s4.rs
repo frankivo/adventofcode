@@ -1,7 +1,6 @@
-mod file;
-
-use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 use chrono_tz::Tz;
+use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
+use i18n::util::file;
 use itertools::Itertools;
 use substring::Substring;
 
