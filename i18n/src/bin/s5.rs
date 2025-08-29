@@ -5,16 +5,12 @@ fn main() {
     let lines: Vec<&str> = data.lines().collect();
     let width = lines[0].chars().count();
 
-    let mut idx = 0;
     let mut cnt = 0;
 
-    for l in lines {
-        if l.chars().nth(idx).unwrap() == '💩' {
+    for (line_num, line) in lines.iter().enumerate() {
+        let idx = (line_num * 2) % width; // position based on line n
+        if line.chars().nth(idx).unwrap() == '💩' {
             cnt += 1;
-        }
-        idx+=2;
-        if idx >= width {
-            idx -= width;
         }
     }
 
