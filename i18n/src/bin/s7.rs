@@ -20,7 +20,7 @@ fn main() {
     let hours = rows.map(|(dt, correct, wrong)| {
         let hal = dt.with_timezone(&Halifax).naive_local().and_utc();
         let utc = dt.naive_local().and_utc();
-        let off = dt - Duration::minutes(wrong) + Duration::minutes(correct) + Duration::milliseconds(0);
+        let off = dt - Duration::minutes(wrong) + Duration::minutes(correct);
         return match utc == hal {
             true => off.with_timezone(&Halifax),
             _ => off.with_timezone(&Santiago)
