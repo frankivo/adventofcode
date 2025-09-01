@@ -1,4 +1,4 @@
-use chrono::{DateTime, Duration};
+use chrono::{DateTime, Duration, Timelike};
 use chrono_tz::America::{Halifax, Santiago};
 use i18n::util::file::input;
 use itertools::Itertools;
@@ -17,19 +17,16 @@ fn main() {
             })
     });
 
-    for (ln, (dt, correct, wrong)) in rows.enumerate() {
-
+    let hours = rows.map(|(dt, correct, wrong)| {
         let hal = dt.with_timezone(&Halifax).naive_local().and_utc();
         let utc = dt.naive_local().and_utc();
         let off = dt - Duration::minutes(wrong) + Duration::minutes(correct) + Duration::milliseconds(0);
-        let fixed = match utc == hal {
-            true => off.with_timezone(&Halifax).to_rfc3339_opts(chrono::SecondsFormat::Millis, true),
-            _ => off.with_timezone(&Santiago).to_rfc3339_opts(chrono::SecondsFormat::Millis, true)
-        };
+        return match utc == hal {
+            true => off.with_timezone(&Halifax),
+            _ => off.with_timezone(&Santiago)
+        }.hour();
+    });
 
-        // dbg!(ln + 1, dt, hal, san, dt == hal, fixed);
-        // println!("");
-        println!("{}", fixed);
-    }
-
+    let sum : usize = hours.enumerate().map(|(ln, hours)| (ln + 1) * hours as usize).sum();
+    println!("Sum of all hours: {}", sum);
 }
