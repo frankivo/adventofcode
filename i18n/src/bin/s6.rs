@@ -20,15 +20,12 @@ fn main() {
         }
     }).collect();
 
-    let solution = crossword.lines().map(|q| {
+    let solution : usize = crossword.lines().map(|q| {
         let rx = Regex::new(&format!("^{}$", q.trim())).unwrap();
-        for (ln, word) in words.iter().enumerate() {
-            if rx.is_match(&word) {
-                return ln + 1;
-            }
-        }
-        return 0;
-    }).sum::<usize>();
+        words.iter()
+        .position(|word| rx.is_match(&word))
+        .map_or(0, |idx| idx+ 1)
+    }).sum();
 
     println!("Soltion: {}", solution);
 }
