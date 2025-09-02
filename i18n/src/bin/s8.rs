@@ -1,7 +1,6 @@
-
 use i18n::util::file;
+use itertools::Itertools;
 use regex::Regex;
-
 use unidecode::unidecode;
 
 fn valid(pw: &str) -> bool {
@@ -10,21 +9,14 @@ fn valid(pw: &str) -> bool {
     // at least one digit
     && Regex::new(r"[\d]").unwrap().is_match(pw)
     // at least one accented or unaccented vowel1 (a, e, i, o, u) (examples: i, Á or ë).
-    && Regex::new(r"[aeiou]").unwrap().is_match(&normalize(pw).to_lowercase())
+    && Regex::new(r"[aeiou]").unwrap().is_match(&unidecode(pw).to_lowercase())
+    // at least one accented or unaccented consonant, examples: s, ñ or ŷ
+    && Regex::new(r"[b-df-hj-np-tv-z]").unwrap().is_match(&unidecode(pw).to_lowercase())
+    // no recurring letters in any form.
+    && !unidecode(pw).to_lowercase().chars().counts().values().any(|&c| c > 1)
 }
-
-fn normalize(pw: &str) -> String {
-    return  unidecode(pw);
-}
-
 
 fn main() {
-    for v in file::input(8).lines().map(|pw|(pw, valid(pw))) {
-        dbg!(v);
-    }
-
     let valid = file::input(8).lines().filter(|pw| valid(pw)).count();
     println!("valid: {}", valid);
-
-    dbg!(normalize("pD9Ĉ*jXh"));
 }
