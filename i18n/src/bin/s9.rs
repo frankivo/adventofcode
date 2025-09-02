@@ -1,5 +1,10 @@
 use std::collections::HashMap;
+use chrono::NaiveDate;
 use i18n::util::file;
+
+fn valid(date: &str, fmt: &str) -> bool {
+    NaiveDate::parse_from_str(date, fmt).is_ok()
+}
 
 fn main() {
     let input = file::input(9);
@@ -14,7 +19,10 @@ fn main() {
         });
     }
 
-    for i in pd {
-        dbg!(i.0, i.1);
+    let fmts = vec!["%d-%m-%y", "%m-%d-%y", "%y-%m-%d", "%y-%d-%m"];
+
+    for fmt in fmts {
+        let x = pd.get("Frank").unwrap().iter().all(|d| valid(d, fmt));
+        dbg!(fmt, x);
     }
 }
