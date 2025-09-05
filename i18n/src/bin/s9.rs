@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use chrono::NaiveDate;
 use i18n::util::file;
+use std::collections::HashMap;
 
 fn main() {
     let input = file::input(9);
@@ -16,28 +16,26 @@ fn main() {
     }
 
     let fmts = vec!["%d-%m-%y", "%m-%d-%y", "%y-%m-%d", "%y-%d-%m"];
+    let dates = pd.get("Peter").unwrap();
+    let nine11 = NaiveDate::parse_from_str("01-09-11", "%y-%m-%d").unwrap();
 
-
-    let dates  = pd.get("Frank").unwrap();
-    dbg!(dates);
-
-    let validator = fmts.iter().filter_map(|f| {
-        let x = dates.iter().all(|d| {
-            NaiveDate::parse_from_str(d, f).is_ok()
-        });
-
-        if x {
-            return Some(dates.iter().map(|d| NaiveDate::parse_from_str(d, f).unwrap()));
+    if let Some(is_911) = fmts.iter().find_map(|f| {
+        if dates
+            .iter()
+            .all(|d| NaiveDate::parse_from_str(d, f).is_ok())
+        {
+            Some(
+                dates
+                    .iter()
+                    .map(|d| NaiveDate::parse_from_str(d, f).unwrap())
+                    .any(|d| d == nine11)
+            )
+        } else {
+            None
         }
-        else {
-            return None;
-        }
-    });
-
-    for v in validator {
-        for d in v{
-            dbg!(d);
-        }
+    }) {
+        dbg!(is_911);
+    } else {
+        eprintln!("No format matched all dates");
     }
-
 }
