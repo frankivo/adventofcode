@@ -5,6 +5,7 @@ use unicode_normalization::UnicodeNormalization;
 fn line_parse(lines: &str) -> Vec<(&str, &str)> {
     lines
         .split("\n")
+        .filter(|l| !l.is_empty())
         .map(|l| l.split_once(" ").unwrap())
         .collect()
 }
