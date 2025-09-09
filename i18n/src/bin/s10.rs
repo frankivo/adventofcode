@@ -11,6 +11,41 @@ fn line_parse(lines: &str) -> Vec<(&str, &str)> {
         .collect()
 }
 
+fn possible_mutations(word: &str) -> Vec<usize> {
+    word
+        .chars()
+        .enumerate()
+        .filter_map(|(pos, c)| {
+            (c.nfd().collect::<String>() != c.to_string()).then_some(pos)
+        })
+        .collect::<Vec<usize>>()
+}
+
+fn get_mutations(word: &str) -> Vec<String> {
+    let mut variants = vec![];
+    variants.push(word.to_string());
+
+    let options = possible_mutations(&word);
+
+    for i in 1..=options.len() {
+        for opts in options.iter().combinations(i) {
+            let fixed = word.clone()
+                .chars()
+                .enumerate()
+                .map(|(o, c)| {
+                    if opts.contains(&&o) {
+                        c.nfd().collect::<String>()
+                    } else {
+                        c.to_string()
+                    }
+                })
+                .collect::<String>();
+            variants.push(fixed);
+        }
+    }
+    return variants;
+}
+
 fn main() {
     let input = input(10);
     let (auth, login_attempts) = input.split_once("\n\n").unwrap();
@@ -30,33 +65,7 @@ fn main() {
         let cached = password_map.contains_key(&simple);
 
         if !cached {
-            let mut variants = vec![];
-            variants.push(simple.to_string());
-
-            let options = &simple
-                .chars()
-                .enumerate()
-                .filter_map(|(pos, c)| {
-                    (c.nfd().collect::<String>() != c.to_string()).then_some(pos)
-                })
-                .collect::<Vec<usize>>();
-
-            for i in 1..=options.len() {
-                for opts in options.iter().combinations(i) {
-                    let fixed = simple.clone()
-                        .chars()
-                        .enumerate()
-                        .map(|(o, c)| {
-                            if opts.contains(&&o) {
-                                c.nfd().collect::<String>()
-                            } else {
-                                c.to_string()
-                            }
-                        })
-                        .collect::<String>();
-                    variants.push(fixed);
-                }
-            }
+            let variants = get_mutations(&simple);
 
             let h = *auth_db.get(usr).expect("Hash not found");
             let has_valid = variants
