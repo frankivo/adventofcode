@@ -1,13 +1,15 @@
 [package]
 name = "i18n"
-version = "0.1.4"
+version = "0.1.10"
 edition = "2024"
 
 [dependencies]
+bcrypt = "0.17"
 chrono = "0.4"
-chrono-tz = "0.10.4"
-encoding = "0.2.33"
+chrono-tz = "0.10"
+encoding = "0.2"
 itertools = "0.14"
 regex = "1.11"
-substring = "1.4.5"
-unidecode = "0.3.0"
+substring = "1.4"
+unicode-normalization = "0.1"
+unidecode = "0.3"
