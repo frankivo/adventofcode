@@ -54,9 +54,7 @@ fn main() {
 
     let mut password_map: HashMap<String, (Vec<String>, bool)> = HashMap::new();
 
-    let mut amount: i32 = 0;
-
-    for (usr, pwd) in line_parse(login_attempts) {
+    let valid : i32 = line_parse(login_attempts).iter().map(|(usr, pwd)| {
         let simple = pwd.nfc().collect::<String>();
 
         let cached = password_map.contains_key(&simple);
@@ -64,17 +62,16 @@ fn main() {
         if !cached {
             let variants = get_mutations(&simple);
 
-            let h = *auth_db.get(usr).expect("Hash not found");
+            let hash = *auth_db.get(usr).expect("Hash not found");
             let has_valid = variants
                 .iter()
-                .any(|v| bcrypt::verify(v, h).expect("Invalid hash"));
+                .any(|v| bcrypt::verify(v, hash).expect("Invalid hash"));
 
             password_map.insert(simple.clone(), (variants, has_valid));
         }
 
-        let valid = password_map.get(&simple).expect("Expected password to be present").1 as i32;
-        amount += valid;
-    }
+        password_map.get(&simple).expect("Expected password to be present").1 as i32
+    }).sum();
 
-    dbg!(amount);
+    print!("Amount of valid attempts: {}", valid);
 }
