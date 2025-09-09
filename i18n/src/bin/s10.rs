@@ -61,8 +61,7 @@ fn main() {
                 let hash = *auth.get(usr).expect("Hash not found");
                 let has_valid = variants
                     .iter()
-                    .find_or_first(|v| bcrypt::verify(v, hash).expect("Invalid hash"))
-                    .is_some();
+                    .any(|v| bcrypt::verify(v, hash).expect("Invalid hash"));
 
                 password_map.insert(simple.clone(), (variants, has_valid));
             }
