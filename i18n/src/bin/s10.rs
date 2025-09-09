@@ -11,6 +11,7 @@ fn line_parse(lines: &str) -> Vec<(&str, &str)> {
         .collect()
 }
 
+// Finds all the character positions of the once that are willing to mutate
 fn possible_mutations(word: &str) -> Vec<usize> {
     word.chars()
         .enumerate()
@@ -18,6 +19,7 @@ fn possible_mutations(word: &str) -> Vec<usize> {
         .collect::<Vec<usize>>()
 }
 
+// Returns all the unicode variants of a (pass)word
 fn get_mutations(word: &str) -> Vec<String> {
     let options = possible_mutations(&word);
     let base = std::iter::once(word.to_string());
@@ -53,6 +55,7 @@ fn main() {
             let simple = pwd.nfc().collect::<String>();
 
             if !password_map.contains_key(&simple) {
+                // No cache present. Find all virants and check if there is a valid one.
                 let variants = get_mutations(&simple);
 
                 let hash = *auth.get(usr).expect("Hash not found");
@@ -64,6 +67,7 @@ fn main() {
                 password_map.insert(simple.clone(), (variants, has_valid));
             }
 
+            // Now we can check normalized passwords :)
             password_map
                 .get(&simple)
                 .expect("Expected password to be present")
