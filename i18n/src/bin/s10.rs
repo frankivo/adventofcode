@@ -25,7 +25,7 @@ fn main() {
     for (usr, pwd) in line_parse(login_attempts) {
         let simple = pwd.nfc().collect::<String>();
 
-        let mut variants: Vec<String> = vec![];
+        let mut variants: Vec<String> = vec![]; // Don't want do all this in every attempt
         variants.push(simple.to_string());
 
         let options = simple
@@ -47,7 +47,7 @@ fn main() {
                         }
                     })
                     .collect::<String>();
-                variants.push(fixed); // Only insert into the password_map if one of these variant results in a valid password.
+                variants.push(fixed);
             }
         }
 
@@ -57,6 +57,9 @@ fn main() {
             .any(|v| bcrypt::verify(v, h).expect("Invalid hash"));
 
         password_map.insert(simple, (variants, has_valid));
+
+
     }
-    dbg!(password_map);
+
+
 }
