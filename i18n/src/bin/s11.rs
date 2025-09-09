@@ -5,9 +5,10 @@ fn rot(msg: &str, mv: i32) -> String {
 }
 
 fn main() {
-    dbg!("day11");
+    let uppers = "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ".chars();
+    let downers = "αβγδεζηθικλμνξοπρστυφχψω".chars();
 
-    let a = rot("abc", 13);
-    let b = rot(&a, -13);
-    dbg!(a, b);
+    let a = rot("σζμ γ' ωοωλδθαξλδμξρ οπξρδυζ οξκτλζσθρ Ξγτρρδτρ.", 13);
+
+    dbg!(a);
 }
