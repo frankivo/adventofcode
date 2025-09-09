@@ -12,12 +12,9 @@ fn line_parse(lines: &str) -> Vec<(&str, &str)> {
 }
 
 fn possible_mutations(word: &str) -> Vec<usize> {
-    word
-        .chars()
+    word.chars()
         .enumerate()
-        .filter_map(|(pos, c)| {
-            (c.nfd().collect::<String>() != c.to_string()).then_some(pos)
-        })
+        .filter_map(|(pos, c)| (c.nfd().collect::<String>() != c.to_string()).then_some(pos))
         .collect::<Vec<usize>>()
 }
 
@@ -47,31 +44,33 @@ fn main() {
     let input = input(10);
     let (auth, login_attempts) = input.split_once("\n\n").unwrap();
 
-    let mut auth_db = HashMap::new();
-    for (k, v) in line_parse(auth) {
-        auth_db.insert(k, v);
-    }
-
+    let auth: HashMap<_, _> = line_parse(auth).into_iter().collect();
     let mut password_map: HashMap<String, (Vec<String>, bool)> = HashMap::new();
 
-    let valid : i32 = line_parse(login_attempts).iter().map(|(usr, pwd)| {
-        let simple = pwd.nfc().collect::<String>();
+    let valid: i32 = line_parse(login_attempts)
+        .iter()
+        .map(|(usr, pwd)| {
+            let simple = pwd.nfc().collect::<String>();
 
-        let cached = password_map.contains_key(&simple);
+            let cached = password_map.contains_key(&simple);
 
-        if !cached {
-            let variants = get_mutations(&simple);
+            if !cached {
+                let variants = get_mutations(&simple);
 
-            let hash = *auth_db.get(usr).expect("Hash not found");
-            let has_valid = variants
-                .iter()
-                .any(|v| bcrypt::verify(v, hash).expect("Invalid hash"));
+                let hash = *auth.get(usr).expect("Hash not found");
+                let has_valid = variants
+                    .iter()
+                    .any(|v| bcrypt::verify(v, hash).expect("Invalid hash"));
 
-            password_map.insert(simple.clone(), (variants, has_valid));
-        }
+                password_map.insert(simple.clone(), (variants, has_valid));
+            }
 
-        password_map.get(&simple).expect("Expected password to be present").1 as i32
-    }).sum();
+            password_map
+                .get(&simple)
+                .expect("Expected password to be present")
+                .1 as i32
+        })
+        .sum();
 
     print!("Amount of valid attempts: {}", valid);
 }
