@@ -22,44 +22,53 @@ fn main() {
 
     let mut password_map: HashMap<String, (Vec<String>, bool)> = HashMap::new();
 
+    let mut amount: i32 = 0;
+
     for (usr, pwd) in line_parse(login_attempts) {
         let simple = pwd.nfc().collect::<String>();
 
-        let mut variants: Vec<String> = vec![]; // Don't want do all this in every attempt
-        variants.push(simple.to_string());
+        let cached = password_map.contains_key(&simple);
 
-        let options = simple
-            .chars()
-            .enumerate()
-            .filter_map(|(pos, c)| (c.nfd().collect::<String>() != c.to_string()).then_some(pos))
-            .collect::<Vec<usize>>();
+        if !cached {
+            let mut variants = vec![];
+            variants.push(simple.to_string());
 
-        for i in 1..=options.len() {
-            for opts in options.iter().combinations(i) {
-                let fixed = simple
-                    .chars()
-                    .enumerate()
-                    .map(|(o, c)| {
-                        if opts.contains(&&o) {
-                            c.nfd().collect::<String>()
-                        } else {
-                            c.to_string()
-                        }
-                    })
-                    .collect::<String>();
-                variants.push(fixed);
+            let options = &simple
+                .chars()
+                .enumerate()
+                .filter_map(|(pos, c)| {
+                    (c.nfd().collect::<String>() != c.to_string()).then_some(pos)
+                })
+                .collect::<Vec<usize>>();
+
+            for i in 1..=options.len() {
+                for opts in options.iter().combinations(i) {
+                    let fixed = simple.clone()
+                        .chars()
+                        .enumerate()
+                        .map(|(o, c)| {
+                            if opts.contains(&&o) {
+                                c.nfd().collect::<String>()
+                            } else {
+                                c.to_string()
+                            }
+                        })
+                        .collect::<String>();
+                    variants.push(fixed);
+                }
             }
+
+            let h = *auth_db.get(usr).expect("Hash not found");
+            let has_valid = variants
+                .iter()
+                .any(|v| bcrypt::verify(v, h).expect("Invalid hash"));
+
+            password_map.insert(simple.clone(), (variants, has_valid));
         }
 
-        let h = *auth_db.get(usr).expect("Hash not found");
-        let has_valid = variants
-            .iter()
-            .any(|v| bcrypt::verify(v, h).expect("Invalid hash"));
-
-        password_map.insert(simple, (variants, has_valid));
-
-
+        let valid = password_map.get(&simple).expect("Expected password to be present").1 as i32;
+        amount += valid;
     }
 
-
+    dbg!(amount);
 }
