@@ -48,8 +48,8 @@ fn main() {
 
     let auth: HashMap<_, _> = line_parse(auth).into_iter().collect();
 
-    // The key for this map is password, but is ugly. Users with the same password should provide funny results.
-    // The vector should be expanded if the user logs in with a completely different password.
+    // The key for this map is password, but is ugly. Users with the same password could provide funny results.
+    // The vector should probably be expanded if the user logs in with a completely different password.
     let mut password_map: HashMap<String, (Vec<String>, bool)> = HashMap::new();
 
     let valid: i32 = line_parse(login_attempts)
