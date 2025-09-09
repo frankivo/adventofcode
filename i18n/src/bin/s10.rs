@@ -52,15 +52,14 @@ fn main() {
         .map(|(usr, pwd)| {
             let simple = pwd.nfc().collect::<String>();
 
-            let cached = password_map.contains_key(&simple);
-
-            if !cached {
+            if !password_map.contains_key(&simple) {
                 let variants = get_mutations(&simple);
 
                 let hash = *auth.get(usr).expect("Hash not found");
                 let has_valid = variants
                     .iter()
-                    .any(|v| bcrypt::verify(v, hash).expect("Invalid hash"));
+                    .find_or_first(|v| bcrypt::verify(v, hash).expect("Invalid hash"))
+                    .is_some();
 
                 password_map.insert(simple.clone(), (variants, has_valid));
             }
