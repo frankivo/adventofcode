@@ -22,15 +22,13 @@ fn possible_mutations(word: &str) -> Vec<usize> {
 }
 
 fn get_mutations(word: &str) -> Vec<String> {
-    let mut variants = vec![];
-    variants.push(word.to_string());
-
     let options = possible_mutations(&word);
+    let base = std::iter::once(word.to_string());
 
-    for i in 1..=options.len() {
-        for opts in options.iter().combinations(i) {
-            let fixed = word.clone()
-                .chars()
+    let variants = (1..=options.len())
+        .flat_map(|i| options.iter().combinations(i))
+        .map(|opts| {
+            word.chars()
                 .enumerate()
                 .map(|(o, c)| {
                     if opts.contains(&&o) {
@@ -39,11 +37,10 @@ fn get_mutations(word: &str) -> Vec<String> {
                         c.to_string()
                     }
                 })
-                .collect::<String>();
-            variants.push(fixed);
-        }
-    }
-    return variants;
+                .collect::<String>()
+        });
+
+    return variants.chain(base).collect();
 }
 
 fn main() {
