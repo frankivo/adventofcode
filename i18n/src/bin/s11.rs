@@ -4,24 +4,14 @@ use i18n::util::file::input;
 use unicode_normalization::UnicodeNormalization;
 
 fn rot(msg: &str, mv: i32) -> String {
-    let chars = "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ".chars();
-    let l_to_i: HashMap<_, _> = chars.clone().enumerate().map(|(i, c)| (c, i)).collect();
-    let i_to_l: HashMap<_, _> = chars.enumerate().collect();
+    let greek : Vec<char> = "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ".chars().collect();
+    let l_to_i: HashMap<_, _> = greek.iter().cloned().enumerate().map(|(i, c)| (c, i)).collect();
 
     msg.nfc()
-        .collect::<String>()
-        .to_uppercase()
-        .chars()
+        .flat_map(char::to_uppercase)
         .map(|c| {
-            let i = l_to_i.get(&c);
-
-            if i.is_none() {
-                c
-            } else {
-                let i = i.unwrap();
-                let j = (i + mv as usize) % 24;
-                i_to_l[&j]
-            }
+            l_to_i.get(&c)
+            .map_or(c, |&i| greek[(i + mv as usize) % greek.len()])
         })
         .collect::<String>()
         .to_lowercase()
