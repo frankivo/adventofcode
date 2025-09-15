@@ -1,4 +1,3 @@
-use encoding_rs::ISO_8859_10;
 use i18n::util::file::input;
 use std::fmt;
 use unidecode::unidecode;
@@ -35,20 +34,29 @@ fn split_line(line: &str) -> Person {
     }
 }
 
-fn clean(name: &str, fix_nordic: bool) -> String {
-    let name = name.to_uppercase();
-
-    // Strip spaces and specials characters
-    let stripped =  name.chars().filter(|c| c.is_alphabetic()).collect::<String>();
-    if !fix_nordic || !is_nordic(&stripped) {
-        return unidecode(&stripped);
-    }
-    return stripped.replace("Æ", "Į").replace("Ø", "Ö").replace("Ä", "Į"); // This is buggy
+fn clean(name: &str) -> String {
+    name.to_lowercase()
+        .chars()
+        .filter(|c| c.is_alphabetic())
+        .collect::<String>()
 }
 
-fn is_nordic(name: &str) -> bool{
-    let (_, _, had_errors) = ISO_8859_10.encode(name);
-    return !had_errors;
+fn swedish_sort(s: &str) -> Vec<u32> {
+    let mut key = Vec::with_capacity(s.len());
+    for ch in s.chars() {
+        let w = match ch {
+            'å' => 27,
+            'ä' => 28,
+            'æ' => 28,
+            'ö' => 29,
+            'ø' => 29,
+            _ => {
+                unidecode(&ch.to_string()).chars().collect::<Vec<char>>()[0] as u32 - ('a' as u32) + 1
+            }
+        };
+        key.push(w);
+    }
+    key
 }
 
 fn middle(names: &Vec<Person>) -> u32 {
@@ -63,7 +71,7 @@ fn main() {
     let mut names: Vec<Person> = input.lines().map(split_line).collect();
 
     // First list
-    names.sort_by(|a,b| clean(&a.lastname, false).cmp(&clean(&b.lastname, false)));
+    names.sort_by(|a, b| clean(&a.lastname).cmp(&clean(&b.lastname)));
     for n in &names {
         println!("{}", &n);
     }
@@ -71,7 +79,7 @@ fn main() {
     println!("");
 
     // Second list
-    names.sort_by(|a,b| clean(&a.lastname, true).cmp(&clean(&b.lastname, true)));
+    names.sort_by_key(|a| swedish_sort(&clean(&a.lastname)));
     for n in &names {
         println!("{}", &n);
     }

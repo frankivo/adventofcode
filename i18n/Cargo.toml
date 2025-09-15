@@ -9,7 +9,6 @@ chrono = "0.4"
 chrono-tz = "0.10"
 dotenv = "0.15"
 encoding = "0.2"
-encoding_rs = "0.8"
 itertools = "0.14"
 regex = "1.11"
 reqwest = { version = "0.12", features = ["json"] }
