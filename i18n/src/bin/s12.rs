@@ -1,6 +1,5 @@
 use encoding_rs::ISO_8859_10;
 use i18n::util::file::input;
-use itertools::Itertools;
 use std::fmt;
 use unidecode::unidecode;
 
@@ -58,5 +57,7 @@ fn main() {
     let mut names: Vec<Person> = input.lines().map(split_line).collect();
     names.sort_by(|a,b| clean(&a.lastname).cmp(&clean(&b.lastname)));
 
-    dbg!(names);
+    for n in names {
+        println!("{}", &n);
+    }
 }
