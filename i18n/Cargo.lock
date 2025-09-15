@@ -576,6 +576,7 @@ dependencies = [
  "chrono-tz",
  "dotenv",
  "encoding",
+ "encoding_rs",
  "itertools",
  "regex",
  "reqwest",
