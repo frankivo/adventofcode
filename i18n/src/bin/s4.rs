@@ -2,7 +2,6 @@ use chrono_tz::Tz;
 use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 use i18n::util::file;
 use itertools::Itertools;
-use substring::Substring;
 
 fn parse_dt(dt_str: &str, tz: &str) -> DateTime<Utc> {
     let dt = NaiveDateTime::parse_from_str(dt_str, "%b %d, %Y, %H:%M").unwrap();
@@ -18,8 +17,8 @@ fn main() {
         .lines()
         .filter(|l| !l.is_empty())
         .map(|l| {
-            let tz = l.substring(11, 41).trim();
-            let dt = l.substring(42, 62).trim();
+            let tz = l[11..40].trim();
+            let dt = l[42..61].trim();
             return parse_dt(dt, tz);
         })
         .tuples::<(DateTime<Utc>, DateTime<Utc>)>()
