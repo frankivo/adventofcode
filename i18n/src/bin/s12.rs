@@ -35,15 +35,15 @@ fn split_line(line: &str) -> Person {
     }
 }
 
-fn clean(name: &str) -> String {
+fn clean(name: &str, fix_nordic: bool) -> String {
     let name = name.to_uppercase();
 
     // Strip spaces and specials characters
     let stripped =  name.chars().filter(|c| c.is_alphabetic()).collect::<String>();
-    if !is_nordic(&stripped) {
+    if !fix_nordic || !is_nordic(&stripped) {
         return unidecode(&stripped);
     }
-    return stripped;
+    return stripped.replace("Æ", "Į").replace("Ø", "Ö").replace("Ä", "Į"); // This is buggy
 }
 
 fn is_nordic(name: &str) -> bool{
@@ -51,13 +51,33 @@ fn is_nordic(name: &str) -> bool{
     return !had_errors;
 }
 
+fn middle(names: &Vec<Person>) -> u32 {
+    let mid = (names.len() / 2) + 0;
+    let x = names.iter().nth(mid).unwrap();
+    x.phone
+}
+
 fn main() {
     let input = input(12);
 
     let mut names: Vec<Person> = input.lines().map(split_line).collect();
-    names.sort_by(|a,b| clean(&a.lastname).cmp(&clean(&b.lastname)));
 
-    for n in names {
+    // First list
+    names.sort_by(|a,b| clean(&a.lastname, false).cmp(&clean(&b.lastname, false)));
+    for n in &names {
         println!("{}", &n);
     }
+    let first = middle(&names);
+    println!("");
+
+    // Second list
+    names.sort_by(|a,b| clean(&a.lastname, true).cmp(&clean(&b.lastname, true)));
+    for n in &names {
+        println!("{}", &n);
+    }
+    let second = middle(&names);
+
+    println!("");
+
+    dbg!(first, second);
 }
