@@ -1,65 +1,53 @@
 use i18n::util::file::input;
-use std::fmt;
+use regex::Regex;
 use unidecode::unidecode;
 
 struct Person {
-    firstname: String,
     lastname: String,
     phone: u32,
 }
 
-impl fmt::Debug for Person {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Person")
-            .field("lastname", &self.lastname)
-            .field("firstname", &self.firstname)
-            .finish()
-    }
-}
-
-impl fmt::Display for Person {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}, {}: {}", self.lastname, self.firstname, self.phone)
-    }
-}
-
 fn split_line(line: &str) -> Person {
     let (last_name, rest) = line.split_once(",").unwrap();
-    let (first_name, phone) = rest.split_once(":").unwrap();
+    let (_, phone) = rest.split_once(":").unwrap();
     let phone = phone.trim().parse::<u32>().expect("can't parse phone");
     Person {
-        firstname: first_name.trim().to_string(),
         lastname: last_name.trim().to_string(),
         phone: phone,
     }
 }
 
 fn clean(name: &str) -> String {
-    name.to_lowercase()
+    name
         .chars()
         .filter(|c| c.is_alphabetic())
         .collect::<String>()
 }
 
 fn swedish_sort(s: &str) -> Vec<u32> {
-    s.chars().map(|c| {
-        match c {
+    s.to_lowercase().chars()
+        .map(|c| match c {
             'å' => 27,
             'ä' => 28,
             'æ' => 28,
             'ö' => 29,
             'ø' => 29,
             _ => {
-                unidecode(&c.to_string()).chars().collect::<Vec<char>>()[0] as u32 - ('a' as u32) + 1
+                unidecode(&c.to_string()).chars().collect::<Vec<char>>()[0] as u32 - ('a' as u32)
+                    + 1
             }
-        }
-    }).collect()
+        })
+        .collect()
 }
 
 fn middle(names: &Vec<Person>) -> u32 {
-    let mid = (names.len() / 2) + 0;
-    let x = names.iter().nth(mid).unwrap();
-    x.phone
+    names.iter().nth((names.len() / 2) + 0).unwrap().phone
+}
+
+fn strip_last_name(name: &str, matcher: &Regex) -> String {
+    let res: Vec<_> = matcher.captures_iter(&name).collect();
+    let idx = res[0].get(0).unwrap().start();
+    name[idx..].to_string()
 }
 
 fn main() {
@@ -67,22 +55,20 @@ fn main() {
 
     let mut names: Vec<Person> = input.lines().map(split_line).collect();
 
-    // First list
-    names.sort_by(|a, b| clean(&a.lastname).cmp(&clean(&b.lastname)));
-    for n in &names {
-        println!("{}", &n);
-    }
-    let first = middle(&names);
-    println!("");
+    // English list sort
+    names.sort_by(|a, b| clean(&unidecode(&a.lastname.to_lowercase())).cmp(&clean(&unidecode(&b.lastname.to_lowercase()))));
+    let english = middle(&names);
 
-    // Second list
+    // Swedish list sort
     names.sort_by_key(|a| swedish_sort(&clean(&a.lastname)));
-    for n in &names {
-        println!("{}", &n);
-    }
-    let second = middle(&names);
+    let swedish = middle(&names);
 
-    println!("");
+    // Dutch list sort
+    let matcher = Regex::new(r"[A-Z]").unwrap();
+    names.sort_by_key(|a| strip_last_name(&clean(&unidecode(&a.lastname)), &matcher).to_lowercase());
 
-    dbg!(first, second);
+    let dutch = middle(&names);
+
+    let res = english as u64 * swedish as u64 * dutch as u64;
+    println!("Result: {}", res);
 }
