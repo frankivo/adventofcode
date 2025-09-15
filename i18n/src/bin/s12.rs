@@ -42,21 +42,18 @@ fn clean(name: &str) -> String {
 }
 
 fn swedish_sort(s: &str) -> Vec<u32> {
-    let mut key = Vec::with_capacity(s.len());
-    for ch in s.chars() {
-        let w = match ch {
+    s.chars().map(|c| {
+        match c {
             'å' => 27,
             'ä' => 28,
             'æ' => 28,
             'ö' => 29,
             'ø' => 29,
             _ => {
-                unidecode(&ch.to_string()).chars().collect::<Vec<char>>()[0] as u32 - ('a' as u32) + 1
+                unidecode(&c.to_string()).chars().collect::<Vec<char>>()[0] as u32 - ('a' as u32) + 1
             }
-        };
-        key.push(w);
-    }
-    key
+        }
+    }).collect()
 }
 
 fn middle(names: &Vec<Person>) -> u32 {
