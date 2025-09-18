@@ -1,5 +1,5 @@
-use encoding::{DecoderTrap, Encoding};
 use encoding::all::{ISO_8859_1, UTF_8, UTF_16BE, UTF_16LE};
+use encoding::{DecoderTrap, Encoding};
 use i18n::util::file::input;
 use itertools::Itertools;
 use regex::Regex;
@@ -40,10 +40,19 @@ fn decode(raw: &str) -> String {
 
 fn main() {
     let input = input(13);
-    let (words, _crossword) = input.split_once("\n\n").expect("Failed to read data");
+    let (words, crossword) = input.split_once("\n\n").expect("Failed to read data");
 
-    let data: Vec<String> = words.lines().map(decode).collect();
-    for w in data {
-        dbg!(w);
-    }
+    let words: Vec<String> = words.lines().map(decode).collect();
+    let solution: usize = crossword
+        .lines()
+        .map(|q| {
+            let rx = Regex::new(&format!("^{}$", q.trim())).unwrap();
+            words
+                .iter()
+                .position(|word| rx.is_match(&word))
+                .map_or(0, |idx| idx + 1)
+        })
+        .sum();
+
+    println!("Soltion: {}", solution);
 }
