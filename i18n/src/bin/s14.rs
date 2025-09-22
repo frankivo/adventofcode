@@ -4,13 +4,9 @@ use i18n::util::file::input;
 
 fn main() {
     let input = input(14);
-    let input = input
-        .lines()
-        .map(|l| l.split_once(" × ").unwrap());
+    let input = input.lines().map(|l| l.split_once(" × ").unwrap());
 
-
-
-    let char_map : HashMap<char, i32> = HashMap::from([
+    let char_map: HashMap<char, i32> = HashMap::from([
         ('一', 1),
         ('二', 2),
         ('三', 3),
@@ -21,16 +17,17 @@ fn main() {
         ('八', 8),
         ('九', 9),
         ('十', 10),
+    ]);
+
+    let myriads: HashMap<char, i32> = HashMap::from([
         ('百', 100),
         ('千', 1000),
         ('万', 10_000),
-        ]);
+        ('億', 100_000_000),
+    ]);
 
-    // for l in input {
-    //     dbg!(&l);
-    // }
-
-    for (c, n) in char_map {
-        dbg!(n, c.escape_unicode() as u32);
+    let num: Vec<i32> = "三百".chars().map(|c| *char_map.get(&c).unwrap()).collect();
+    for i in num {
+        dbg!(i);
     }
 }
