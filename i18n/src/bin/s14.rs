@@ -26,7 +26,7 @@ fn main() {
         ('億', 100_000_000),
     ]);
 
-    let num: Vec<i32> = "三百".chars().map(|c| *char_map.get(&c).unwrap()).collect();
+    let num: Vec<i32> = "三七".chars().map(|c| *char_map.get(&c).unwrap()).collect();
     for i in num {
         dbg!(i);
     }
