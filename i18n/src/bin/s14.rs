@@ -2,6 +2,25 @@ use std::collections::HashMap;
 
 use i18n::util::file::input;
 
+
+fn to_int(s: &str, numbers: &HashMap<char, i32>, mutators: &HashMap<char, i32>) -> i32 {
+    let mut sum = 0;
+    let mut tmp = 0;
+
+    for (i, c) in s.chars().enumerate() {
+        if numbers.contains_key(&c) {
+            tmp = numbers.get(&c).unwrap().to_owned();
+        }
+        if mutators.contains_key(&c) {
+            sum += mutators.get(&c).unwrap() * tmp;
+        } else if i + 1 == s.chars().count() {
+            sum += tmp;
+        }
+    }
+
+    return sum;
+}
+
 fn main() {
     let input = input(14);
     let input = input.lines().map(|l| l.split_once(" × ").unwrap());
@@ -26,8 +45,8 @@ fn main() {
         ('億', 100_000_000),
     ]);
 
-    let num: Vec<i32> = "三七".chars().map(|c| *char_map.get(&c).unwrap()).collect();
-    for i in num {
-        dbg!(i);
+    let tests: Vec<_> = vec!["三百", "三百二十一", "四千", "五万", "九万九千九百九十九", "四十二万四十二", "九億八千七百六十五万四千三百二十一"];
+    for t in tests {
+        dbg!(t, to_int(t, &char_map, &myriads));
     }
 }
