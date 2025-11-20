@@ -9,7 +9,7 @@ fn get_num(instr: &str) -> i8 {
         .unwrap()
 }
 
-fn parse(part: i32) -> (Vec<String>, Vec<String>) {
+fn parse(part: i8) -> (Vec<String>, Vec<String>) {
     let data = file::input(1, part);
     let lines: Vec<_> = data.lines().collect();
     let names: Vec<_> = lines[0].split(",").map(str::to_owned).collect();
@@ -17,34 +17,26 @@ fn parse(part: i32) -> (Vec<String>, Vec<String>) {
     (names, instructions)
 }
 
-fn part1() -> String {
-    let (names, instructions) = parse(1);
+fn solve(part: i8) -> String {
+    let (names, instructions) = parse(part);
+    let num_names = names.len() as i8;
 
     let index = instructions.iter().fold(0, |i, instr| {
         let go_right = instr.starts_with('R');
         let steps = get_num(&instr);
         let next = if go_right { i + steps } else { i - steps };
-        next.clamp(0, names.len() as i8 - 1)
-    });
 
-    names.get(index as usize).unwrap().to_string()
-}
-
-fn part2() -> String {
-    let (names, instructions) = parse(2);
-    let n = names.len() as i32;
-
-    let index: i32 = instructions.iter().fold(0, |i, instr| {
-        let go_right = instr.starts_with('R');
-        let steps = get_num(&instr) as i32;
-        let next = if go_right { i + steps } else { i - steps };
-        ((next % n) + n) % n
+        if part == 1 {
+            next.clamp(0, num_names as i8 - 1)
+        } else {
+            ((next % num_names) + num_names) % num_names
+        }
     });
 
     names.get(index as usize).unwrap().to_string()
 }
 
 fn main() {
-    println!("My name is: {}", part1());
-    println!("My parent is: {}", part2());
+    println!("My name is: {}", solve(1));
+    println!("My parent is: {}", solve(2));
 }
