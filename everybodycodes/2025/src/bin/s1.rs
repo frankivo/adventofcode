@@ -37,22 +37,28 @@ fn solve(part: i8) -> String {
 }
 
 fn part3() -> String {
-    let (mut names, instructions) = parse(3);
+    let (names, instructions) = parse(3);
     let num_names = names.len() as i8;
 
-    for instr in instructions {
-        let tmp = names.get(0).unwrap().to_string();
-        dbg!(&tmp, &instr);
-
+    let shuffled = instructions.iter().fold(names, |names, instr| {
         let go_right = instr.starts_with('R');
         let steps = get_num(&instr);
         let next = if go_right { steps } else { -steps };
         let idx = ((next % num_names) + num_names) % num_names;
-        names[0] = names[idx as usize].clone();
-        names[idx as usize] = tmp;
-    }
 
-    names[0].clone()
+        let p1 = &names[1..idx as usize].to_vec();
+        let p2 = &names[idx as usize + 1 ..].to_vec();
+
+        let swapped: Vec<String> = std::iter::once(names[idx as usize].clone())
+            .chain(p1.iter().cloned())
+            .chain(std::iter::once(names[0].to_string()))
+            .chain(p2.iter().cloned())
+            .collect();
+
+        swapped
+    });
+
+    shuffled[0].clone()
 }
 
 fn main() {
