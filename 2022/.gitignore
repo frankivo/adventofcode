@@ -1,9 +1,0 @@
-# SBT
-.bsp
-target/
-
-# IntelliJ
-.idea
-
-# Project
-input/
