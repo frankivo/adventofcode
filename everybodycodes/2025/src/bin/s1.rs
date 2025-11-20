@@ -1,12 +1,7 @@
 use everybodycodes::util::file;
 
 fn get_num(instr: &str) -> i8 {
-    instr
-        .chars()
-        .filter(|c| c.is_digit(10))
-        .collect::<String>()
-        .parse()
-        .unwrap()
+    instr[1..].parse().unwrap()
 }
 
 fn parse(part: i8) -> (Vec<String>, Vec<String>) {
@@ -47,7 +42,7 @@ fn part3() -> String {
         let idx = ((next % num_names) + num_names) % num_names;
 
         let p1 = &names[1..idx as usize];
-        let p2 = &names[idx as usize + 1 ..];
+        let p2 = &names[idx as usize + 1..];
 
         let swapped: Vec<String> = std::iter::once(names[idx as usize].clone())
             .chain(p1.iter().cloned())
