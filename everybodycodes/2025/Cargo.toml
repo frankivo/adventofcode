@@ -1,0 +1,6 @@
+[package]
+name = "everybodycodes"
+version = "0.1.12"
+edition = "2024"
+
+[dependencies]
