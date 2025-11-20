@@ -18,5 +18,5 @@ fn main() {
         next.clamp(0, max_idx)
     }) as usize;
 
-    print!("{}", names.get(index).unwrap());
+    print!("My name is: {}", names.get(index).unwrap());
 }
