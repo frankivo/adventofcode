@@ -46,8 +46,8 @@ fn part3() -> String {
         let next = if go_right { steps } else { -steps };
         let idx = ((next % num_names) + num_names) % num_names;
 
-        let p1 = &names[1..idx as usize].to_vec();
-        let p2 = &names[idx as usize + 1 ..].to_vec();
+        let p1 = &names[1..idx as usize];
+        let p2 = &names[idx as usize + 1 ..];
 
         let swapped: Vec<String> = std::iter::once(names[idx as usize].clone())
             .chain(p1.iter().cloned())
