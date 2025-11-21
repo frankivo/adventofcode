@@ -45,8 +45,7 @@ fn cycle(a: Complex, r: Complex) -> Complex {
 }
 
 fn solve(a: Complex) -> Complex {
-    let r = Complex(0, 0);
-    let r = cycle(a, r);
+    let r = cycle(a, Complex(0, 0));
     let r = cycle(a, r);
     cycle(a, r)
 }
