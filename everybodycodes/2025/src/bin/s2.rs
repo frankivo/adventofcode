@@ -1,8 +1,14 @@
-use everybodycodes::util::file;
+use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, Div, Mul};
 
-#[derive(Debug, Clone)]
+#[derive(Copy, Clone)]
 struct Complex(i32, i32);
+
+impl Display for Complex {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "[{},{}]", self.0, self.1)
+    }
+}
 
 impl Add for Complex {
     type Output = Complex;
@@ -32,22 +38,22 @@ impl Mul for Complex {
 }
 
 fn cycle(a: Complex, r: Complex) -> Complex {
-    let r = r.clone() * r.clone();
-    let r = r.clone() / Complex(10, 10);
-    let r = r.clone() + a;
+    let r = r * r;
+    let r = r / Complex(10, 10);
+    let r = r + a;
     r
 }
 
 fn solve(a: Complex) -> Complex {
-    let r = Complex(0,0);
-    let r = cycle(a.clone(), r.clone());
-    let r = cycle(a.clone(), r.clone());
-    cycle(a.clone(), r.clone())
+    let r = Complex(0, 0);
+    let r = cycle(a, r);
+    let r = cycle(a, r);
+    cycle(a, r)
 }
 
 fn main() {
     let a = Complex(143, 53);
     let r = solve(a);
 
-    println!("[{},{}]", r.0, r.1);
+    println!("{}", r);
 }
