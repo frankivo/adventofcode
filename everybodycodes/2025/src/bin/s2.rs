@@ -1,3 +1,4 @@
+use everybodycodes::util::file;
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, Div, Mul};
 
@@ -44,15 +45,25 @@ fn cycle(a: Complex, r: Complex) -> Complex {
     r
 }
 
-fn solve(a: Complex) -> Complex {
+fn get_a(part: i8) -> Complex {
+    let data = file::input(2, part).lines().collect::<Vec<_>>()[0].to_string();
+    let numbers_str = data.trim_start_matches("A=[").trim_end_matches(']');
+    let nums: Vec<i32> = numbers_str
+        .split(',')
+        .filter_map(|s| s.parse::<i32>().ok())
+        .collect();
+    Complex(nums[0], nums[1])
+}
+
+fn part1() -> Complex {
+    let a = get_a(1);
     let r = cycle(a, Complex(0, 0));
     let r = cycle(a, r);
     cycle(a, r)
 }
 
 fn main() {
-    let a = Complex(143, 53);
-    let r = solve(a);
+    let r = part1();
 
     println!("{}", r);
 }
