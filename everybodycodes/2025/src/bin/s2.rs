@@ -2,7 +2,7 @@ use everybodycodes::util::file;
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, Div, Mul};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 struct Complex(i32, i32);
 
 impl Display for Complex {
@@ -62,8 +62,19 @@ fn part1() -> Complex {
     cycle(a, r)
 }
 
-fn main() {
-    let r = part1();
+fn part2() {
+    let a = get_a(2);
+    let op = a + Complex(1000,1000);
 
-    println!("{}", r);
+    for x in 0..10 {
+        for y in 0..1 {
+            let g = a + Complex(x * 101, y * 101);
+            dbg!(g);
+        }
+    }
+}
+
+fn main() {
+    println!("Part 1: {}", part1());
+    part2();
 }
