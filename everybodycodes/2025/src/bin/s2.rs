@@ -76,7 +76,7 @@ fn engrave(point: Complex) -> bool {
     true
 }
 
-fn part2() {
+fn part2() -> i64 {
     let a = get_a(2);
     let mut sum = 0;
     for x in 0..=100 {
@@ -88,14 +88,10 @@ fn part2() {
             }
         }
     }
-
-    dbg!(sum);
-
-    // let x = Complex(35630, -64880);
-    // dbg!(engrave(x));
+    sum
 }
 
 fn main() {
     println!("Part 1: {}", part1());
-    part2();
+    println!("Part 2: {}", part2());
 }
