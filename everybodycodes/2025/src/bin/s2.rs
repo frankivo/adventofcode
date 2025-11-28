@@ -65,11 +65,12 @@ fn part1() -> Complex {
 fn part2() {
     let a = get_a(2);
     let op = a + Complex(1000,1000);
+    dbg!(&op);
 
-    for x in 0..10 {
-        for y in 0..1 {
-            let g = a + Complex(x * 101, y * 101);
-            dbg!(g);
+    for x in 0..=100 {
+        for y in 0..=100 {
+            let g = a + Complex(x * 10, y * 10);
+            println!("{}", g);
         }
     }
 }
