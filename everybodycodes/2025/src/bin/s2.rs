@@ -63,12 +63,15 @@ fn part1() -> Complex {
 }
 
 fn engrave(point: Complex) -> bool {
+    let mut check = Complex(0, 0);
     for _ in 0..100 {
-        let point = point * point;
-        let point = point / Complex(100_000, 100_000);
-        if point.0.abs() > 1_000_000 {
+        check = check * check;
+        check = check / Complex(100_000, 100_000);
+        check = check + point;
+        if check.0.abs() > 1_000_000 || check.1.abs() > 1_000_000 {
             return false;
         }
+        // dbg!(check);
     }
     true
 }
@@ -87,6 +90,9 @@ fn part2() {
     }
 
     dbg!(sum);
+
+    // let x = Complex(35630, -64880);
+    // dbg!(engrave(x));
 }
 
 fn main() {
