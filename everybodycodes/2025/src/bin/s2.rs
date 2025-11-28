@@ -3,7 +3,7 @@ use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, Div, Mul};
 
 #[derive(Copy, Clone, Debug)]
-struct Complex(i32, i32);
+struct Complex(i64, i64);
 
 impl Display for Complex {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
@@ -48,9 +48,9 @@ fn cycle(a: Complex, r: Complex) -> Complex {
 fn get_a(part: i8) -> Complex {
     let data = file::input(2, part).lines().collect::<Vec<_>>()[0].to_string();
     let numbers_str = data.trim_start_matches("A=[").trim_end_matches(']');
-    let nums: Vec<i32> = numbers_str
+    let nums: Vec<i64> = numbers_str
         .split(',')
-        .filter_map(|s| s.parse::<i32>().ok())
+        .filter_map(|s| s.parse::<i64>().ok())
         .collect();
     Complex(nums[0], nums[1])
 }
@@ -62,17 +62,31 @@ fn part1() -> Complex {
     cycle(a, r)
 }
 
+fn engrave(point: Complex) -> bool {
+    for _ in 0..100 {
+        let point = point * point;
+        let point = point / Complex(100_000, 100_000);
+        if point.0.abs() > 1_000_000 {
+            return false;
+        }
+    }
+    true
+}
+
 fn part2() {
     let a = get_a(2);
-    let op = a + Complex(1000,1000);
-    dbg!(&op);
-
+    let mut sum = 0;
     for x in 0..=100 {
         for y in 0..=100 {
             let g = a + Complex(x * 10, y * 10);
-            println!("{}", g);
+            let e = engrave(g);
+            if e {
+                sum += 1;
+            }
         }
     }
+
+    dbg!(sum);
 }
 
 fn main() {
