@@ -63,17 +63,12 @@ fn part1() -> Complex {
 }
 
 fn engrave(point: Complex) -> bool {
-    let mut check = Complex(0, 0);
-    for _ in 0..100 {
-        check = check * check;
-        check = check / Complex(100_000, 100_000);
-        check = check + point;
-        if check.0.abs() > 1_000_000 || check.1.abs() > 1_000_000 {
-            return false;
-        }
-        // dbg!(check);
-    }
-    true
+    (0..100)
+        .try_fold(Complex(0, 0), |current, _| {
+            let next = current * current / Complex(100_000, 100_000) + point;
+            (next.0.abs() <= 1_000_000 && next.1.abs() <= 1_000_000).then_some(next)
+        })
+        .is_some()
 }
 
 fn part2() -> i64 {
