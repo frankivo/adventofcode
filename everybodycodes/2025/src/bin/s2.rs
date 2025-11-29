@@ -62,7 +62,7 @@ fn part1() -> Complex {
     cycle(a, r)
 }
 
-fn engrave(point: Complex) -> bool {
+fn engrave_point(point: Complex) -> bool {
     (0..100)
         .try_fold(Complex(0, 0), |current, _| {
             let next = current * current / Complex(100_000, 100_000) + point;
@@ -71,12 +71,14 @@ fn engrave(point: Complex) -> bool {
         .is_some()
 }
 
-fn part2() -> i64 {
-    let a = get_a(2);
-    (0..=100).fold(0, |sum_x, x| {
-        let sum_y = (0..=100).fold(0, |sum_y, y| {
-            let g = a + Complex(x * 10, y * 10);
-            sum_y + engrave(g) as i64
+fn engrave(part: i8) -> i64 {
+    let a = get_a(part);
+    let (steps, precision) = if part == 2 { (100, 10) } else { (1000, 1) };
+
+    (0..=steps).fold(0, |sum_x, x| {
+        let sum_y = (0..=steps).fold(0, |sum_y, y| {
+            let g = a + Complex(x * precision, y * precision);
+            sum_y + engrave_point(g) as i64
         });
         sum_x + sum_y
     })
@@ -84,5 +86,6 @@ fn part2() -> i64 {
 
 fn main() {
     println!("Part 1: {}", part1());
-    println!("Part 2: {}", part2());
+    println!("Part 2: {}", engrave(2));
+    println!("Part 3: {}", engrave(3));
 }
