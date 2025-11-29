@@ -1,8 +1,9 @@
 use everybodycodes::util::file;
-use std::collections::{BTreeSet, HashSet};
+use std::collections::BTreeSet;
 
-fn part1() -> i16 {
-    let crates: HashSet<i16> = file::input(3, 1)
+
+fn solve(part: i8) -> i16 {
+    let crates: BTreeSet<i16> = file::input(3, part)
         .lines()
         .next()
         .unwrap()
@@ -10,26 +11,19 @@ fn part1() -> i16 {
         .filter_map(|s| s.parse().ok())
         .collect();
 
-    crates.iter().sum()
-}
+    let crates: Vec<i16> = crates.into_iter().collect();
 
-fn part2() -> i16 {
-    let crates: BTreeSet<i16> = file::input(3, 2)
-        .lines()
-        .next()
-        .unwrap()
-        .split(',')
-        .filter_map(|s| s.parse().ok())
-        .collect();
-
-    let crates : Vec<i16> = crates.into_iter().collect();
-    crates[0..20].iter().sum()
+    if (part == 1) {
+        crates.iter().sum()
+    } else {
+        crates[0..20].iter().sum()
+    }
 }
 
 fn main() {
-    println!(
-        "What is the largest possible set of crates that can be formed from a given list? {}",
-        part1()
-    );
-    println!("Pack the mushroom into exactly 20 crates. What is the smallest possible set of the crates that can be used for this purpose? {}", part2());
+    let part1 = solve(1);
+    let part2 = solve(2);
+
+    println!("Largest possible set of crates: {}", part1);
+    println!("Smallest possible set of crates: {}", part2);
 }
