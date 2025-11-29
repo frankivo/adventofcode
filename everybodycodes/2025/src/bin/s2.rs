@@ -73,17 +73,13 @@ fn engrave(point: Complex) -> bool {
 
 fn part2() -> i64 {
     let a = get_a(2);
-    let mut sum = 0;
-    for x in 0..=100 {
-        for y in 0..=100 {
+    (0..=100).fold(0, |sum_x, x| {
+        let sum_y = (0..=100).fold(0, |sum_y, y| {
             let g = a + Complex(x * 10, y * 10);
-            let e = engrave(g);
-            if e {
-                sum += 1;
-            }
-        }
-    }
-    sum
+            sum_y + engrave(g) as i64
+        });
+        sum_x + sum_y
+    })
 }
 
 fn main() {
