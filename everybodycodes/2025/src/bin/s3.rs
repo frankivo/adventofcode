@@ -22,8 +22,8 @@ fn part2() -> i16 {
         .filter_map(|s| s.parse().ok())
         .collect();
 
-    dbg!(crates);
-    0
+    let crates : Vec<i16> = crates.into_iter().collect();
+    crates[0..20].iter().sum()
 }
 
 fn main() {
