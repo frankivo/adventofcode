@@ -28,24 +28,24 @@ fn part3() -> i16 {
         .filter_map(|s| s.parse().ok())
         .collect();
     crates.sort();
-    crates.reverse(); // Wrong I think
 
     let mut sets = 0;
-    let mut cur =usize::MAX ;
 
-    while crates.len() > 0 {
+    while !crates.is_empty() {
+        let mut cur = 0;
         sets += 1;
-        for (i,c) in crates.clone().into_iter().enumerate() {
-            dbg!( i, c);
-            // if c < cur {
-            //     cur = c;
-                crates.remove(i as usize) ;
-            // }
+
+        let mut i = 0;
+        while i < crates.len() {
+            if crates[i] > cur {
+                cur = crates[i];
+                crates.remove(i);
+            } else {
+                i += 1;
+            }
         }
-        break;
     }
 
-    // dbg!(crates);
     sets
 }
 
