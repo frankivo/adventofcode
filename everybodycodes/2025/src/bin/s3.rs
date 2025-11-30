@@ -1,4 +1,5 @@
 use everybodycodes::util::file;
+use itertools::Itertools;
 use std::collections::BTreeSet;
 
 fn solve(part: i8) -> i16 {
@@ -20,33 +21,17 @@ fn solve(part: i8) -> i16 {
 }
 
 fn part3() -> i16 {
-    let mut crates: Vec<i16> = file::input(3, 3)
+    file::input(3, 3)
         .lines()
         .next()
         .unwrap()
         .split(',')
-        .filter_map(|s| s.parse().ok())
-        .collect();
-    crates.sort();
-
-    let mut sets = 0;
-
-    while !crates.is_empty() {
-        let mut cur = 0;
-        sets += 1;
-
-        let mut i = 0;
-        while i < crates.len() {
-            if crates[i] > cur {
-                cur = crates[i];
-                crates.remove(i);
-            } else {
-                i += 1;
-            }
-        }
-    }
-
-    sets
+        .filter_map(|s| s.parse::<i16>().ok())
+        .counts()
+        .values()
+        .max()
+        .copied()
+        .unwrap() as i16
 }
 
 fn main() {
