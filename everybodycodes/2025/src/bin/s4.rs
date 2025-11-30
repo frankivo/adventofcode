@@ -6,15 +6,12 @@ fn main() {
         .filter_map(|s| s.parse().ok())
         .collect();
 
-    let mut mul = 1.0;
-
-    for (i, _) in gears.iter().enumerate() {
-        dbg!(mul);
+    let last_mul = gears.iter().enumerate().fold(1.0, |mul, (i, _)| {
         if i > 0 {
-            mul = (gears[i-1] / gears[i]) * mul;
-
+            (gears[i - 1] / gears[i]) * mul
+        } else {
+            mul
         }
-    }
-    dbg!((mul * 2025.0) as i16);
-
+    });
+    dbg!((last_mul * 2025.0) as i16);
 }
