@@ -30,9 +30,8 @@ fn part2() -> i16 {
     let (_, zeroes) = instructions().iter().fold((50, 0), |(pos, zeroes), instr| {
         let next = pos + instr;
         let clamped = ((next % 100) + 100) % 100;
-
-        let tmp = pos > 0 && (next <= 0 || next >= 99);
-        (clamped, if tmp { zeroes + 1 } else { zeroes })
+        let wraps = next.div_euclid(100);
+        (clamped, zeroes + wraps.abs())
     });
 
     zeroes
