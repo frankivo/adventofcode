@@ -12,16 +12,13 @@ fn part1() -> i16 {
     (multiplier * 2025.0) as i16
 }
 
-fn part2() -> i128 {
-    let multiplier : f64 = file::input(4, 2)
+fn part2() -> i64 {
+    let gears: Vec<f64> = file::input(4, 2)
         .lines()
         .filter_map(|s| s.parse().ok())
         .rev()
-        .collect::<Vec<f64>>()
-        .windows(2)
-        .map(|w| w[0] / w[1])
-        .product();
-    (multiplier * 10_000_000_000_000.0) as i128
+        .collect();
+    (10000000000000.0 * gears[0] / gears[gears.len()-1]).ceil() as i64
 }
 
 fn main() {
