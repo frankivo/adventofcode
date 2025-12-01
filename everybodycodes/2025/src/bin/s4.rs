@@ -1,7 +1,7 @@
 use everybodycodes::util::file;
 
-fn main() {
-    let last_mul: f32 = file::input(4, 1)
+fn part1() -> i16 {
+    let multiplier: f32 = file::input(4, 1)
         .lines()
         .filter_map(|s| s.parse().ok())
         .collect::<Vec<f32>>()
@@ -9,5 +9,25 @@ fn main() {
         .map(|w| w[0] / w[1])
         .product();
 
-    dbg!((last_mul * 2025.0) as i16);
+    (multiplier * 2025.0) as i16
+}
+
+fn part2() -> i64 {
+    let gears = file::input(4, 2)
+        .lines()
+        .filter_map(|s| s.parse().ok())
+        .rev()
+        .collect::<Vec<f64>>();
+
+    let x: f64 = gears
+        .windows(2)
+        .map(|w| w[0] / w[1])
+        .product();
+    dbg!(x);
+    (x * 10000000000000.0) as i64
+}
+
+fn main() {
+    dbg!(part1());
+    dbg!(part2());
 }
