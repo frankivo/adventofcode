@@ -21,17 +21,25 @@ fn part2() -> i64 {
     (10000000000000.0 * gears[0] / gears[gears.len() - 1]).ceil() as i64
 }
 
-fn part3() -> i16 {
+fn part3() -> i64 {
     let data = file::input(4, 3);
-    let lines: Vec<_> = data.lines().collect();
+    let gears: Vec<f64> = data
+        .lines()
+        .map(|l| {
+            let tmp = match l.split_once("|") {
+                Some(v) => {
+                    let (x, y) = v;
+                    y.parse::<f64>().unwrap() / x.parse::<f64>().unwrap()
+                }
+                None => l.parse::<f64>().unwrap(),
+            };
+            tmp
+        })
+        .collect();
 
-    let (first, last) = (lines[0], lines[lines.len() - 1]);
-    dbg!(first, last);
-
-    for l in lines {
-        dbg!(l);
-    }
-    0
+    let inner_ratio: f64 = gears[1..gears.len() - 1].into_iter().product();
+    let outer_ratio = *gears.first().unwrap() / *gears.last().unwrap();
+    (100 as f64 * inner_ratio * outer_ratio) as i64
 }
 
 fn main() {
