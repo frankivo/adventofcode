@@ -26,14 +26,13 @@ fn part3() -> i64 {
     let gears: Vec<f64> = data
         .lines()
         .map(|l| {
-            let tmp = match l.split_once("|") {
+            match l.split_once("|") {
                 Some(v) => {
                     let (x, y) = v;
                     y.parse::<f64>().unwrap() / x.parse::<f64>().unwrap()
                 }
                 None => l.parse::<f64>().unwrap(),
-            };
-            tmp
+            }
         })
         .collect();
 
