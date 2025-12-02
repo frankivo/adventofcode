@@ -30,7 +30,6 @@ fn part3() -> i64 {
                 || l.parse::<f64>().unwrap(),
                 | (x,y)| y.parse::<f64>().unwrap() / x.parse::<f64>().unwrap()
             )
-
         })
         .collect();
 
