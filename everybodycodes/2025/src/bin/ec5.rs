@@ -8,7 +8,7 @@ struct Row {
 
 struct Sword {
     id: i16,
-    strength: Vec<Row>,
+    strength: i64,
 }
 
 impl Row {
@@ -39,16 +39,25 @@ fn build_sword(input: &str) -> Sword {
         }
     }
 
-    Sword{id: id, strength: sword}
+    let strength = sword.iter().map(|r| r.base.to_string()).collect::<Vec<_>>().join("").parse::<i64>().unwrap();
+    Sword{id: id, strength: strength}
 }
 
-fn part1() -> String {
+fn part1() -> i64 {
     let binding = file::input(5, 1);
     let sword = build_sword(&binding);
+    sword.strength
+}
 
-    sword.strength.into_iter().map(|r| r.base.to_string()).collect::<Vec<_>>().join("")
+fn part2() -> i64 {
+    let binding = file::input(5, 2);
+    let swords : Vec<Sword> = binding.lines().into_iter().map(build_sword).collect();
+    let min = swords.iter().min_by_key(|r|r.strength).unwrap();
+    let max = swords.iter().max_by_key(|r|r.strength).unwrap();
+    max.strength - min.strength
 }
 
 fn main() {
     dbg!(part1());
+    dbg!(part2());
 }
