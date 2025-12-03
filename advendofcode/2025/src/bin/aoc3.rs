@@ -14,7 +14,16 @@ fn part1() -> u32 {
 }
 
 fn part2() -> u32 {
-    0
+    file::input(3, 1)
+        .lines()
+        .map(|bank| {
+            let batteries: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
+            for i in 0..12 {
+                dbg!(i);
+            }
+            1
+        })
+        .sum()
 }
 
 fn main() {
