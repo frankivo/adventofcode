@@ -22,16 +22,15 @@ fn part2() -> u64 {
     file::input(3, 1)
         .lines()
         .map(|bank| {
-            let mut batteries: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
-            let mut jolt = String::with_capacity(12);
-
-            for i in (0..12).rev() {
-                let right = batteries.len() - i;
-                let (bat, pos) = find_max(&batteries[..right]);
-                jolt.push(char::from_digit(bat, 10).unwrap());
-                batteries = batteries[pos + 1..].to_vec();
-            }
-            jolt.parse::<u64>().unwrap()
+            let batteries: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
+            (0..12)
+                .rev()
+                .fold((0usize, 0u64), |(left, joltage), i| {
+                    let right = batteries.len() - i;
+                    let (bat, pos) = find_max(&batteries[left..right]);
+                    (left + pos + 1, (joltage * 10 + bat as u64))
+                })
+                .1
         })
         .sum()
 }
