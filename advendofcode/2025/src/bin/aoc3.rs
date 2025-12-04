@@ -23,16 +23,14 @@ fn part2() -> u64 {
         .lines()
         .map(|bank| {
             let mut batteries: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
-            let mut jolt= String::new();
+            let mut jolt = String::new();
 
-            for i in (1..=12).rev() {
-                // let right: usize = batteries.len() - (batteries.len() - 12);
-                let bat = find_max(&batteries);
+            for i in (0..12).rev() {
+                let right: usize = batteries.len() - i;
+                let bat = find_max(&batteries[..right]);
                 jolt += &(bat.0).to_string();
                 batteries = batteries[bat.1 + 1..].to_vec();
-                dbg!(&jolt, &batteries);
             }
-            dbg!(&jolt);
             jolt.parse::<u64>().unwrap()
         })
         .sum()
