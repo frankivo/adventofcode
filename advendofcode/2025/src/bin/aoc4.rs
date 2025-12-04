@@ -1,7 +1,9 @@
 use aoc::util::file;
 
+use std::collections::HashSet;
+
 type Point = (i16, i16);
-type Map = Vec<Point>;
+type Map = HashSet<Point>;
 
 fn build_map(raw: &str) -> Map {
     raw.lines()
@@ -23,7 +25,7 @@ fn build_map(raw: &str) -> Map {
         .collect()
 }
 fn adjacent(map: &Map, point: Point) -> Map {
-    let mut adj: Map = Vec::new();
+    let mut adj: Map = HashSet::new();
     let (y, x) = point;
     for yy in -1..=1 {
         for xx in -1..=1 {
@@ -31,7 +33,7 @@ fn adjacent(map: &Map, point: Point) -> Map {
                 let y = y + yy;
                 let x = x + xx;
                 if map.contains(&(y, x)) {
-                    adj.push((y, x));
+                    adj.insert((y, x));
                 }
             }
         }
