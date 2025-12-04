@@ -11,9 +11,9 @@ fn part1() -> u32 {
         .lines()
         .map(|bank| {
             let batteries: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
-            let bat1 = find_max(&batteries[..batteries.len() - 1]);
-            let bat2 = find_max(&batteries[bat1.1 + 1..]);
-            bat1.0 * 10 + bat2.0
+            let (bat1, pos) = find_max(&batteries[..batteries.len() - 1]);
+            let (bat2, _) = find_max(&batteries[pos + 1..]);
+            bat1 * 10 + bat2
         })
         .sum()
 }
