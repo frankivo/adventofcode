@@ -41,25 +41,13 @@ fn adjacent(map: &Vec<(i16, i16)>, point: (i16, i16)) -> Vec<(i16, i16)> {
 fn part1() -> i16 {
     let binding = file::input(4, 1);
     let map: Vec<(i16, i16)> = build_map(&binding);
-
     let size: i16 = binding.lines().count() as i16;
 
-    for a in adjacent(&map, (0, 2)) {
-        dbg!(a);
-    }
-
-    let mut sum = 0;
-    for y in 0..size {
-        for x in 0..size {
-            if map.contains(&(y, x)) {
-                let tmp = adjacent(&map, (y, x)).len();
-                if tmp < 4 {
-                    sum += 1;
-                }
-            }
-        }
-    }
-    sum
+    (0..size).fold(0, |sum, y| {
+        sum + (0..size).fold(0, |sum, x| {
+            sum + (map.contains(&(y, x)) && adjacent(&map, (y, x)).len() < 4) as i16
+        })
+    })
 }
 
 fn main() {
