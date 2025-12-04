@@ -44,15 +44,16 @@ fn remove(map: &Map, size: i16) -> Map {
 }
 
 fn part2(map: &Map, size: i16) -> i16 {
-    let items = map.len();
-    let mut removed = usize::MAX;
+    let papers = map.len();
     let mut map = map.clone();
-    while removed > 0 {
-        let items = map.len();
+
+    loop {
+        let prev = map.len();
         map = remove(&map, size);
-        removed = items - map.len();
+        if map.len() == prev {
+            return (papers - prev) as i16;
+        }
     }
-    (items - map.len()) as i16
 }
 
 fn main() {
