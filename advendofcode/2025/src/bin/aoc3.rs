@@ -11,22 +11,29 @@ fn part1() -> u32 {
         .lines()
         .map(|bank| {
             let batteries: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
-            let bat1 = find_max(&batteries[..batteries.len() -1]);
+            let bat1 = find_max(&batteries[..batteries.len() - 1]);
             let bat2 = find_max(&batteries[bat1.1 + 1..]);
             bat1.0 * 10 + bat2.0
         })
         .sum()
 }
 
-fn part2() -> u32 {
+fn part2() -> u64 {
     file::input(3, 1)
         .lines()
         .map(|bank| {
-            // let batteries: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
-            // for i in 0..12 {
-            //     dbg!(1);
-            // }
-            1
+            let mut batteries: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
+            let mut jolt= String::new();
+
+            for i in (1..=12).rev() {
+                // let right: usize = batteries.len() - (batteries.len() - 12);
+                let bat = find_max(&batteries);
+                jolt += &(bat.0).to_string();
+                batteries = batteries[bat.1 + 1..].to_vec();
+                dbg!(&jolt, &batteries);
+            }
+            dbg!(&jolt);
+            jolt.parse::<u64>().unwrap()
         })
         .sum()
 }
