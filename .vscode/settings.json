@@ -1,5 +1,5 @@
 {
-    "editor.renderWhitespace": "all",
+    "editor.renderWhitespace": "none",
 
     "sqlfluff.linter.run": "onSave",
     "sqlfluff.executablePath": ".venv/Scripts/sqlfluff.exe",

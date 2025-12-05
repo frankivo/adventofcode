@@ -26,7 +26,21 @@ fn part1(fresh: &HashSet<(u64, u64)>, ingredients: &str) -> usize {
 }
 
 fn part2(fresh: &HashSet<(u64, u64)>) -> u64 {
-    fresh.iter().map(|f| f.1 - f.0).sum()
+    let mut ranges: Vec<(u64, u64)> = fresh.iter().copied().collect();
+    ranges.sort_by_key(|r| r.0);
+    let mut merged: Vec<(u64, u64)> = Vec::new();
+
+    for (start, end) in ranges {
+        if let Some(last) = merged.last_mut() {
+            if start <= last.1 + 1 {
+                last.1 = last.1.max(end);
+                continue;
+            }
+        }
+        merged.push((start, end));
+    }
+
+    merged.iter().map(|(min, max)| max - min + 1).sum()
 }
 
 fn main() {
