@@ -1,7 +1,7 @@
 use aoc::util::file;
 use std::collections::HashSet;
 
-fn main() {
+fn part1() -> usize {
     let binding = file::input(5, 1);
     let (ranges, ingredients) = binding.split_once("\r\n\r\n").unwrap();
 
@@ -23,5 +23,9 @@ fn main() {
         .into_iter()
         .filter(|i| fresh.iter().any(|f| i >= &f.0 && i <= &f.1))
         .collect();
-    dbg!(count.len());
+    count.len()
+}
+
+fn main() {
+    dbg!(part1());
 }
