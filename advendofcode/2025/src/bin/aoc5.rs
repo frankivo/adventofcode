@@ -5,13 +5,12 @@ fn main() {
     let binding = file::input(5, 1);
     let (ranges, ingredients) = binding.split_once("\r\n\r\n").unwrap();
 
-    let fresh: HashSet<u64> = ranges
+    let fresh: HashSet<(u64, u64)> = ranges
         .lines()
         .into_iter()
-        .flat_map(|r| {
-            dbg!(&r);
+        .map(|r| {
             let (start, end) = r.split_once("-").unwrap();
-            start.parse().unwrap()..=end.parse().unwrap()
+            (start.parse().unwrap(), end.parse().unwrap())
         })
         .collect();
 
@@ -19,9 +18,10 @@ fn main() {
         .lines()
         .map(|i| i.parse::<u64>().unwrap())
         .collect();
+
     let count: HashSet<_> = ingredients
         .into_iter()
-        .filter(|i| fresh.contains(&i))
+        .filter(|i| fresh.iter().any(|f| i >= &f.0 && i <= &f.1))
         .collect();
     dbg!(count.len());
 }
