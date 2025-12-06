@@ -26,15 +26,12 @@ fn part1() -> u64 {
         .map(|op| op.as_str().chars().next().unwrap())
         .collect();
 
-    let mut sums : Vec<u64> = numbers.first().unwrap().to_vec();
-    dbg!(&sums);
+    let mut sums: Vec<u64> = numbers.first().unwrap().to_vec();
     for num in &numbers[1..] {
-        for (i,n) in num.iter().enumerate() {
-            let op = ops[i];
-            dbg!(op);
-            match op {
+        for (i, n) in num.iter().enumerate() {
+            match ops[i] {
                 '+' => sums[i] = sums[i] + n,
-                '*' =>sums[i] = sums[i] * n,
+                '*' => sums[i] = sums[i] * n,
                 _ => sums[i] = 0,
             }
         }
