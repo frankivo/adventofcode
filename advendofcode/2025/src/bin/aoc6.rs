@@ -43,12 +43,12 @@ fn part2() -> i64 {
         .rev()
         .collect();
 
-    let mut sum = 0u32;
+    let mut sum = 0u64;
     let mut op = 'a';
 
     let len = lines.iter().map(|l| l.len()).max().unwrap();
     for i in 0..len {
-        let mut line_sum = 0u32;
+        let mut line_sum = 0u64;
 
         let fl = lines.first().unwrap();
         let c = fl.chars().nth(i).unwrap_or(' ');
@@ -56,21 +56,34 @@ fn part2() -> i64 {
             op = c;
         }
 
-        for line in &lines[1..] {
-            let n = line.chars().nth(i).unwrap_or(' ').to_digit(10);
-            if n.is_some() {
+        let num: Vec<char> = lines[1..]
+            .iter()
+            .filter_map(|l| {
+                let c = l.chars().nth(i).unwrap_or(' ');
+                (c != ' ').then_some(c)
+            })
+            .rev()
+            .collect();
+        let num: String = num.into_iter().collect();
+        let num = num.parse::<u64>();
+
+        match num {
+            Ok(num) => {
                 if line_sum == 0 {
-                    line_sum += n.unwrap();
+                    line_sum = num
                 } else {
                     match op {
-                        '+' => line_sum = line_sum + n.unwrap(),
-                        '*' => line_sum = line_sum * n.unwrap(),
-                        _ => line_sum += 1,
+                        '+' => line_sum = line_sum +num,
+                        '*' => line_sum = line_sum * num,
+                        _ => line_sum = line_sum + 0,
                     }
                 }
             }
+            Err(e) => line_sum = line_sum + 0,
         }
+
         dbg!(line_sum);
+
         sum += line_sum;
     }
 
