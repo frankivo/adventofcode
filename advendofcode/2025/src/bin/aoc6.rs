@@ -1,5 +1,4 @@
 use aoc::util::file;
-use regex::Regex;
 
 fn part1() -> u64 {
     let binding = file::input(6, 1);
@@ -8,22 +7,18 @@ fn part1() -> u64 {
     let numbers = &lines[0..lines.len() - 1];
     let ops = lines.last().unwrap();
 
-    let r_num = Regex::new(r"[\d]+").unwrap();
-    let r_char = Regex::new(r"[\S]").unwrap();
-
     let numbers: Vec<Vec<u64>> = numbers
         .iter()
         .map(|line| {
-            r_num
-                .find_iter(line)
-                .map(|r| r.as_str().parse().unwrap())
+            line.split_whitespace()
+                .map(|n| n.parse().unwrap())
                 .collect()
         })
         .collect();
 
-    let ops: Vec<char> = r_char
-        .find_iter(ops)
-        .map(|op| op.as_str().chars().next().unwrap())
+    let ops: Vec<char> = ops
+        .split_whitespace()
+        .map(|op| op.chars().next().unwrap())
         .collect();
 
     let mut sums: Vec<u64> = numbers.first().unwrap().to_vec();
