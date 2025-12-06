@@ -11,7 +11,7 @@ fn part1() -> u64 {
     let r_num = Regex::new(r"[\d]+").unwrap();
     let r_char = Regex::new(r"[\S]").unwrap();
 
-    let numbers: Vec<Vec<i16>> = numbers
+    let numbers: Vec<Vec<u64>> = numbers
         .iter()
         .map(|line| {
             r_num
@@ -21,10 +21,25 @@ fn part1() -> u64 {
         })
         .collect();
 
-    let ops : Vec<char> = r_char.find_iter(ops).map(|op| op.as_str().chars().next().unwrap()).collect();
+    let ops: Vec<char> = r_char
+        .find_iter(ops)
+        .map(|op| op.as_str().chars().next().unwrap())
+        .collect();
 
-
-    0
+    let mut sums : Vec<u64> = numbers.first().unwrap().to_vec();
+    dbg!(&sums);
+    for num in &numbers[1..] {
+        for (i,n) in num.iter().enumerate() {
+            let op = ops[i];
+            dbg!(op);
+            match op {
+                '+' => sums[i] = sums[i] + n,
+                '*' =>sums[i] = sums[i] * n,
+                _ => sums[i] = 0,
+            }
+        }
+    }
+    sums.iter().sum()
 }
 
 fn main() {
