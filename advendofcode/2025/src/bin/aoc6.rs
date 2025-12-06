@@ -6,9 +6,10 @@ fn part1() -> u64 {
 
     let lines: Vec<_> = binding.lines().collect();
     let numbers = &lines[0..lines.len() - 1];
-    dbg!(numbers);
+    let ops = lines.last().unwrap();
 
     let r_num = Regex::new(r"[\d]+").unwrap();
+    let r_char = Regex::new(r"[\S]").unwrap();
 
     let numbers: Vec<Vec<i16>> = numbers
         .iter()
@@ -19,9 +20,10 @@ fn part1() -> u64 {
                 .collect()
         })
         .collect();
-    dbg!(numbers);
 
-    dbg!(lines.last());
+    let ops : Vec<char> = r_char.find_iter(ops).map(|op| op.as_str().chars().next().unwrap()).collect();
+
+
     0
 }
 
