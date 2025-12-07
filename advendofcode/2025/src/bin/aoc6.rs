@@ -34,7 +34,7 @@ fn part1() -> u64 {
     sums.iter().sum()
 }
 
-fn part2() -> i64 {
+fn part2() -> u64 {
     let binding = file::input(6, 1);
     let lines: Vec<_> = binding
         .lines()
@@ -45,11 +45,10 @@ fn part2() -> i64 {
 
     let mut sum = 0u64;
     let mut op = 'a';
+    let mut op_sum = 0u64;
 
     let len = lines.iter().map(|l| l.len()).max().unwrap();
     for i in 0..len {
-        let mut line_sum = 0u64;
-
         let fl = lines.first().unwrap();
         let c = fl.chars().nth(i).unwrap_or(' ');
         if c != ' ' {
@@ -68,28 +67,26 @@ fn part2() -> i64 {
         let num = num.parse::<u64>();
 
         match num {
-            Ok(num) => {
-                if line_sum == 0 {
-                    line_sum = num
-                } else {
-                    match op {
-                        '+' => line_sum = line_sum +num,
-                        '*' => line_sum = line_sum * num,
-                        _ => line_sum = line_sum + 0,
+            Ok(num) => match op {
+                '+' => op_sum = op_sum + num,
+                '*' => {
+                    if op_sum == 0 {
+                        op_sum = op_sum + num;
                     }
-                }
-            }
-            Err(e) => line_sum = line_sum + 0,
+                    else {
+                        op_sum = op_sum* num;
+                    }
+                },
+                _ => op_sum = op_sum,
+            },
+            Err(_) => {
+                sum = sum + op_sum;
+                op_sum = 0;
+            },
         }
-
-        dbg!(line_sum);
-
-        sum += line_sum;
     }
 
-    dbg!(sum);
-
-    0
+    sum + op_sum
 }
 
 fn main() {
