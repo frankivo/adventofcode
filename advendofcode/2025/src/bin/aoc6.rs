@@ -36,53 +36,46 @@ fn part1() -> u64 {
 
 fn part2() -> u64 {
     let binding = file::input(6, 1);
-    let lines: Vec<_> = binding
-        .lines()
-        .collect::<Vec<_>>()
-        .into_iter()
-        .rev()
-        .collect();
+    let lines: Vec<Vec<char>> = binding.lines().map(|l| l.chars().collect()).rev().collect();
 
     let mut sum = 0u64;
-    let mut op = 'a';
+    let mut op = ' ';
     let mut op_sum = 0u64;
 
     let len = lines.iter().map(|l| l.len()).max().unwrap();
     for i in 0..len {
-        let fl = lines.first().unwrap();
-        let c = fl.chars().nth(i).unwrap_or(' ');
-        if c != ' ' {
-            op = c;
+        if let Some(&c) = lines[0].get(i) {
+            if c != ' ' {
+                op = c;
+            }
         }
 
-        let num: Vec<char> = lines[1..]
-            .iter()
-            .filter_map(|l| {
-                let c = l.chars().nth(i).unwrap_or(' ');
-                (c != ' ').then_some(c)
-            })
-            .rev()
-            .collect();
-        let num: String = num.into_iter().collect();
-        let num = num.parse::<u64>();
+        let mut num_str = String::with_capacity(len);
+        for l in &lines[1..] {
+            if let Some(&c) = l.get(i) {
+                if c != ' ' {
+                    num_str.push(c);
+                }
+            }
+        }
+        num_str = num_str.chars().rev().collect();
 
-        match num {
+        match num_str.parse::<u64>() {
             Ok(num) => match op {
                 '+' => op_sum = op_sum + num,
                 '*' => {
                     if op_sum == 0 {
                         op_sum = op_sum + num;
+                    } else {
+                        op_sum = op_sum * num;
                     }
-                    else {
-                        op_sum = op_sum* num;
-                    }
-                },
-                _ => op_sum = op_sum,
+                }
+                _ => {},
             },
             Err(_) => {
                 sum = sum + op_sum;
                 op_sum = 0;
-            },
+            }
         }
     }
 
