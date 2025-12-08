@@ -4,14 +4,13 @@ use std::collections::HashSet;
 fn part1() -> u16 {
     let binding = file::input(7, 1);
 
-    let start = binding
+    let start = HashSet::from([binding
         .lines()
         .next()
         .unwrap()
         .chars()
         .position(|c| c == 'S')
-        .unwrap();
-    dbg!(start);
+        .unwrap()]);
 
     let lines = binding
         .lines()
@@ -19,7 +18,7 @@ fn part1() -> u16 {
         .filter_map(|(i, l)| (i % 2 == 0).then_some(l));
 
     lines
-        .fold((HashSet::from([start]), 0), |(beams, split_count), line| {
+        .fold((start, 0), |(beams, split_count), line| {
             let splitters: Vec<_> = line
                 .char_indices()
                 .filter_map(|(i, c)| (c == '^').then_some(i))
