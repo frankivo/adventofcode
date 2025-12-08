@@ -18,27 +18,23 @@ fn part1() -> u16 {
         .enumerate()
         .filter_map(|(i, l)| (i % 2 == 0).then_some(l));
 
-    let count = lines.fold((HashSet::from([start]), 0), |(beams, count), line| {
-        let splitters: Vec<_> = line
-            .char_indices()
-            .filter_map(|(i, c)| (c == '^').then_some(i))
-            .collect();
-
-        let mut beams_active = beams.clone();
-        let mut tmp = 0;
-
-        for s in &splitters {
-            if beams_active.contains(&s) {
-                tmp += 1;
-                beams_active.insert(s - 1);
-                beams_active.insert(s + 1);
-                beams_active.remove(&s);
-            }
-        }
-        dbg!(count);
-        (beams_active, count + tmp)
-    });
-    count.1
+    lines
+        .fold((HashSet::from([start]), 0), |(beams, split_count), line| {
+            let splitters: Vec<_> = line
+                .char_indices()
+                .filter_map(|(i, c)| (c == '^').then_some(i))
+                .filter(|i| beams.contains(&i))
+                .collect();
+            let add: HashSet<_> = splitters.iter().flat_map(|&i| [i - 1, i + 1]).collect();
+            let beams: HashSet<_> = beams
+                .iter()
+                .filter(|b| !splitters.contains(b))
+                .chain(add.iter())
+                .copied()
+                .collect();
+            (beams, split_count + splitters.len() as u16)
+        })
+        .1
 }
 
 fn part2() -> u64 {
