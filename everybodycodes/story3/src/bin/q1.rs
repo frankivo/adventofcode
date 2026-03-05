@@ -1,4 +1,5 @@
 use everybodycodes::util::file;
+use itertools::Itertools;
 
 fn col2int(col: &str) -> u16 {
     let fixed: String = col
@@ -38,6 +39,44 @@ fn part2() -> u32 {
         .0
 }
 
+fn part3() -> u32 {
+    let binding = file::input(1, 3);
+    let groups = binding.lines().map(parse_line).map(|(id, r, g, b, s)| {
+        let shinyness = match s {
+            s if s <= 30 => Some("matte"),
+            s if s >= 33 => Some("shiny"),
+            _ => None,
+        };
+
+        let dominant = match (r, g, b) {
+            (r, g, b) if r > b && r > g => Some("red"),
+            (r, g, b) if g > r && g > b => Some("green"),
+            (r, g, b) if b > r && b > g => Some("blue"),
+            _ => None,
+        };
+
+        let group = match (dominant, shinyness) {
+            (Some(d), Some(s)) => format!("{}-{}", d, s),
+            _ => "---".to_owned(),
+        };
+
+        (id, group)
+    });
+
+    let biggest = groups
+        .clone()
+        .map(|(_, group)| group)
+        .counts()
+        .into_iter()
+        .max_by_key(|g| g.1)
+        .unwrap()
+        .0;
+
+    groups
+        .flat_map(|(id, g)| (g == *biggest).then_some(id))
+        .sum()
+}
+
 fn main() {
     println!(
         "What is the sum of the identifiers of the scales where green is the dominant colour? {}",
@@ -47,5 +86,10 @@ fn main() {
     println!(
         "What is the identifier of the darkest scale among the most shiny ones? {}",
         part2()
-    )
+    );
+
+    println!(
+        "What is the sum of the identifiers of the scales in the largest group? {}",
+        part3()
+    );
 }
