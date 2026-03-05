@@ -1,6 +1,6 @@
 use everybodycodes::util::file;
 
-fn col2bin(col: &str) -> u16 {
+fn col2int(col: &str) -> u16 {
     let fixed: String = col
         .chars()
         .map(|c| match c {
@@ -13,10 +13,10 @@ fn col2bin(col: &str) -> u16 {
 
 fn parse_line(line: &str) -> (u32, u16, u16, u16, u16) {
     let (id, colours) = line.split_once(":").unwrap();
-    let red = col2bin(&colours.get(0..6).unwrap());
-    let green = col2bin(&colours.get(7..13).unwrap());
-    let blue = col2bin(&colours.get(14..20).unwrap());
-    let shine = col2bin(&colours.get(21..).unwrap_or("0"));
+    let red = col2int(&colours.get(0..6).unwrap());
+    let green = col2int(&colours.get(7..13).unwrap());
+    let blue = col2int(&colours.get(14..20).unwrap());
+    let shine = col2int(&colours.get(21..).unwrap_or("0"));
     (id.parse().unwrap(), red, green, blue, shine)
 }
 
