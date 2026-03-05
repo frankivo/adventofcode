@@ -14,10 +14,10 @@ fn col2int(col: &str) -> u16 {
 
 fn parse_line(line: &str) -> (u32, u16, u16, u16, u16) {
     let (id, colours) = line.split_once(":").unwrap();
-    let red = col2int(&colours.get(0..6).unwrap());
-    let green = col2int(&colours.get(7..13).unwrap());
-    let blue = col2int(&colours.get(14..20).unwrap());
-    let shine = col2int(&colours.get(21..).unwrap_or("0"));
+    let red = col2int(&colours[0..6]);
+    let green = col2int(&colours[7..13]);
+    let blue = col2int(&colours[14..20]);
+    let shine = col2int(colours.get(21..).unwrap_or("0"));
     (id.parse().unwrap(), red, green, blue, shine)
 }
 
@@ -25,7 +25,7 @@ fn part1() -> u32 {
     file::input(1, 1)
         .lines()
         .map(parse_line)
-        .flat_map(|(id, r, g, b, _)| (g > r && g > b).then_some(id))
+        .filter_map(|(id, r, g, b, _)| (g > r && g > b).then_some(id))
         .sum()
 }
 
@@ -41,30 +41,34 @@ fn part2() -> u32 {
 
 fn part3() -> u32 {
     let binding = file::input(1, 3);
-    let groups = binding.lines().map(parse_line).map(|(id, r, g, b, s)| {
-        let shinyness = match s {
-            s if s <= 30 => Some("matte"),
-            s if s >= 33 => Some("shiny"),
-            _ => None,
-        };
+    let groups: Vec<_> = binding
+        .lines()
+        .map(parse_line)
+        .map(|(id, r, g, b, s)| {
+            let shinyness = match s {
+                s if s <= 30 => Some("matte"),
+                s if s >= 33 => Some("shiny"),
+                _ => None,
+            };
 
-        let dominant = match (r, g, b) {
-            (r, g, b) if r > b && r > g => Some("red"),
-            (r, g, b) if g > r && g > b => Some("green"),
-            (r, g, b) if b > r && b > g => Some("blue"),
-            _ => None,
-        };
+            let dominant = match (r, g, b) {
+                (r, g, b) if r > b && r > g => Some("red"),
+                (r, g, b) if g > r && g > b => Some("green"),
+                (r, g, b) if b > r && b > g => Some("blue"),
+                _ => None,
+            };
 
-        let group = match (dominant, shinyness) {
-            (Some(d), Some(s)) => format!("{}-{}", d, s),
-            _ => "---".to_owned(),
-        };
+            let group = match (dominant, shinyness) {
+                (Some(d), Some(s)) => format!("{}-{}", d, s),
+                _ => "---".to_owned(),
+            };
 
-        (id, group)
-    });
+            (id, group)
+        })
+        .collect();
 
     let biggest = groups
-        .clone()
+        .iter()
         .map(|(_, group)| group)
         .counts()
         .into_iter()
@@ -73,7 +77,8 @@ fn part3() -> u32 {
         .0;
 
     groups
-        .flat_map(|(id, g)| (g == *biggest).then_some(id))
+        .iter()
+        .filter_map(|(id, g)| (g == biggest).then_some(id))
         .sum()
 }
 
