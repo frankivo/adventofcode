@@ -1,27 +1,51 @@
 use everybodycodes::util::file;
 
-fn col2bin(col: &str) -> i8 {
+fn col2bin(col: &str) -> u16 {
     let fixed: String = col
         .chars()
         .map(|c| match c {
-            'G' | 'R' | 'B' => '1',
+            'G' | 'R' | 'B' | 'S' => '1',
             _ => '0',
         })
         .collect();
-    i8::from_str_radix(&fixed, 2).unwrap()
+    u16::from_str_radix(&fixed, 2).unwrap()
 }
 
-fn part1() -> u16 {
-    file::input(1, 1).lines().flat_map(|line| {
-        let id: u16 = line[..4].parse().unwrap();
-        let red = col2bin(&line[5..11]);
-        let green = col2bin(&line[12..18]);
-        let blue = col2bin(&line[19..]);
+fn parse_line(line: &str) -> (u32, u16, u16, u16, u16) {
+    let (id, colours) = line.split_once(":").unwrap();
+    let red = col2bin(&colours.get(0..6).unwrap());
+    let green = col2bin(&colours.get(7..13).unwrap());
+    let blue = col2bin(&colours.get(14..20).unwrap());
+    let shine = col2bin(&colours.get(21..).unwrap_or("0"));
+    (id.parse().unwrap(), red, green, blue, shine)
+}
 
-        (green > red && green > blue).then_some(id)
-    }).sum()
+fn part1() -> u32 {
+    file::input(1, 1)
+        .lines()
+        .map(parse_line)
+        .flat_map(|(id, r, g, b, _)| (g > r && g > b).then_some(id))
+        .sum()
+}
+
+fn part2() -> u32 {
+    file::input(1, 2)
+        .lines()
+        .map(parse_line)
+        .map(|(id, r, g, b, s)| (id, r + g + b, s))
+        .max_by(|a, b| a.2.cmp(&b.2).then(b.1.cmp(&a.1)))
+        .unwrap()
+        .0
 }
 
 fn main() {
-    dbg!(part1());
+    println!(
+        "What is the sum of the identifiers of the scales where green is the dominant colour? {}",
+        part1()
+    );
+
+    println!(
+        "What is the identifier of the darkest scale among the most shiny ones? {}",
+        part2()
+    )
 }
