@@ -21,7 +21,6 @@ fn main() {
         let red = col2bin(&line[5..11]);
         let green = col2bin(&line[12..18]);
         let blue = col2bin(&line[19..]);
-        dbg!(id, red, green, blue);
 
         if green > red && green > blue {
             sum += id;
