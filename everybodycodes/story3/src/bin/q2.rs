@@ -1,19 +1,20 @@
 use everybodycodes::util::file;
 
-fn part1() -> u32 {
-    let binding = file::input(2, 1);
-
-    let start: Vec<_> = binding
+fn find_pos(needle: char) -> Option<(usize, usize)> {
+    file::input(2, 1)
         .lines()
         .enumerate()
         .flat_map(|(y, line)| {
-            let source = line.chars().position(|c| c == '@').map(|x| ('@', y, x));
-            let bone = line.chars().position(|c| c == '#').map(|x| ('#', y, x));
-            vec![source, bone].into_iter().flatten()
+            line.chars()
+                .position(|c| c == needle)
+                .map(|x| (y, x))
         })
-        .collect();
+        .nth(0)
+}
 
-    dbg!(start);
+fn part1() -> u32 {
+    let (source, bone) = (find_pos('@'), find_pos('#'));
+    dbg!(source, bone);
 
     0
 }
