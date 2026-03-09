@@ -23,7 +23,13 @@ fn part1() -> usize {
                 _ => unreachable!(),
             };
 
-            let mut map = (*map).clone();
+            let pos = if !map.contains(&tmp_pos) {
+                tmp_pos
+            } else {
+                *pos
+            };
+
+            let map = map.iter().cloned().chain(std::iter::once(pos)).collect();
 
             let direction = match direction {
                 'U' => 'R',
@@ -31,15 +37,6 @@ fn part1() -> usize {
                 'D' => 'L',
                 'L' => 'U',
                 _ => unreachable!(),
-            };
-
-            let pos = {
-                if !map.contains(&tmp_pos) {
-                    map.insert(tmp_pos);
-                    tmp_pos
-                } else {
-                    *pos
-                }
             };
 
             (tmp_pos != bone).then_some((map, pos, direction))
