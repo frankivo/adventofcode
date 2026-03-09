@@ -1,5 +1,6 @@
 use everybodycodes::util::file;
 use std::collections::HashSet;
+use std::iter::successors;
 
 fn find_pos(needle: char) -> Option<(usize, usize)> {
     file::input(2, 1)
@@ -11,40 +12,41 @@ fn find_pos(needle: char) -> Option<(usize, usize)> {
 
 fn part1() -> usize {
     let (source, bone) = (find_pos('@').unwrap(), find_pos('#').unwrap());
+    let res = successors(
+        Some((HashSet::from([source]), source, 'U')),
+        |(map, pos, direction)| {
+            let tmp_pos = match direction {
+                'U' => (pos.0 - 1, pos.1),
+                'R' => (pos.0, pos.1 + 1),
+                'D' => (pos.0 + 1, pos.1),
+                'L' => (pos.0, pos.1 - 1),
+                _ => unreachable!(),
+            };
 
-    let mut pos = source;
-    let mut direction = 'U';
+            let mut map = (*map).clone();
 
-    let mut matrix: HashSet<(usize, usize)> = HashSet::from([source]);
+            let direction = match direction {
+                'U' => 'R',
+                'R' => 'D',
+                'D' => 'L',
+                'L' => 'U',
+                _ => unreachable!(),
+            };
 
-    loop {
-        let tmp_pos = match direction {
-            'U' => (pos.0 -1, pos.1),
-            'R' => (pos.0 , pos.1 + 1),
-            'D' => (pos.0 +1, pos.1),
-            'L' => (pos.0, pos.1 -1),
-            _ => unimplemented!(),
-        };
+            let pos = {
+                if !map.contains(&tmp_pos) {
+                    map.insert(tmp_pos);
+                    tmp_pos
+                } else {
+                    *pos
+                }
+            };
 
-         if tmp_pos == bone {
-            break;
-        }
+            (tmp_pos != bone).then_some((map, pos, direction))
+        },
+    );
 
-        if !matrix.contains(&tmp_pos) {
-            matrix.insert(tmp_pos);
-            pos = tmp_pos;
-        }
-
-        direction = match direction {
-            'U' => 'R',
-            'R' => 'D',
-            'D' => 'L',
-            'L' => 'U',
-            _ => unimplemented!(),
-        };
-    }
-
-    matrix.len()
+    res.last().unwrap().0.len()
 }
 
 fn main() {
